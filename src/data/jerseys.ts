@@ -1,1012 +1,872 @@
+// Gerado a partir de https://soccerpika.com — dados reais (preço, estoque, fotos, descrição).
+// Não edite à mão: regenerado pelo scraper.
+
 import type { Jersey } from '../types/jersey';
 
-export const JERSEYS: Jersey[] = [
+export const jerseys: Jersey[] = [
   {
-    "id": "brasil-1995-96-n17",
+    "id": "camisa-brasil-1995-96-n-17-de-jogo-fvbca",
     "name": "CAMISA BRASIL 1995-96 Nº 17 DE JOGO",
-    "club": "Seleção",
+    "club": "BRASIL",
     "season": "1995",
     "era": "90s",
-    "teamType": "Seleção",
-    "rarityTier": "GRAIL",
-    "condition": "8.5/10 (Match Worn de Jogo)",
+    "category": "De Jogo",
+    "categories": [
+      "De Jogo"
+    ],
     "price": 3249.99,
-    "originalPrice": 3737.49,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Seleção (1995). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA BRASIL 1995-96 Nº 17 DE JOGO com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-BRASIL-1995-",
+    "brand": "Umbro",
+    "description": "Camisa de jogo da lendária geração do período entre o tetra e o penta, usada pelo volante Doriva. Tamanho GG",
+    "images": [
+      "/products/camisa-brasil-1995-96-n-17-de-jogo-fvbca-0.webp"
+    ],
+    "sizes": [],
+    "colors": [],
+    "inStock": true,
+    "stockQty": 1,
     "isMatchWorn": true,
     "isAutographed": false,
-    "featured": true,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/brasil-1995-938545e97b5e9a8b4717741734665294-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/boca2003-0f59e4d43438e6a9cb17741746714725-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/jaqueta-toyota-cup-2a479eaf84232bd03617534012458767-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/spfc-1992-4706d87c2a505a6e6517582627054934-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-brasil-1995-96-n-17-de-jogo-fvbca/"
   },
   {
-    "id": "boca-2003-ibarra",
+    "id": "camisa-boca-juniors-2003-de-jogo-no-4-ibarra-18a",
     "name": "CAMISA BOCA JUNIORS 2003 DE JOGO No 4 IBARRA",
-    "club": "Boca Juniors",
+    "club": "BOCA JUNIORS",
     "season": "2003",
     "era": "2000s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "GRAIL",
-    "condition": "8.5/10 (Match Worn de Jogo)",
+    "category": "De Jogo",
+    "categories": [
+      "De Jogo"
+    ],
     "price": 1000.0,
-    "originalPrice": 1150.0,
-    "brand": "Adidas",
-    "playerName": "IBARRA",
-    "playerNumber": "4",
-    "description": "Manto histórico do Boca Juniors (2003). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA BOCA JUNIORS 2003 DE JOGO No 4 IBARRA com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-BOCA-2003-IB",
+    "brand": "Nike",
+    "description": "Camisa usada no time lendário de Buenos Aires que conquistou a Argentina, a América e o Mundo em 2003, especificamente usada pelo zagueiro Ibarra. Tamanho G",
+    "images": [
+      "/products/camisa-boca-juniors-2003-de-jogo-no-4-ib-0.webp"
+    ],
+    "sizes": [
+      "GG"
+    ],
+    "colors": [
+      "Azul"
+    ],
+    "inStock": true,
+    "stockQty": 1,
     "isMatchWorn": true,
     "isAutographed": false,
-    "featured": true,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/boca2003-0f59e4d43438e6a9cb17741746714725-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/brasil-1995-938545e97b5e9a8b4717741734665294-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-89-jogo-fc2cc2a4e65684f06b17547194096859-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/jaqueta-toyota-cup-2a479eaf84232bd03617534012458767-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-boca-juniors-2003-de-jogo-no-4-ibarra-18ack/"
   },
   {
-    "id": "gremio-1989-assis",
-    "name": "CAMISA DE JOGO GRÊMIO 1989- Nº 10 Assis",
-    "club": "Grêmio",
-    "season": "1989",
-    "era": "80s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "GRAIL",
-    "condition": "8.5/10 (Match Worn de Jogo)",
-    "price": 1000.0,
-    "originalPrice": 1150.0,
-    "brand": "Penalty / Umbro",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Grêmio (1989). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA DE JOGO GRÊMIO 1989- Nº 10 Assis com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-GREMIO-1989-",
-    "isMatchWorn": true,
-    "isAutographed": false,
-    "featured": true,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-89-jogo-fc2cc2a4e65684f06b17547194096859-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/boca2003-0f59e4d43438e6a9cb17741746714725-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/brasil-1995-938545e97b5e9a8b4717741734665294-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/jaqueta-toyota-cup-2a479eaf84232bd03617534012458767-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "jaqueta-gremio-1995",
-    "name": "JAQUETA MUNDIAL 1995- GRÊMIO VS. AJAX (STAFF)",
-    "club": "Grêmio",
-    "season": "1995",
-    "era": "90s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "GRAIL",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 2499.99,
-    "originalPrice": 2874.99,
-    "brand": "Penalty / Umbro",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Grêmio (1995). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo JAQUETA MUNDIAL 1995- GRÊMIO VS. AJAX (STAFF) com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-JAQUETA-GREM",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": true,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/jaqueta-toyota-cup-2a479eaf84232bd03617534012458767-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/boca2003-0f59e4d43438e6a9cb17741746714725-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/brasil-1995-938545e97b5e9a8b4717741734665294-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-89-jogo-fc2cc2a4e65684f06b17547194096859-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "spfc-1992-rai",
-    "name": "CAMISA SÃO PAULO 1992 No 10 RAÍ AUTOGRAFADA",
-    "club": "São Paulo",
-    "season": "1992",
-    "era": "90s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "GRAIL",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 829.0,
-    "originalPrice": 953.35,
-    "brand": "Nike",
-    "playerName": "RAÍ",
-    "playerNumber": "10",
-    "description": "Manto histórico do São Paulo (1992). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA SÃO PAULO 1992 No 10 RAÍ AUTOGRAFADA com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-SPFC-1992-RA",
-    "isMatchWorn": false,
-    "isAutographed": true,
-    "featured": true,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/spfc-1992-4706d87c2a505a6e6517582627054934-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "vasco-2007-romario",
-    "name": "CAMISA VASCO 2007 AWAY ''1000 GOLS''- No 11 ROMÁRIO",
-    "club": "Vasco da Gama",
-    "season": "2007",
-    "era": "2000s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 749.99,
-    "originalPrice": 862.49,
-    "brand": "Nike",
-    "playerName": "ROMÁRIO",
-    "playerNumber": "11",
-    "description": "Manto histórico do Vasco da Gama (2007). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA VASCO 2007 AWAY ''1000 GOLS''- No 11 ROMÁRIO com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-VASCO-2007-R",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/endloss-f78b456ed10ff9bafe17556406369065-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "botafogo-1996-tulio",
-    "name": "CAMISA BOTAFOGO 1996- Nº 7 TÚLIO",
-    "club": "Botafogo",
-    "season": "1996",
-    "era": "90s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 649.99,
-    "originalPrice": 747.49,
-    "brand": "Nike",
-    "playerName": "TÚLIO",
-    "playerNumber": "7",
-    "description": "Manto histórico do Botafogo (1996). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA BOTAFOGO 1996- Nº 7 TÚLIO com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-BOTAFOGO-199",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/fogao-95-7up-verdao-a0d1073f4a6c9933fb17633241108675-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "napoli-2023-kvara",
-    "name": "CAMISA NAPOLI 2022-23 No 77 KVARATSKHELIA",
-    "club": "Napoli",
-    "season": "2022",
-    "era": "2010s",
-    "teamType": "Clube Europeu",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 599.0,
-    "originalPrice": 688.85,
-    "brand": "Nike",
-    "playerName": "KVARATSKHELIA",
-    "playerNumber": "77",
-    "description": "Manto histórico do Napoli (2022). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA NAPOLI 2022-23 No 77 KVARATSKHELIA com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-NAPOLI-2023-",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/napoli2022-30830902ee276de0ce17741751256485-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/milan-125-022ab01a11c51b997317741761192543-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "italia-2006-pirlo",
+    "id": "camisa-italia-2006-no-21-pirlo-d7cxt",
     "name": "CAMISA ITÁLIA 2006 No 21 PIRLO",
-    "club": "Seleção",
+    "club": "ITÁLIA",
     "season": "2006",
     "era": "2000s",
-    "teamType": "Seleção",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
+    "category": "Seleções",
+    "categories": [
+      "Seleções"
+    ],
     "price": 599.99,
-    "originalPrice": 689.99,
-    "brand": "Puma",
-    "playerName": "PIRLO",
-    "playerNumber": "21",
-    "description": "Manto histórico do Seleção (2006). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA ITÁLIA 2006 No 21 PIRLO com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-ITALIA-2006-",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
+    "brand": "",
+    "description": "Camisa da Copa do Mundo de 2006 da seleção Azzurri, número e nome pertecendo ao grande meio-campista Andrea Pirlo. Tamanho GG.",
     "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/italia-2006-9a51d2d9d96797827517741735519513-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/jhamaicas-5c2fa605069e910e1317741742131693-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/brasil-1995-938545e97b5e9a8b4717741734665294-1024-0.webp"
+      "/products/camisa-italia-2006-no-21-pirlo-d7cxt-0.webp"
     ],
     "sizes": [
-      "P",
-      "M",
-      "G",
       "GG"
     ],
-    "inStock": true
+    "colors": [
+      "Azul"
+    ],
+    "inStock": true,
+    "stockQty": 1,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-italia-2006-no-21-pirlo-d7cxt/"
   },
   {
-    "id": "vasco-2000-n10",
-    "name": "CAMISA VASCO 2000 Nº 10",
-    "club": "Vasco da Gama",
-    "season": "2000",
-    "era": "2000s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
+    "id": "camisa-napoli-2022-23-no-77-kvaratskhelia-1gagu",
+    "name": "CAMISA NAPOLI 2022-23 No 77 KVARATSKHELIA",
+    "club": "NAPOLI",
+    "season": "2022",
+    "era": "2010s+",
+    "category": "Europeus",
+    "categories": [
+      "Europeus",
+      "Italianos"
+    ],
     "price": 599.0,
-    "originalPrice": 688.85,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Vasco da Gama (2000). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA VASCO 2000 Nº 10 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-VASCO-2000-N",
+    "brand": "Emporio Armani",
+    "description": "Camisa raríssima, ainda mais por se tratar de ser modelo jogador e na etiqueta, usada somente em um jogo durante a campanha do 3o campeonato italiano do time...",
+    "images": [
+      "/products/camisa-napoli-2022-23-no-77-kvaratskheli-0.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Azul claro"
+    ],
+    "inStock": true,
+    "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/vsco2000-84dd7ddcb91101d49c17594347585392-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-napoli-2022-23-no-77-kvaratskhelia-1gagu/"
   },
   {
-    "id": "gremio-2000-havana",
-    "name": "CAMISA GRÊMIO 2000 GOLEIRO (HAVANA)",
-    "club": "Grêmio",
-    "season": "2000",
-    "era": "2000s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 579.0,
-    "originalPrice": 665.85,
-    "brand": "Penalty / Umbro",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Grêmio (2000). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA GRÊMIO 2000 GOLEIRO (HAVANA) com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-GREMIO-2000-",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2000-goleiro-73ac870f3905421f8017582584246017-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "real-madrid-2006",
-    "name": "CAMISA REAL MADRID 2006/07",
-    "club": "Real Madrid",
-    "season": "2006",
-    "era": "2000s",
-    "teamType": "Clube Europeu",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 549.99,
-    "originalPrice": 632.49,
-    "brand": "Adidas",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Real Madrid (2006). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA REAL MADRID 2006/07 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-REAL-MADRID-",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/real-2006-cfa17cae3a5ea49d4217627928450089-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-preta-2012-pique-063bb72f4862bb763d17537551315129-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-2009-f3e34932de31c703ba17547184096203-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-2014-neymar-atualizada-51819afa0c03df16ad17627932688379-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "boca-2000-perez",
-    "name": "CAMISA BOCA JUNIORS 2000 Nº 15 PEREZ",
-    "club": "Boca Juniors",
-    "season": "2000",
-    "era": "2000s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 549.99,
-    "originalPrice": 632.49,
-    "brand": "Adidas",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Boca Juniors (2000). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA BOCA JUNIORS 2000 Nº 15 PEREZ com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-BOCA-2000-PE",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/boca2000-c41744837c42165f2917741736353562-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "milan-125-anos",
+    "id": "camisa-milan-125-anos-comemorativa-xa2q7",
     "name": "CAMISA MILAN 125 ANOS COMEMORATIVA",
-    "club": "AC Milan",
-    "season": "Retro",
-    "era": "90s",
-    "teamType": "Clube Europeu",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
+    "club": "MILAN",
+    "season": "",
+    "era": "Sem data",
+    "category": "Europeus",
+    "categories": [
+      "Europeus",
+      "Italianos"
+    ],
     "price": 499.99,
-    "originalPrice": 574.99,
-    "brand": "Adidas",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do AC Milan (Retro). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA MILAN 125 ANOS COMEMORATIVA com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-MILAN-125-AN",
+    "brand": "Puma",
+    "description": "Camisa comemorativa em alusão aos 125 da fundação do Milan. Tamanho M, nova na etiqueta",
+    "images": [
+      "/products/camisa-milan-125-anos-comemorativa-xa2q7-0.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "M"
+    ],
+    "inStock": true,
+    "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/milan-125-022ab01a11c51b997317741761192543-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/napoli2022-30830902ee276de0ce17741751256485-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-milan-125-anos-comemorativa-xa2q7/"
   },
   {
-    "id": "inter-2007-autografada",
-    "name": "CAMISA INTER 2007 Nº 11 AUTOGRAFADA",
-    "club": "Internacional",
-    "season": "2007",
-    "era": "2000s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "GRAIL",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 499.99,
-    "originalPrice": 574.99,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Internacional (2007). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA INTER 2007 Nº 11 AUTOGRAFADA com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-INTER-2007-A",
-    "isMatchWorn": false,
-    "isAutographed": true,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/inter-2007-c616ca64333526957617582606252555-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "juventude-1999-away",
+    "id": "camisa-juventude-1999-away-no-10-1629t",
     "name": "CAMISA JUVENTUDE 1999 AWAY No 10",
-    "club": "Juventude",
+    "club": "JUVENTUDE",
     "season": "1999",
     "era": "90s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
     "price": 399.0,
-    "originalPrice": 458.85,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Juventude (1999). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA JUVENTUDE 1999 AWAY No 10 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-JUVENTUDE-19",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
+    "brand": "Umbro",
+    "description": "Camisa bem underground (pouco utilizada em jogos) mas esteticamente magistral do Juventude, lançada no lendário ano de 1999, em que o Juventude teve seu maio...",
     "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/vsco2000-84dd7ddcb91101d49c17594347585392-1024-0.webp"
+      "/products/camisa-juventude-1999-away-no-10-1629t-0.webp"
     ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
+    "sizes": [],
+    "colors": [
       "GG"
     ],
-    "inStock": true
-  },
-  {
-    "id": "barcelona-2009",
-    "name": "CAMISA BARCELONA 2009",
-    "club": "FC Barcelona",
-    "season": "2009",
-    "era": "2000s",
-    "teamType": "Clube Europeu",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 399.99,
-    "originalPrice": 459.99,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do FC Barcelona (2009). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA BARCELONA 2009 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-BARCELONA-20",
+    "inStock": true,
+    "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-2009-f3e34932de31c703ba17547184096203-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/vardrid-f21141b315ee751fc117537539216239-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-preta-2012-pique-063bb72f4862bb763d17537551315129-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/real-2006-cfa17cae3a5ea49d4217627928450089-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-juventude-1999-away-no-10-1629t/"
   },
   {
-    "id": "barcelona-2012-pique",
-    "name": "CAMISA BARCELONA 2012 THIRD- Nº 3 PIQUÉ",
-    "club": "FC Barcelona",
-    "season": "2012",
-    "era": "2010s",
-    "teamType": "Clube Europeu",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 399.99,
-    "originalPrice": 459.99,
-    "brand": "Nike",
-    "playerName": "PIQUÉ",
-    "playerNumber": "3",
-    "description": "Manto histórico do FC Barcelona (2012). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA BARCELONA 2012 THIRD- Nº 3 PIQUÉ com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-BARCELONA-20",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-preta-2012-pique-063bb72f4862bb763d17537551315129-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-2014-neymar-atualizada-51819afa0c03df16ad17627932688379-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/real-2006-cfa17cae3a5ea49d4217627928450089-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-2009-f3e34932de31c703ba17547184096203-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "gremio-2014-plano-azul",
-    "name": "CAMISA GRÊMIO 2014 ''PLANO AZUL''- 1928 MANGA LONGA NA ETIQUETA",
-    "club": "Grêmio",
-    "season": "2014",
-    "era": "2010s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "10/10 (Nova c/ Etiquetas)",
-    "price": 399.99,
-    "originalPrice": 459.99,
-    "brand": "Penalty / Umbro",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Grêmio (2014). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA GRÊMIO 2014 ''PLANO AZUL''- 1928 MANGA LONGA NA ETIQUETA com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-GREMIO-2014-",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-1928-90ea1792610153347117547179814262-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "vasco-2011-away",
-    "name": "CAMISA VASCO 2011-12 AWAY",
-    "club": "Vasco da Gama",
-    "season": "2011",
-    "era": "2010s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 399.99,
-    "originalPrice": 459.99,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Vasco da Gama (2011). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA VASCO 2011-12 AWAY com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-VASCO-2011-A",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/vassssco-2011-8bced9e2822f488a5017571991967672-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "juventude-1999-branca",
-    "name": "JUVENTUDE 1999 AWAY- Nº 10",
-    "club": "Juventude",
-    "season": "1999",
-    "era": "90s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 399.99,
-    "originalPrice": 459.99,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Juventude (1999). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo JUVENTUDE 1999 AWAY- Nº 10 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-JUVENTUDE-19",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juventude-1999-branca-0faf0cff0b34c99bc917547201778415-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "gremio-1997-paulo-nunes",
+    "id": "camisa-gremio-1997-no-7-paulo-nunes-qknjt",
     "name": "CAMISA GRÊMIO 1997 No 7 PAULO NUNES",
-    "club": "Grêmio",
+    "club": "GRÊMIO",
     "season": "1997",
     "era": "90s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
     "price": 379.99,
-    "originalPrice": 436.99,
-    "brand": "Penalty / Umbro",
-    "playerName": "PAULO NUNES",
-    "playerNumber": "7",
-    "description": "Manto histórico do Grêmio (1997). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA GRÊMIO 1997 No 7 PAULO NUNES com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-GREMIO-1997-",
+    "brand": "Penalty",
+    "description": "Camisa do incrível título de 1997 da Copa do Brasil do Imortal Tricolor. Tamanho G.",
+    "images": [
+      "/products/camisa-gremio-1997-no-7-paulo-nunes-qknj-0.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "G"
+    ],
+    "inStock": true,
+    "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/hitchcock-eb0bad5a4e4a80ada417547665958642-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-1997-no-7-paulo-nunes-qknjt/"
   },
   {
-    "id": "jaqueta-inter-2008",
-    "name": "JAQUETA INTERNACIONAL 2008",
-    "club": "Internacional",
-    "season": "2008",
-    "era": "2000s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 369.99,
-    "originalPrice": 425.49,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Internacional (2008). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo JAQUETA INTERNACIONAL 2008 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-JAQUETA-INTE",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/hitchcock-eb0bad5a4e4a80ada417547665958642-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "barcelona-2014-neymar",
-    "name": "CAMISA BARCELONA 2014 THIRD Nº 11 NEYMAR",
-    "club": "FC Barcelona",
-    "season": "2014",
-    "era": "2010s",
-    "teamType": "Clube Europeu",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 349.99,
-    "originalPrice": 402.49,
-    "brand": "Nike",
-    "playerName": "NEYMAR",
-    "playerNumber": "11",
-    "description": "Manto histórico do FC Barcelona (2014). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA BARCELONA 2014 THIRD Nº 11 NEYMAR com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-BARCELONA-20",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-2014-neymar-atualizada-51819afa0c03df16ad17627932688379-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/vardrid-f21141b315ee751fc117537539216239-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-preta-2012-pique-063bb72f4862bb763d17537551315129-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/real-2006-cfa17cae3a5ea49d4217627928450089-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "jamaica-2008-n10",
+    "id": "camisa-jamaica-2008-10-no-10-43c0w",
     "name": "CAMISA JAMAICA 2008/10 No 10",
-    "club": "Seleção",
+    "club": "JAMAICA",
     "season": "2008",
     "era": "2000s",
-    "teamType": "Seleção",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
+    "category": "Seleções",
+    "categories": [
+      "Seleções"
+    ],
     "price": 349.99,
-    "originalPrice": 402.49,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Seleção (2008). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA JAMAICA 2008/10 No 10 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-JAMAICA-2008",
+    "brand": "Kappa",
+    "description": "Camisa da seleção da Jamaica do período do bicampeonato da Copa do Caribe. Tamanho G, veste um M ou um G magro.",
+    "images": [
+      "/products/camisa-jamaica-2008-10-no-10-43c0w-0.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Amarelo"
+    ],
+    "inStock": true,
+    "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/jhamaicas-5c2fa605069e910e1317741742131693-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/italia-2006-9a51d2d9d96797827517741735519513-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/brasil-1995-938545e97b5e9a8b4717741734665294-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-jamaica-2008-10-no-10-43c0w/"
   },
   {
-    "id": "gremio-2017-n10",
+    "id": "camisa-gremio-2017-no-10",
     "name": "CAMISA GRÊMIO 2017- No 10",
-    "club": "Grêmio",
+    "club": "GRÊMIO",
     "season": "2017",
-    "era": "2010s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
+    "era": "2010s+",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
     "price": 349.99,
-    "originalPrice": 402.49,
-    "brand": "Penalty / Umbro",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Grêmio (2017). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA GRÊMIO 2017- No 10 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-GREMIO-2017-",
+    "brand": "Umbro",
+    "description": "Camisa do lendário ano de 2017 que o time do Grêmio FBPA viveu, conquistando a América não pela primeira, nem segunda mas terceira vez. Camisa tamanho XGG (7...",
+    "images": [
+      "/products/camisa-gremio-2017-no-10-0.webp",
+      "/products/camisa-gremio-2017-no-10-1.webp",
+      "/products/camisa-gremio-2017-no-10-2.webp",
+      "/products/camisa-gremio-2017-no-10-3.webp",
+      "/products/camisa-gremio-2017-no-10-4.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Azul claro"
+    ],
+    "inStock": true,
+    "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/endloss-f78b456ed10ff9bafe17556406369065-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2017-no-10/"
   },
   {
-    "id": "corinthians-2022-mundial",
-    "name": "CAMISA CORINTHIANS 2022 THIRD MUNDIAL",
-    "club": "Corinthians",
-    "season": "2022",
-    "era": "2010s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 329.99,
-    "originalPrice": 379.49,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Corinthians (2022). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA CORINTHIANS 2022 THIRD MUNDIAL com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-CORINTHIANS-",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/curintia-134a73e3127dd9e82717537542956836-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp"
+    "id": "jaqueta-mundial-gremio-ajax-1995",
+    "name": "JAQUETA MUNDIAL 1995- GRÊMIO VS. AJAX (STAFF)",
+    "club": "GRÊMIO",
+    "season": "1995",
+    "era": "90s",
+    "category": "De Jogo",
+    "categories": [
+      "De Jogo"
     ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
-  },
-  {
-    "id": "fluminense-2023-cartola",
-    "name": "FLUMINENSE 2023 THIRD CARTOLA",
-    "club": "Fluminense",
-    "season": "2023",
-    "era": "2010s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 269.99,
-    "originalPrice": null,
+    "price": 2499.99,
     "brand": "Adidas",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Fluminense (2023). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo FLUMINENSE 2023 THIRD CARTOLA com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-FLUMINENSE-2",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
+    "description": "Jaqueta usada pelos ''Stewards'' no jogo entre Grêmio e Ajax, final do mundial de clubes de 1995. Excelentemente conservada, tamanho único (cabe um XGG)",
     "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/fluminense-2023-9fc0949aa51bdef11e17582615739019-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp"
+      "/products/jaqueta_mundial_gremio_ajax_1995-0.webp",
+      "/products/jaqueta_mundial_gremio_ajax_1995-1.webp",
+      "/products/jaqueta_mundial_gremio_ajax_1995-2.webp",
+      "/products/jaqueta_mundial_gremio_ajax_1995-3.webp"
     ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
+    "sizes": [],
+    "colors": [
+      "Amarelo"
     ],
-    "inStock": true
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": true,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/jaqueta_mundial_gremio_ajax_1995/"
   },
   {
-    "id": "spfc-2004-n9",
-    "name": "CAMISA SÃO PAULO 2004 No9",
-    "club": "São Paulo",
-    "season": "2004",
+    "id": "camisa-de-jogo-gremio-1989-n-10",
+    "name": "CAMISA DE JOGO GRÊMIO 1989- Nº 10 Assis",
+    "club": "GRÊMIO",
+    "season": "1989",
+    "era": "80s",
+    "category": "De Jogo",
+    "categories": [
+      "De Jogo"
+    ],
+    "price": 1000.0,
+    "brand": "Penalty",
+    "description": "Uma camisa veterana de guerra preparada/usada de jogo, do lendário ano de 1989, quando o Grêmio fez o doplete nacional ganhando o Gauchão e a Copa do Brasil ...",
+    "images": [
+      "/products/camisa-de-jogo-gremio-1989-n-10-0.webp",
+      "/products/camisa-de-jogo-gremio-1989-n-10-1.webp",
+      "/products/camisa-de-jogo-gremio-1989-n-10-2.webp",
+      "/products/camisa-de-jogo-gremio-1989-n-10-3.webp",
+      "/products/camisa-de-jogo-gremio-1989-n-10-4.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "G (justo)"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": true,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-de-jogo-gremio-1989-n-10/"
+  },
+  {
+    "id": "camisa-sao-paulo-1992-no-10-rai-autografada",
+    "name": "CAMISA SÃO PAULO 1992 No 10 RAÍ AUTOGRAFADA",
+    "club": "SÃO PAULO",
+    "season": "1992",
+    "era": "90s",
+    "category": "De Jogo",
+    "categories": [
+      "De Jogo",
+      "Autografadas"
+    ],
+    "price": 829.0,
+    "brand": "",
+    "description": "Camisa do SPFC de 1992, autografada pelo craque Raí, com dedicatória (algo que o Raí costumeiramente sempre fez). Tamanho G (65x53)",
+    "images": [
+      "/products/camisa-sao-paulo-1992-no-10-rai-autograf-0.webp",
+      "/products/camisa-sao-paulo-1992-no-10-rai-autograf-1.webp",
+      "/products/camisa-sao-paulo-1992-no-10-rai-autograf-2.webp",
+      "/products/camisa-sao-paulo-1992-no-10-rai-autograf-3.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Branco"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": true,
+    "isAutographed": true,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-sao-paulo-1992-no-10-rai-autografada/"
+  },
+  {
+    "id": "camisa-vasco-2007-especial-1000gols-romario",
+    "name": "CAMISA VASCO 2007 AWAY ''1000 GOLS''- No 11 ROMÁRIO",
+    "club": "VASCO",
+    "season": "2007",
     "era": "2000s",
-    "teamType": "Clube Sul-Americano",
-    "rarityTier": "COLLECTOR",
-    "condition": "9.5/10 (Impecável de Época)",
-    "price": 249.99,
-    "originalPrice": null,
-    "brand": "Nike",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do São Paulo (2004). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA SÃO PAULO 2004 No9 com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-SPFC-2004-N9",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 749.99,
+    "brand": "Reebok",
+    "description": "Camisa modelo ''away'' (secundária) do C.R.V.G. do ano de 2007, celebrando o milésimo gol de Romário como jogador, fato que aconteceu no jogo entre Vasco e S...",
+    "images": [
+      "/products/camisa-vasco-2007-especial-1000gols-roma-0.webp",
+      "/products/camisa-vasco-2007-especial-1000gols-roma-1.webp",
+      "/products/camisa-vasco-2007-especial-1000gols-roma-2.webp",
+      "/products/camisa-vasco-2007-especial-1000gols-roma-3.webp",
+      "/products/camisa-vasco-2007-especial-1000gols-roma-4.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Preto"
+    ],
+    "inStock": false,
+    "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "featured": false,
-    "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/spfc-2004-c23cc016f80e35a89217582611304881-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gre97-669a3fc9a9115205a817741758200400-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/juv-b417156cf64cde515317741767733570-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/gremio-2017-b5ec5e521c14fe3a7317559018027797-1024-0.webp"
-    ],
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG"
-    ],
-    "inStock": true
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2007-especial-1000gols-romario/"
   },
   {
-    "id": "real-madrid-1998-copa",
+    "id": "camisa-botafogo-1996",
+    "name": "CAMISA BOTAFOGO 1996- Nº 7 TÚLIO",
+    "club": "BOTAFOGO",
+    "season": "1996",
+    "era": "90s",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 649.99,
+    "brand": "Finta",
+    "description": "Após um lendário ano de 1995, o Botafogo volta com a mesma camisa, porém com o símbolo do seu triunfo de campeão brasileiro nas mangas para 1996, e o mítico ...",
+    "images": [
+      "/products/camisa-botafogo-1996-0.webp",
+      "/products/camisa-botafogo-1996-1.webp",
+      "/products/camisa-botafogo-1996-2.webp",
+      "/products/camisa-botafogo-1996-3.webp",
+      "/products/camisa-botafogo-1996-4.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "G"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-botafogo-1996/"
+  },
+  {
+    "id": "camisa-vasco-2000-n-10-5kpap",
+    "name": "CAMISA VASCO 2000 Nº 10",
+    "club": "VASCO",
+    "season": "2000",
+    "era": "2000s",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 599.0,
+    "brand": "Kappa",
+    "description": "Camisa elegante do Vasco, uma obra-prima do futebol dos anos 90. Tamanho G (75x57)",
+    "images": [
+      "/products/camisa-vasco-2000-n-10-5kpap-0.webp",
+      "/products/camisa-vasco-2000-n-10-5kpap-1.webp",
+      "/products/camisa-vasco-2000-n-10-5kpap-2.webp",
+      "/products/camisa-vasco-2000-n-10-5kpap-3.webp"
+    ],
+    "sizes": [
+      "GG"
+    ],
+    "colors": [
+      "Branco"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2000-n-10-5kpap/"
+  },
+  {
+    "id": "camisa-gremio-2000-goleiro-havana",
+    "name": "CAMISA GRÊMIO 2000 GOLEIRO (HAVANA)",
+    "club": "GRÊMIO",
+    "season": "2000",
+    "era": "2000s",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 579.0,
+    "brand": "Kappa",
+    "description": "Camisa de goleiro, remetendo as cores originais das camisas do Grêmio FBPA. Tamanho GG (73x60)",
+    "images": [
+      "/products/camisa-gremio-2000-goleiro-havana-0.webp",
+      "/products/camisa-gremio-2000-goleiro-havana-1.webp",
+      "/products/camisa-gremio-2000-goleiro-havana-2.webp",
+      "/products/camisa-gremio-2000-goleiro-havana-3.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Marrom"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2000-goleiro-havana/"
+  },
+  {
+    "id": "camisa-boca-juniors-2000-n-15-perez-zkrqb",
+    "name": "CAMISA BOCA JUNIORS 2000 Nº 15 PEREZ",
+    "club": "BOCA JUNIORS",
+    "season": "2000",
+    "era": "2000s",
+    "category": "Sulamericanas",
+    "categories": [
+      "Sulamericanas"
+    ],
+    "price": 549.99,
+    "brand": "Nike",
+    "description": "Camisa do mítico ano de 2000, que o Boca vence não só a Libertadores da América como também o campeonato argentino e o mundial de clubes em cima do lendário ...",
+    "images": [
+      "/products/camisa-boca-juniors-2000-n-15-perez-zkrq-0.webp",
+      "/products/camisa-boca-juniors-2000-n-15-perez-zkrq-1.webp",
+      "/products/camisa-boca-juniors-2000-n-15-perez-zkrq-2.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Azul",
+      "Amarelo"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-boca-juniors-2000-n-15-perez-zkrqb/"
+  },
+  {
+    "id": "camisa-real-madrid-2006-07",
+    "name": "CAMISA REAL MADRID 2006/07",
+    "club": "REAL MADRID",
+    "season": "2006",
+    "era": "2000s",
+    "category": "Europeus",
+    "categories": [
+      "Europeus",
+      "Espanhóis"
+    ],
+    "price": 549.99,
+    "brand": "Adidas",
+    "description": "Camisa do maior time da Europa no template mais bonito da Adidas dos anos 2000, o Teamgeist. Versão nacional, tamanho G.",
+    "images": [
+      "/products/camisa-real-madrid-2006-07-0.webp",
+      "/products/camisa-real-madrid-2006-07-1.webp",
+      "/products/camisa-real-madrid-2006-07-2.webp",
+      "/products/camisa-real-madrid-2006-07-3.webp"
+    ],
+    "sizes": [
+      "G"
+    ],
+    "colors": [
+      "Branco"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-real-madrid-2006-07/"
+  },
+  {
+    "id": "camisa-real-madrid-1998-7a-copa-europa",
     "name": "CAMISA REAL MADRID 1998 7a ''COPA EUROPA''",
-    "club": "Real Madrid",
+    "club": "REAL MADRID",
     "season": "1998",
     "era": "90s",
-    "teamType": "Clube Europeu",
-    "rarityTier": "LEGENDARY",
-    "condition": "9.5/10 (Impecável de Época)",
+    "category": "Europeus",
+    "categories": [
+      "Europeus",
+      "Espanhóis"
+    ],
     "price": 549.99,
-    "originalPrice": 632.49,
-    "brand": "Adidas",
-    "playerName": null,
-    "playerNumber": null,
-    "description": "Manto histórico do Real Madrid (1998). Peça de vestuário com autenticidade verificada Soccer Pika Vault™.",
-    "history": "Relíquia autêntica Soccer Pika proveniente de curadoria especializada. Modelo CAMISA REAL MADRID 1998 7a ''COPA EUROPA'' com tecido, patches e acabamentos oficiais.",
-    "authenticityCode": "SPK-REAL-MADRID-",
-    "isMatchWorn": false,
-    "isAutographed": false,
-    "featured": false,
+    "brand": "",
+    "description": "Camisa comemorativa do sétimo título de champions league do Real Madrid, última com a parceria Real e Kelme. Autógrafos sublimados, tamanho G (67x57), razoav...",
     "images": [
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/vardrid-f21141b315ee751fc117537539216239-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/real-2006-cfa17cae3a5ea49d4217627928450089-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-preta-2012-pique-063bb72f4862bb763d17537551315129-1024-0.webp",
-      "https://dcdn-us.mitiendanube.com/stores/005/573/242/products/barca-2014-neymar-atualizada-51819afa0c03df16ad17627932688379-1024-0.webp"
+      "/products/camisa-real-madrid-1998-7a-copa-europa-0.webp",
+      "/products/camisa-real-madrid-1998-7a-copa-europa-1.webp",
+      "/products/camisa-real-madrid-1998-7a-copa-europa-2.webp",
+      "/products/camisa-real-madrid-1998-7a-copa-europa-3.webp"
     ],
     "sizes": [
-      "P",
-      "M",
-      "G",
+      "G"
+    ],
+    "colors": [
+      "Branco"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-real-madrid-1998-7a-copa-europa/"
+  },
+  {
+    "id": "camisa-inter-2007-n-11-autografada-vqixt",
+    "name": "CAMISA INTER 2007 Nº 11 AUTOGRAFADA",
+    "club": "INTER",
+    "season": "2007",
+    "era": "2000s",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 499.99,
+    "brand": "Reebok",
+    "description": "Camisa autografada por Alexandre Pato, Iarley, Clemer, Renan, Wellington Monteiro, Magal, Hidalgo, Diego Bottin, Marcelo Boeck e maioria do elenco campeão co...",
+    "images": [
+      "/products/camisa-inter-2007-n-11-autografada-vqixt-0.webp",
+      "/products/camisa-inter-2007-n-11-autografada-vqixt-1.webp",
+      "/products/camisa-inter-2007-n-11-autografada-vqixt-2.webp",
+      "/products/camisa-inter-2007-n-11-autografada-vqixt-3.webp"
+    ],
+    "sizes": [
+      "G"
+    ],
+    "colors": [
+      "Vermelho"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": true,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-inter-2007-n-11-autografada-vqixt/"
+  },
+  {
+    "id": "camisa-gremio-2014-plano-azul-1928-manga-longa-n",
+    "name": "CAMISA GRÊMIO 2014 ''PLANO AZUL''- 1928 MANGA LONGA NA ETIQUETA",
+    "club": "GRÊMIO",
+    "season": "2014",
+    "era": "2010s+",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 399.99,
+    "brand": "",
+    "description": "Camisa do Grêmio que conseguia-se ao participar do plano de capitalização da Arena, o Plano Azul, então quando falamos de camisas retrô do Grêmio, essa é uma...",
+    "images": [
+      "/products/camisa-gremio-2014-plano-azul-1928-manga-0.webp",
+      "/products/camisa-gremio-2014-plano-azul-1928-manga-1.webp"
+    ],
+    "sizes": [],
+    "colors": [],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2014-plano-azul-1928-manga-longa-na-etiqueta/"
+  },
+  {
+    "id": "camisa-vasco-2011-away",
+    "name": "CAMISA VASCO 2011-12 AWAY",
+    "club": "VASCO",
+    "season": "2011",
+    "era": "2010s+",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 399.99,
+    "brand": "Penalty",
+    "description": "Camisa sinônima ao time do ''trem bala da colina'', que se coroou campeão da Copa do Brasil no ano de 2011. Tamanho GG (80x55)",
+    "images": [
+      "/products/camisa-vasco-2011-away-0.webp",
+      "/products/camisa-vasco-2011-away-1.webp",
+      "/products/camisa-vasco-2011-away-2.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Preto"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2011-away/"
+  },
+  {
+    "id": "camisa-juventude-1999-branca-g",
+    "name": "JUVENTUDE 1999 AWAY- Nº 10",
+    "club": "JUVENTUDE",
+    "season": "1999",
+    "era": "90s",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 399.99,
+    "brand": "Umbro",
+    "description": "Camisa reserva extremamente misteriosa (pouco utilizada em jogos) mas esteticamente magistral (como era de se esperar) do Juventude, lançada no lendário ano...",
+    "images": [
+      "/products/camisa-juventude-1999-branca-g-0.webp",
+      "/products/camisa-juventude-1999-branca-g-1.webp",
+      "/products/camisa-juventude-1999-branca-g-2.webp",
+      "/products/camisa-juventude-1999-branca-g-3.webp",
+      "/products/camisa-juventude-1999-branca-g-4.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Branco"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-juventude-1999-branca-g/"
+  },
+  {
+    "id": "camisa-barcelona-2009",
+    "name": "CAMISA BARCELONA 2009",
+    "club": "BARCELONA",
+    "season": "2009",
+    "era": "2000s",
+    "category": "Europeus",
+    "categories": [
+      "Europeus",
+      "Espanhóis"
+    ],
+    "price": 399.99,
+    "brand": "",
+    "description": "Camisa do lendário ano da sextúplice coroa do Barcelona. Tamanho G (77x60).",
+    "images": [
+      "/products/camisa-barcelona-2009-0.webp",
+      "/products/camisa-barcelona-2009-1.webp"
+    ],
+    "sizes": [],
+    "colors": [],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2009/"
+  },
+  {
+    "id": "camisa-barcelona-2012-third-n-3-pique",
+    "name": "CAMISA BARCELONA 2012 THIRD- Nº 3 PIQUÉ",
+    "club": "BARCELONA",
+    "season": "2012",
+    "era": "2010s+",
+    "category": "Europeus",
+    "categories": [
+      "Europeus",
+      "Espanhóis"
+    ],
+    "price": 399.99,
+    "brand": "",
+    "description": "Camisa do lendário ano que Messi com o Barça fez 91 gols em 1 ano. Porém, nas costas, é Piqué que ilustra a camisa. Excelente estado, tamanho GG (78x60)",
+    "images": [
+      "/products/camisa-barcelona-2012-third-n-3-pique-0.webp",
+      "/products/camisa-barcelona-2012-third-n-3-pique-1.webp",
+      "/products/camisa-barcelona-2012-third-n-3-pique-2.webp",
+      "/products/camisa-barcelona-2012-third-n-3-pique-3.webp"
+    ],
+    "sizes": [
       "GG"
     ],
-    "inStock": true
+    "colors": [
+      "Preto"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2012-third-n-3-pique/"
+  },
+  {
+    "id": "jaqueta-internacional-2008",
+    "name": "JAQUETA INTERNACIONAL 2008",
+    "club": "INTERNACIONAL",
+    "season": "2008",
+    "era": "2000s",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 369.99,
+    "brand": "Reebok",
+    "description": "Jaqueta muito usada pelo ilustre técnico Tite e toda a comissão técnica e jogadores durante o ano de 2008 do Internacional. Tamanho G (67x61)",
+    "images": [
+      "/products/jaqueta-internacional-2008-0.webp",
+      "/products/jaqueta-internacional-2008-1.webp",
+      "/products/jaqueta-internacional-2008-2.webp",
+      "/products/jaqueta-internacional-2008-3.webp",
+      "/products/jaqueta-internacional-2008-4.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "G"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/jaqueta-internacional-2008/"
+  },
+  {
+    "id": "camisa-barcelona-2014-third-n-11-neymar-noloe",
+    "name": "CAMISA BARCELONA 2014 THIRD Nº 11 NEYMAR",
+    "club": "BARCELONA",
+    "season": "2014",
+    "era": "2010s+",
+    "category": "Europeus",
+    "categories": [
+      "Europeus",
+      "Espanhóis"
+    ],
+    "price": 349.99,
+    "brand": "Nike",
+    "description": "Terceira camisa do Barcelona no ano de 2014, camisa marca registrada de Neymar Jr. em sua estreia pelo time da Catalunha. Tamanho GG.",
+    "images": [
+      "/products/camisa-barcelona-2014-third-n-11-neymar--0.webp",
+      "/products/camisa-barcelona-2014-third-n-11-neymar--1.webp",
+      "/products/camisa-barcelona-2014-third-n-11-neymar--2.webp",
+      "/products/camisa-barcelona-2014-third-n-11-neymar--3.webp"
+    ],
+    "sizes": [
+      "GG"
+    ],
+    "colors": [
+      "Preto"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2014-third-n-11-neymar-noloe/"
+  },
+  {
+    "id": "camisa-corinthians-2022-third-mundial",
+    "name": "CAMISA CORINTHIANS 2022 THIRD MUNDIAL",
+    "club": "CORINTHIANS",
+    "season": "2022",
+    "era": "2010s+",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 329.99,
+    "brand": "Nike",
+    "description": "3a camisa do Corinthians de 2022, comemorando os 10 anos do título do mundial de clubes de 2012 conquistado contra o Chelsea. Nova na etiqueta, tamanho GG (7...",
+    "images": [
+      "/products/camisa-corinthians-2022-third-mundial-0.webp",
+      "/products/camisa-corinthians-2022-third-mundial-1.webp",
+      "/products/camisa-corinthians-2022-third-mundial-2.webp",
+      "/products/camisa-corinthians-2022-third-mundial-3.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "GG"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-corinthians-2022-third-mundial/"
+  },
+  {
+    "id": "fluminense-2023-third-cartola",
+    "name": "FLUMINENSE 2023 THIRD CARTOLA",
+    "club": "FLUMINENSE",
+    "season": "2023",
+    "era": "2010s+",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 269.99,
+    "brand": "Umbro",
+    "description": "Camisa na etiqueta remetente ao saudoso Cartola, porém com algumas avarias (vide fotos). Tamanho G (75x55)",
+    "images": [
+      "/products/fluminense-2023-third-cartola-0.webp",
+      "/products/fluminense-2023-third-cartola-1.webp",
+      "/products/fluminense-2023-third-cartola-2.webp",
+      "/products/fluminense-2023-third-cartola-3.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Pink"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/fluminense-2023-third-cartola/"
+  },
+  {
+    "id": "camisa-sao-paulo-2004-no9",
+    "name": "CAMISA SÃO PAULO 2004 No9",
+    "club": "SÃO PAULO",
+    "season": "2004",
+    "era": "2000s",
+    "category": "Brasileiros",
+    "categories": [
+      "Brasileiros"
+    ],
+    "price": 249.99,
+    "brand": "Topper",
+    "description": "Camisa de 2004 do SPFC, com o número 9 do lendário L. Fabiano. Tamanho G (78x55)",
+    "images": [
+      "/products/camisa-sao-paulo-2004-no9-0.webp",
+      "/products/camisa-sao-paulo-2004-no9-1.webp",
+      "/products/camisa-sao-paulo-2004-no9-2.webp",
+      "/products/camisa-sao-paulo-2004-no9-3.webp"
+    ],
+    "sizes": [],
+    "colors": [
+      "Branco"
+    ],
+    "inStock": false,
+    "stockQty": 0,
+    "isMatchWorn": false,
+    "isAutographed": false,
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-sao-paulo-2004-no9/"
   }
 ];

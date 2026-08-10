@@ -1,214 +1,211 @@
-import React, { useState } from 'react';
-import { X, ShieldCheck, Check, ShoppingBag, Heart } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Check, ExternalLink, PenLine, Shirt, Truck, X } from 'lucide-react';
 import type { Jersey } from '../types/jersey';
+import { formatPrice, installment } from '../lib/format';
 
 interface ProductModalProps {
   jersey: Jersey | null;
   onClose: () => void;
-  onAddToCart: (jersey: Jersey, size: 'P' | 'M' | 'G' | 'GG') => void;
-  isWishlisted: boolean;
-  onToggleWishlist: (jersey: Jersey) => void;
-  onOpenAuthenticityWithCode: (code: string) => void;
+  onAddToCart: (jersey: Jersey, size: string) => void;
 }
 
-export const ProductModal: React.FC<ProductModalProps> = ({
-  jersey,
-  onClose,
-  onAddToCart,
-  isWishlisted,
-  onToggleWishlist,
-  onOpenAuthenticityWithCode
-}) => {
+export function ProductModal({ jersey, onClose, onAddToCart }: ProductModalProps) {
+  const [imageIndex, setImageIndex] = useState(0);
+  const [size, setSize] = useState<string>('');
+  const [added, setAdded] = useState(false);
+
+  useEffect(() => {
+    setImageIndex(0);
+    setAdded(false);
+    setSize(jersey?.sizes[0] ?? 'Único');
+  }, [jersey]);
+
+  useEffect(() => {
+    if (!jersey) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [jersey, onClose]);
+
   if (!jersey) return null;
 
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<'P' | 'M' | 'G' | 'GG'>(jersey.sizes[0]);
+  const parcela = installment(jersey.price);
+
+  const add = () => {
+    onAddToCart(jersey, size);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div 
-        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto glass-panel border border-white/20 p-6 md:p-8 bg-[#0c101a] shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        
-        {/* Close Button */}
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/70 p-4 sm:items-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label={jersey.name}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="relative w-full max-w-4xl border-2 border-ink bg-paper">
         <button
+          type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors"
+          aria-label="Fechar"
+          className="absolute top-3 right-3 z-10 border-2 border-ink bg-paper p-1.5 hover:bg-ink hover:text-paper"
         >
-          <X className="w-5 h-5" />
+          <X size={18} />
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-          
-          {/* Left: Product Images Gallery */}
-          <div className="md:col-span-6 space-y-4">
-            
-            <div className="relative aspect-[4/4] rounded-xl overflow-hidden bg-black/60 border border-white/10">
+        <div className="grid md:grid-cols-2">
+          {/* Galeria */}
+          <div className="border-ink md:border-r-2">
+            <div className="aspect-square bg-surface">
               <img
-                src={jersey.images[selectedImage] || jersey.images[0]}
-                alt={jersey.name}
-                className="w-full h-full object-cover object-center"
+                src={jersey.images[imageIndex]}
+                alt={`${jersey.name} — foto ${imageIndex + 1}`}
+                className="h-full w-full object-contain p-6"
               />
-
-              {jersey.isMatchWorn && (
-                <span className="absolute top-3 left-3 bg-amber-500 text-black font-black text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-lg">
-                  MATCH WORN (USADA EM JOGO)
-                </span>
-              )}
-
-              {jersey.isAutographed && (
-                <span className="absolute top-3 right-3 bg-purple-600 text-white font-black text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-lg">
-                  AUTOGRAFADA COM CERTIFICADO
-                </span>
-              )}
             </div>
 
-            {/* Thumbnails */}
             {jersey.images.length > 1 && (
-              <div className="flex items-center gap-3">
-                {jersey.images.map((img, idx) => (
+              <div className="flex gap-2 border-t-2 border-ink p-3">
+                {jersey.images.map((src, i) => (
                   <button
-                    key={idx}
-                    onClick={() => setSelectedImage(idx)}
-                    className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedImage === idx ? 'border-[#00FF7F] scale-105' : 'border-white/10 opacity-60 hover:opacity-100'
+                    key={src}
+                    type="button"
+                    onClick={() => setImageIndex(i)}
+                    aria-label={`Ver foto ${i + 1}`}
+                    aria-current={i === imageIndex ? 'true' : undefined}
+                    className={`h-16 w-16 shrink-0 border-2 bg-surface ${
+                      i === imageIndex ? 'border-brand' : 'border-line hover:border-ink'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={src} alt="" className="h-full w-full object-contain p-1" />
                   </button>
                 ))}
               </div>
             )}
-
-            {/* Authenticity Box */}
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-300 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[#00FF7F]" />
-                  Código de Autenticidade Vault:
-                </span>
-                <span className="text-xs font-mono font-bold text-[#00FF7F] bg-[#00FF7F]/10 px-2 py-0.5 rounded border border-[#00FF7F]/30">
-                  {jersey.authenticityCode}
-                </span>
-              </div>
-              <button
-                onClick={() => {
-                  onClose();
-                  onOpenAuthenticityWithCode(jersey.authenticityCode);
-                }}
-                className="w-full py-2 rounded-lg bg-white/10 hover:bg-white/15 text-xs text-white font-bold transition-colors flex items-center justify-center gap-1"
-              >
-                Verificar Certificado Digital Completo
-              </button>
-            </div>
-
           </div>
 
-          {/* Right: Details & Order Form */}
-          <div className="md:col-span-6 flex flex-col justify-between space-y-6">
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  {jersey.brand} • {jersey.season}
+          {/* Detalhes */}
+          <div className="flex flex-col p-5 sm:p-7">
+            <div className="flex flex-wrap gap-1.5">
+              {jersey.isMatchWorn && (
+                <span className="flex items-center gap-1 bg-navy px-2 py-1 text-[10px] font-bold tracking-wider text-paper uppercase">
+                  <Shirt size={11} /> De jogo
                 </span>
-                <button
-                  onClick={() => onToggleWishlist(jersey)}
-                  className={`p-2 rounded-full border transition-all ${
-                    isWishlisted 
-                      ? 'bg-rose-500/20 text-rose-500 border-rose-500/50' 
-                      : 'bg-white/5 text-gray-400 border-white/10 hover:text-white'
-                  }`}
-                >
-                  <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-rose-500' : ''}`} />
-                </button>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-black text-white font-['Outfit'] leading-tight">
-                {jersey.name}
-              </h2>
-
-              {/* Price */}
-              <div className="flex items-baseline gap-3 pt-2">
-                <span className="text-3xl font-black text-[#00FF7F] font-['Outfit']">
-                  R$ {jersey.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              )}
+              {jersey.isAutographed && (
+                <span className="flex items-center gap-1 bg-brand px-2 py-1 text-[10px] font-bold tracking-wider text-paper uppercase">
+                  <PenLine size={11} /> Autografada
                 </span>
-                {jersey.originalPrice && (
-                  <span className="text-base text-gray-500 line-through">
-                    R$ {jersey.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </span>
-                )}
-              </div>
-
-              {/* Description & History */}
-              <div className="space-y-2 pt-2 text-sm text-gray-300 leading-relaxed">
-                <p>{jersey.description}</p>
-                <div className="p-3 rounded-lg bg-[#141b2b] border border-white/10 text-xs text-gray-300">
-                  <span className="font-bold text-[#FFD700] block mb-1">Histórico da Peça:</span>
-                  {jersey.history}
-                </div>
-              </div>
-
-              {/* Condition Badge */}
-              <div className="flex items-center gap-2 pt-1 text-xs">
-                <span className="text-gray-400 font-semibold">Estado de Conservação:</span>
-                <span className="text-[#FFD700] font-bold bg-[#FFD700]/10 px-2.5 py-1 rounded border border-[#FFD700]/30">
-                  {jersey.condition}
+              )}
+              {/* A categoria "De Jogo" já aparece como selo — não repetir. */}
+              {!(jersey.isMatchWorn && jersey.category === 'De Jogo') && (
+                <span className="border-2 border-ink px-2 py-1 text-[10px] font-bold tracking-wider uppercase">
+                  {jersey.category}
                 </span>
-              </div>
+              )}
+            </div>
 
-              {/* Size Selector */}
-              <div className="space-y-2 pt-4">
-                <label className="text-xs font-bold text-gray-300 block uppercase tracking-wider">
-                  Selecione o Tamanho Disponível:
-                </label>
-                <div className="flex items-center gap-3">
-                  {jersey.sizes.map((size) => (
+            <h2 className="mt-3 font-display text-2xl leading-tight font-900 uppercase">
+              {jersey.name}
+            </h2>
+
+            <p className="mt-1.5 text-sm text-muted">
+              {jersey.brand || 'Marca não informada'}
+              {jersey.season && ` · Temporada ${jersey.season}`}
+              {jersey.colors.length > 0 && ` · ${jersey.colors.join(', ')}`}
+            </p>
+
+            {jersey.description && (
+              <p className="mt-4 border-t-2 border-line pt-4 text-sm leading-relaxed">
+                {jersey.description}
+              </p>
+            )}
+
+            <div className="mt-5 border-t-2 border-ink pt-4">
+              <p className="font-display text-3xl font-900">{formatPrice(jersey.price)}</p>
+              <p className="mt-1 text-sm text-muted">
+                em até {parcela.times}x de {parcela.value} sem juros
+              </p>
+            </div>
+
+            {jersey.sizes.length > 0 && (
+              <div className="mt-5">
+                <p className="mb-2 font-display text-xs font-800 tracking-widest uppercase">
+                  Tamanho
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {jersey.sizes.map((option) => (
                     <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`w-12 h-12 rounded-xl font-bold text-sm transition-all border ${
-                        selectedSize === size
-                          ? 'bg-[#00FF7F] text-[#05140b] border-[#00FF7F] shadow-[0_0_15px_rgba(0,255,127,0.3)] scale-105'
-                          : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                      key={option}
+                      type="button"
+                      onClick={() => setSize(option)}
+                      aria-pressed={size === option}
+                      className={`min-w-12 border-2 px-3 py-2 text-sm font-bold ${
+                        size === option
+                          ? 'border-ink bg-ink text-paper'
+                          : 'border-line hover:border-ink'
                       }`}
                     >
-                      {size}
+                      {option}
                     </button>
                   ))}
                 </div>
               </div>
+            )}
 
-            </div>
+            <p className="mt-5 flex items-center gap-2 text-sm font-semibold">
+              <span
+                className={`inline-block h-2.5 w-2.5 rounded-full ${
+                  jersey.inStock ? 'bg-success' : 'bg-danger'
+                }`}
+              />
+              {jersey.inStock
+                ? `Disponível — ${jersey.stockQty} ${jersey.stockQty === 1 ? 'unidade' : 'unidades'} em estoque`
+                : 'Esgotado — peça única já vendida'}
+            </p>
 
-            {/* Action Buttons */}
-            <div className="space-y-3 pt-6 border-t border-white/10">
+            <div className="mt-5 space-y-2.5">
               <button
-                onClick={() => {
-                  onAddToCart(jersey, selectedSize);
-                  onClose();
-                }}
-                className="btn-primary w-full py-4 text-center justify-center font-bold text-base shadow-[0_0_20px_rgba(0,255,127,0.3)]"
+                type="button"
+                onClick={add}
+                disabled={!jersey.inStock}
+                className={`btn w-full py-3.5 text-sm uppercase ${
+                  added ? 'btn-dark' : 'btn-primary'
+                }`}
               >
-                <ShoppingBag className="w-5 h-5" /> Adicionar ao Carrinho
+                {added ? (
+                  <>
+                    <Check size={16} /> Adicionado
+                  </>
+                ) : jersey.inStock ? (
+                  'Adicionar ao carrinho'
+                ) : (
+                  'Indisponível'
+                )}
               </button>
 
-              <div className="flex items-center justify-center gap-4 text-xs text-gray-400 pt-1">
-                <span className="flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5 text-[#00FF7F]" /> Envio com Seguro Total
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5 text-[#00FF7F]" /> Lacre Inviolável
-                </span>
-              </div>
+              <a
+                href={jersey.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline w-full py-3 text-xs uppercase"
+              >
+                Ver na loja oficial <ExternalLink size={14} />
+              </a>
             </div>
 
+            <p className="mt-4 flex items-center gap-2 border-t-2 border-line pt-4 text-xs text-muted">
+              <Truck size={14} /> Enviamos para todo o Brasil · peça única, sem reposição
+            </p>
           </div>
-
         </div>
-
       </div>
     </div>
   );
-};
+}

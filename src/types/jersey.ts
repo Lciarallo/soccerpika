@@ -1,53 +1,47 @@
-export type RarityTier = 'GRAIL' | 'LEGENDARY' | 'COLLECTOR' | 'RARE';
+export type Era = '80s' | '90s' | '2000s' | '2010s+' | 'Sem data';
 
-export type Condition = '10/10 (Nova c/ Etiquetas)' | '9.5/10 (Impecável de Época)' | '9/10 (Excelente Estado)' | '8.5/10 (Match Worn de Jogo)';
-
-export type EraCategory = '80s' | '90s' | '2000s' | '2010s';
-
-export type TeamType = 'Seleção' | 'Clube Europeu' | 'Clube Sul-Americano';
+export type Category =
+  | 'Brasileiros'
+  | 'Europeus'
+  | 'Seleções'
+  | 'Sulamericanas'
+  | 'De Jogo'
+  | 'Outros';
 
 export interface Jersey {
   id: string;
   name: string;
   club: string;
   season: string;
-  era: EraCategory;
-  teamType: TeamType;
-  rarityTier: RarityTier;
-  condition: Condition;
+  era: Era;
+  category: Category;
+  categories: string[];
   price: number;
-  originalPrice?: number | null;
   brand: string;
-  playerNumber?: string | null;
-  playerName?: string | null;
   description: string;
-  history: string;
-  authenticityCode: string;
-  isMatchWorn?: boolean;
-  isAutographed?: boolean;
-  featured?: boolean;
   images: string[];
-  sizes: ('P' | 'M' | 'G' | 'GG')[];
+  sizes: string[];
+  colors: string[];
   inStock: boolean;
+  stockQty: number;
+  isMatchWorn: boolean;
+  isAutographed: boolean;
+  sourceUrl: string;
 }
 
 export interface CartItem {
   jersey: Jersey;
-  size: 'P' | 'M' | 'G' | 'GG';
+  size: string;
   quantity: number;
 }
 
-export interface FilterState {
-  searchQuery: string;
-  era: string;
-  teamType: string;
-  rarityTier: string;
-  sortBy: 'featured' | 'price-asc' | 'price-desc' | 'rarity';
-}
+export type SortBy = 'destaque' | 'preco-asc' | 'preco-desc' | 'nome';
 
-export interface VerificationResult {
-  valid: boolean;
-  jersey?: Jersey;
-  issuedDate?: string;
-  certificateId?: string;
+export interface FilterState {
+  query: string;
+  category: string;
+  era: string;
+  brand: string;
+  onlyInStock: boolean;
+  sortBy: SortBy;
 }

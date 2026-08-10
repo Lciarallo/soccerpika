@@ -1,148 +1,123 @@
-import React, { useState } from 'react';
-import { X, Send, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
+import { Send } from 'lucide-react';
 
-interface SellJerseyFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+export function SellJerseyForm() {
+  const [sent, setSent] = useState(false);
 
-export const SellJerseyForm: React.FC<SellJerseyFormProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const texto = [
+      'Olá! Tenho uma camisa para vender na Soccer Pika:',
+      '',
+      `Peça: ${form.get('peca')}`,
+      `Ano/temporada: ${form.get('ano') || 'não sei'}`,
+      `Estado: ${form.get('estado')}`,
+      `Contato: ${form.get('contato')}`,
+      form.get('detalhes') ? `\nDetalhes: ${form.get('detalhes')}` : '',
+    ].join('\n');
 
-  const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    contact: '',
-    jerseyName: '',
-    year: '',
-    condition: '10/10 (Nova c/ etiquetas)',
-    price: '',
-    details: ''
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
+    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank', 'noopener');
+    setSent(true);
+    event.currentTarget.reset();
+    setTimeout(() => setSent(false), 4000);
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div 
-        className="relative w-full max-w-xl glass-panel border border-[#FFD700]/40 p-6 sm:p-8 bg-[#0a0f1c] shadow-[0_0_50px_rgba(255,215,0,0.15)]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <section id="vender" className="mx-auto max-w-7xl px-4 py-14">
+      <div className="grid gap-0 border-2 border-ink lg:grid-cols-[1fr_1.1fr]">
+        <div className="flex flex-col justify-center border-ink bg-navy p-8 text-paper lg:border-r-2">
+          <h2 className="font-display text-3xl font-900 uppercase">
+            Tem uma camisa
+            <br />
+            <span className="underline decoration-brand decoration-4 underline-offset-4">
+              para vender?
+            </span>
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-paper/75">
+            Compramos e recebemos em consignação camisas de jogo, retrô,
+            autografadas e peças de seleção. Conte o que você tem — respondemos
+            com uma avaliação honesta, mesmo que a resposta seja não.
+          </p>
+          <ul className="mt-6 space-y-2 text-sm text-paper/75">
+            <li>· Avaliação sem compromisso</li>
+            <li>· Pagamento à vista ou consignação</li>
+            <li>· Aceitamos peças com marcas de uso</li>
+          </ul>
+        </div>
 
-        {!submitted ? (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFD700]/10 border border-[#FFD700]/30 text-[#FFD700] text-xs font-bold uppercase tracking-wider mb-1">
-                <Sparkles className="w-3.5 h-3.5" /> CURATORIA & AVALIAÇÃO SOCCERPIKA
-              </div>
-              <h2 className="text-2xl font-black text-white font-['Outfit']">Venda ou Desapegue do seu Manto Raro</h2>
-              <p className="text-xs text-gray-400">
-                Nossos especialistas analisam etiquetas, costuras e marcas d'água para fazer uma oferta de compra ou consignação.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="space-y-1">
-                <label className="font-bold text-gray-300 block">Seu Nome Completo:</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ex: Gabriel Barbosa"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-white/5 border border-white/15 focus:border-[#FFD700] rounded-xl p-3 text-white focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-gray-300 block">WhatsApp ou E-mail:</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="(11) 99999-9999"
-                  value={formData.contact}
-                  onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                  className="w-full bg-white/5 border border-white/15 focus:border-[#FFD700] rounded-xl p-3 text-white focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="space-y-1">
-                <label className="font-bold text-gray-300 block">Nome da Camisa / Time / Jogador:</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ex: Brasil 1998 Ronaldo #9"
-                  value={formData.jerseyName}
-                  onChange={(e) => setFormData({ ...formData, jerseyName: e.target.value })}
-                  className="w-full bg-white/5 border border-white/15 focus:border-[#FFD700] rounded-xl p-3 text-white focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-gray-300 block">Ano / Época da Peça:</label>
-                <input
-                  type="text"
-                  placeholder="Ex: 1998"
-                  value={formData.year}
-                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                  className="w-full bg-white/5 border border-white/15 focus:border-[#FFD700] rounded-xl p-3 text-white focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1 text-xs">
-              <label className="font-bold text-gray-300 block">Detalhes Adicionais & Fotos (Link do Drive/Imgur):</label>
-              <textarea
-                rows={3}
-                placeholder="Descreva defeitos, detalhes da etiqueta, se é match worn ou autografada..."
-                value={formData.details}
-                onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                className="w-full bg-white/5 border border-white/15 focus:border-[#FFD700] rounded-xl p-3 text-white focus:outline-none resize-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="btn-gold w-full py-3.5 text-center justify-center font-bold text-sm"
+        <form onSubmit={submit} className="grid gap-4 bg-paper p-8 sm:grid-cols-2">
+          <Field name="peca" label="Qual a peça?" placeholder="Ex.: Camisa Grêmio 1995 nº 10" required />
+          <Field name="ano" label="Ano / temporada" placeholder="Ex.: 1995" />
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="estado" className="font-display text-xs font-800 tracking-widest uppercase">
+              Estado da peça
+            </label>
+            <select
+              id="estado"
+              name="estado"
+              required
+              className="border-2 border-line px-3 py-2.5 text-sm focus:border-ink focus:outline-none"
             >
-              <Send className="w-4 h-4" /> Enviar Proposta para Avaliação
-            </button>
-
-          </form>
-        ) : (
-          <div className="text-center py-8 space-y-4">
-            <CheckCircle2 className="w-16 h-16 text-[#FFD700] mx-auto animate-bounce" />
-            <h3 className="text-2xl font-black text-white font-['Outfit']">Proposta Recebida com Sucesso!</h3>
-            <p className="text-xs text-gray-300 max-w-md mx-auto">
-              Nossa equipe de curadoria entrará em contato via WhatsApp/E-mail dentro de 24 horas úteis com a estimativa de avaliação.
-            </p>
-            <button
-              onClick={() => {
-                setSubmitted(false);
-                onClose();
-              }}
-              className="btn-secondary text-xs mx-auto px-6 py-2.5"
-            >
-              Fechar Janela
-            </button>
+              <option value="">Selecione…</option>
+              <option>Nova, com etiqueta</option>
+              <option>Excelente, pouco uso</option>
+              <option>Boa, marcas leves de uso</option>
+              <option>Usada em jogo</option>
+              <option>Com defeitos</option>
+            </select>
           </div>
-        )}
+          <Field name="contato" label="Seu contato" placeholder="WhatsApp ou e-mail" required />
 
+          <div className="flex flex-col gap-1.5 sm:col-span-2">
+            <label htmlFor="detalhes" className="font-display text-xs font-800 tracking-widest uppercase">
+              Detalhes (opcional)
+            </label>
+            <textarea
+              id="detalhes"
+              name="detalhes"
+              rows={3}
+              placeholder="Origem da peça, etiquetas, autógrafos, defeitos…"
+              className="resize-y border-2 border-line px-3 py-2.5 text-sm focus:border-ink focus:outline-none"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <button type="submit" className="btn btn-primary w-full py-3.5 text-sm uppercase">
+              {sent ? 'Abrindo WhatsApp…' : 'Enviar para avaliação'}
+              <Send size={15} />
+            </button>
+            <p className="mt-2 text-center text-[11px] text-muted">
+              Abrimos o WhatsApp com sua mensagem pronta — você só confirma o envio.
+            </p>
+          </div>
+        </form>
       </div>
+    </section>
+  );
+}
+
+interface FieldProps {
+  name: string;
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+}
+
+function Field({ name, label, placeholder, required }: FieldProps) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={name} className="font-display text-xs font-800 tracking-widest uppercase">
+        {label}
+      </label>
+      <input
+        id={name}
+        name={name}
+        type="text"
+        placeholder={placeholder}
+        required={required}
+        className="border-2 border-line px-3 py-2.5 text-sm placeholder:text-muted focus:border-ink focus:outline-none"
+      />
     </div>
   );
-};
+}

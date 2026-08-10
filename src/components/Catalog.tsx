@@ -1,226 +1,171 @@
-import React, { useState, useMemo } from 'react';
-import { SlidersHorizontal, Trophy, RefreshCw, Layers } from 'lucide-react';
-import type { Jersey } from '../types/jersey';
+import { SlidersHorizontal, X } from 'lucide-react';
+import type { FilterState, Jersey, SortBy } from '../types/jersey';
 import { JerseyCard } from './JerseyCard';
 
 interface CatalogProps {
   jerseys: Jersey[];
-  wishlistIds: string[];
-  onToggleWishlist: (jersey: Jersey) => void;
-  onSelectJersey: (jersey: Jersey) => void;
-  onAddToCart: (jersey: Jersey, size: 'P' | 'M' | 'G' | 'GG') => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  filters: FilterState;
+  onFilterChange: <K extends keyof FilterState>(key: K, value: FilterState[K]) => void;
+  onReset: () => void;
+  categories: string[];
+  eras: string[];
+  brands: string[];
+  onSelect: (jersey: Jersey) => void;
 }
 
-export const Catalog: React.FC<CatalogProps> = ({
+const SORT_LABELS: Record<SortBy, string> = {
+  destaque: 'Destaques',
+  'preco-asc': 'Menor preço',
+  'preco-desc': 'Maior preço',
+  nome: 'Nome (A–Z)',
+};
+
+export function Catalog({
   jerseys,
-  wishlistIds,
-  onToggleWishlist,
-  onSelectJersey,
-  onAddToCart,
-  searchQuery,
-  setSearchQuery
-}) => {
-  const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>('ALL');
-  const [selectedEra, setSelectedEra] = useState<string>('ALL');
-  const [selectedRarity, setSelectedRarity] = useState<string>('ALL');
-  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'rarity'>('featured');
-
-  const filteredJerseys = useMemo(() => {
-    return jerseys.filter(jersey => {
-      // Search Query
-      if (searchQuery.trim() !== '') {
-        const query = searchQuery.toLowerCase();
-        const matchName = jersey.name.toLowerCase().includes(query);
-        const matchClub = jersey.club.toLowerCase().includes(query);
-        const matchPlayer = jersey.playerName?.toLowerCase().includes(query);
-        const matchBrand = jersey.brand.toLowerCase().includes(query);
-        const matchCode = jersey.authenticityCode.toLowerCase().includes(query);
-        if (!matchName && !matchClub && !matchPlayer && !matchBrand && !matchCode) return false;
-      }
-
-      // Category Tabs
-      if (selectedCategoryTab === 'MATCH_WORN' && !jersey.isMatchWorn) return false;
-      if (selectedCategoryTab === 'AUTOGRAPHED' && !jersey.isAutographed) return false;
-      if (selectedCategoryTab === 'SELECAO' && jersey.teamType !== 'Seleção') return false;
-      if (selectedCategoryTab === 'EUROPEU' && jersey.teamType !== 'Clube Europeu') return false;
-      if (selectedCategoryTab === 'SUL_AMERICANO' && jersey.teamType !== 'Clube Sul-Americano') return false;
-
-      // Era
-      if (selectedEra !== 'ALL' && jersey.era !== selectedEra) return false;
-
-      // Rarity
-      if (selectedRarity !== 'ALL' && jersey.rarityTier !== selectedRarity) return false;
-
-      return true;
-    }).sort((a, b) => {
-      if (sortBy === 'price-asc') return a.price - b.price;
-      if (sortBy === 'price-desc') return b.price - a.price;
-      if (sortBy === 'rarity') {
-        const rarityMap = { GRAIL: 4, LEGENDARY: 3, COLLECTOR: 2, RARE: 1 };
-        return rarityMap[b.rarityTier] - rarityMap[a.rarityTier];
-      }
-      return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-    });
-  }, [jerseys, searchQuery, selectedCategoryTab, selectedEra, selectedRarity, sortBy]);
-
-  const resetFilters = () => {
-    setSearchQuery('');
-    setSelectedCategoryTab('ALL');
-    setSelectedEra('ALL');
-    setSelectedRarity('ALL');
-    setSortBy('featured');
-  };
+  filters,
+  onFilterChange,
+  onReset,
+  categories,
+  eras,
+  brands,
+  onSelect,
+}: CatalogProps) {
+  const hasFilters =
+    filters.query !== '' ||
+    filters.category !== 'Todos' ||
+    filters.era !== 'Todas' ||
+    filters.brand !== 'Todas' ||
+    filters.onlyInStock;
 
   return (
-    <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+    <section id="catalogo" className="mx-auto max-w-7xl px-4 py-14">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b-2 border-ink pb-5">
         <div>
-          <div className="flex items-center gap-2 text-[#00FF7F] text-xs font-black tracking-widest uppercase mb-1">
-            <Layers className="w-4 h-4" />
-            ACERVO COMPLETO SOCCER PIKA
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-white font-['Outfit']">
-            Garagem de Mantos Raros
+          <h2 className="font-display text-3xl font-900 uppercase sm:text-4xl">
+            O acervo
           </h2>
-          <p className="text-gray-400 text-sm mt-1">
-            Exibindo <span className="text-[#00FF7F] font-bold font-mono">{filteredJerseys.length}</span> de <span className="text-white font-bold font-mono">{jerseys.length}</span> camisas autênticas em estoque.
+          <p className="mt-1 text-sm text-muted">
+            {jerseys.length} {jerseys.length === 1 ? 'peça encontrada' : 'peças encontradas'}
           </p>
         </div>
 
-        {/* Sorting Dropdown */}
-        <div className="flex items-center gap-2 bg-[#0f1523] p-2 rounded-xl border border-white/10">
-          <SlidersHorizontal className="w-4 h-4 text-gray-400 ml-1" />
-          <span className="text-xs text-gray-400 font-bold hidden sm:inline">Ordenar:</span>
+        <label className="flex items-center gap-2 text-sm font-semibold">
+          <SlidersHorizontal size={16} />
+          <span className="sr-only sm:not-sr-only">Ordenar por</span>
           <select
-            value={sortBy}
-            onChange={(e: any) => setSortBy(e.target.value)}
-            className="bg-transparent text-white text-xs font-bold py-1 pr-3 focus:outline-none cursor-pointer"
+            value={filters.sortBy}
+            onChange={(e) => onFilterChange('sortBy', e.target.value as SortBy)}
+            className="border-2 border-ink bg-paper px-3 py-2 text-sm font-semibold focus:outline-none"
           >
-            <option value="featured" className="bg-[#0f1523]">Destaques Pika</option>
-            <option value="rarity" className="bg-[#0f1523]">Nível de Raridade (Maior)</option>
-            <option value="price-asc" className="bg-[#0f1523]">Menor Preço</option>
-            <option value="price-desc" className="bg-[#0f1523]">Maior Preço</option>
+            {(Object.keys(SORT_LABELS) as SortBy[]).map((key) => (
+              <option key={key} value={key}>
+                {SORT_LABELS[key]}
+              </option>
+            ))}
           </select>
-        </div>
+        </label>
       </div>
 
-      {/* Main Category Filter Tabs */}
-      <div className="space-y-4 mb-8">
-        
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {[
-            { id: 'ALL', label: '⚡ Todas as Camisas', count: jerseys.length },
-            { id: 'MATCH_WORN', label: '👕 De Jogo (Match Worn)', count: jerseys.filter(j => j.isMatchWorn).length },
-            { id: 'AUTOGRAPHED', label: '✍️ Autografadas', count: jerseys.filter(j => j.isAutographed).length },
-            { id: 'SUL_AMERICANO', label: '🏆 Sul-Americanos', count: jerseys.filter(j => j.teamType === 'Clube Sul-Americano').length },
-            { id: 'EUROPEU', label: '🇪🇺 Clubes Europeus', count: jerseys.filter(j => j.teamType === 'Clube Europeu').length },
-            { id: 'SELECAO', label: '🇧🇷 Seleções Nacionais', count: jerseys.filter(j => j.teamType === 'Seleção').length }
-          ].map(tab => (
+      <div className="grid gap-8 py-6 lg:grid-cols-[220px_1fr]">
+        {/* Filtros */}
+        <aside className="space-y-6">
+          <Filter
+            label="Categoria"
+            options={categories}
+            value={filters.category}
+            onChange={(v) => onFilterChange('category', v)}
+          />
+          <Filter
+            label="Época"
+            options={eras}
+            value={filters.era}
+            onChange={(v) => onFilterChange('era', v)}
+          />
+          <Filter
+            label="Marca"
+            options={brands}
+            value={filters.brand}
+            onChange={(v) => onFilterChange('brand', v)}
+          />
+
+          <label className="flex cursor-pointer items-center gap-2.5 border-t-2 border-ink pt-5 text-sm font-semibold">
+            <input
+              type="checkbox"
+              checked={filters.onlyInStock}
+              onChange={(e) => onFilterChange('onlyInStock', e.target.checked)}
+              className="h-4 w-4 accent-[var(--color-brand)]"
+            />
+            Somente disponíveis
+          </label>
+
+          {hasFilters && (
             <button
-              key={tab.id}
-              onClick={() => setSelectedCategoryTab(tab.id)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-black whitespace-nowrap transition-all border flex items-center gap-2 ${
-                selectedCategoryTab === tab.id
-                  ? 'bg-[#00FF7F]/15 border-[#00FF7F] text-[#00FF7F] shadow-[0_0_20px_rgba(0,255,127,0.2)]'
-                  : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
-              }`}
+              type="button"
+              onClick={onReset}
+              className="flex items-center gap-1.5 text-sm font-bold text-brand hover:underline"
             >
-              <span>{tab.label}</span>
-              <span className={`px-1.5 py-0.5 rounded text-[10px] ${selectedCategoryTab === tab.id ? 'bg-[#00FF7F] text-[#041209]' : 'bg-white/10 text-gray-400'}`}>
-                {tab.count}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {/* Sub-Filters Bar */}
-        <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-white/10 text-xs">
-          
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 font-bold">Época:</span>
-            <div className="flex items-center gap-1.5">
-              {[
-                { id: 'ALL', label: 'Todas' },
-                { id: '80s', label: 'Anos 80' },
-                { id: '90s', label: 'Anos 90' },
-                { id: '2000s', label: 'Anos 2000' },
-                { id: '2010s', label: 'Anos 2010+' }
-              ].map(era => (
-                <button
-                  key={era.id}
-                  onClick={() => setSelectedEra(era.id)}
-                  className={`px-2.5 py-1 rounded-lg font-bold border transition-colors ${
-                    selectedEra === era.id 
-                      ? 'bg-white text-black border-white' 
-                      : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
-                  }`}
-                >
-                  {era.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 font-bold">Nível:</span>
-            <select
-              value={selectedRarity}
-              onChange={(e) => setSelectedRarity(e.target.value)}
-              className="bg-[#0f1523] text-white font-bold py-1 px-3 rounded-lg border border-white/10 focus:outline-none"
-            >
-              <option value="ALL">Todas as Raridades</option>
-              <option value="GRAIL">★ GRAIL (Match Worn / Relíquias)</option>
-              <option value="LEGENDARY">Legendárias</option>
-              <option value="COLLECTOR">Colecionador</option>
-            </select>
-          </div>
-
-          {(selectedEra !== 'ALL' || selectedCategoryTab !== 'ALL' || selectedRarity !== 'ALL' || searchQuery !== '') && (
-            <button
-              onClick={resetFilters}
-              className="text-[#FF3366] hover:underline font-bold flex items-center gap-1 ml-auto"
-            >
-              <RefreshCw className="w-3.5 h-3.5" /> Limpar Filtros
+              <X size={14} /> Limpar filtros
             </button>
           )}
+        </aside>
 
-        </div>
-
-      </div>
-
-      {/* Catalog Grid */}
-      {filteredJerseys.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredJerseys.map(jersey => (
-            <JerseyCard
-              key={jersey.id}
-              jersey={jersey}
-              isWishlisted={wishlistIds.includes(jersey.id)}
-              onToggleWishlist={onToggleWishlist}
-              onSelectJersey={onSelectJersey}
-              onAddToCart={onAddToCart}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="py-16 text-center glass-panel p-8 max-w-md mx-auto space-y-4">
-          <div className="w-16 h-16 rounded-full bg-white/5 mx-auto flex items-center justify-center text-gray-500">
-            <Trophy className="w-8 h-8 text-gray-500" />
+        {/* Grade */}
+        {jerseys.length > 0 ? (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {jerseys.map((jersey) => (
+              <JerseyCard key={jersey.id} jersey={jersey} onSelect={onSelect} />
+            ))}
           </div>
-          <h3 className="text-xl font-bold text-white">Nenhum manto encontrado</h3>
-          <p className="text-sm text-gray-400">
-            Não encontramos camisas para os filtros selecionados.
-          </p>
-          <button onClick={resetFilters} className="btn-primary text-xs mx-auto">
-            Redefinir Filtros
-          </button>
-        </div>
-      )}
-
+        ) : (
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-line py-24 text-center">
+            <p className="font-display text-xl font-800 uppercase">Nada encontrado</p>
+            <p className="mt-2 max-w-xs text-sm text-muted">
+              Tente outra busca ou remova alguns filtros para ver mais peças do acervo.
+            </p>
+            <button type="button" onClick={onReset} className="btn btn-primary mt-6 px-5 py-2.5 text-sm uppercase">
+              Limpar filtros
+            </button>
+          </div>
+        )}
+      </div>
     </section>
   );
-};
+}
+
+interface FilterProps {
+  label: string;
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function Filter({ label, options, value, onChange }: FilterProps) {
+  return (
+    <fieldset>
+      <legend className="mb-2.5 font-display text-xs font-800 tracking-widest uppercase">
+        {label}
+      </legend>
+      <ul className="space-y-1">
+        {options.map((option) => {
+          const active = value === option;
+          return (
+            <li key={option}>
+              <button
+                type="button"
+                onClick={() => onChange(option)}
+                aria-pressed={active}
+                className={`w-full border-l-4 py-1.5 pl-2.5 text-left text-sm transition-colors ${
+                  active
+                    ? 'border-brand font-bold text-ink'
+                    : 'border-transparent text-muted hover:border-line-strong hover:text-ink'
+                }`}
+              >
+                {option}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </fieldset>
+  );
+}
