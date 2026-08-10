@@ -22,8 +22,8 @@ export const Catalog: React.FC<CatalogProps> = ({
   searchQuery,
   setSearchQuery
 }) => {
+  const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>('ALL');
   const [selectedEra, setSelectedEra] = useState<string>('ALL');
-  const [selectedTeamType, setSelectedTeamType] = useState<string>('ALL');
   const [selectedRarity, setSelectedRarity] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'rarity'>('featured');
 
@@ -40,11 +40,15 @@ export const Catalog: React.FC<CatalogProps> = ({
         if (!matchName && !matchClub && !matchPlayer && !matchBrand && !matchCode) return false;
       }
 
+      // Category Tabs
+      if (selectedCategoryTab === 'MATCH_WORN' && !jersey.isMatchWorn) return false;
+      if (selectedCategoryTab === 'AUTOGRAPHED' && !jersey.isAutographed) return false;
+      if (selectedCategoryTab === 'SELECAO' && jersey.teamType !== 'Seleção') return false;
+      if (selectedCategoryTab === 'EUROPEU' && jersey.teamType !== 'Clube Europeu') return false;
+      if (selectedCategoryTab === 'SUL_AMERICANO' && jersey.teamType !== 'Clube Sul-Americano') return false;
+
       // Era
       if (selectedEra !== 'ALL' && jersey.era !== selectedEra) return false;
-
-      // Team Type
-      if (selectedTeamType !== 'ALL' && jersey.teamType !== selectedTeamType) return false;
 
       // Rarity
       if (selectedRarity !== 'ALL' && jersey.rarityTier !== selectedRarity) return false;
@@ -59,12 +63,12 @@ export const Catalog: React.FC<CatalogProps> = ({
       }
       return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     });
-  }, [jerseys, searchQuery, selectedEra, selectedTeamType, selectedRarity, sortBy]);
+  }, [jerseys, searchQuery, selectedCategoryTab, selectedEra, selectedRarity, sortBy]);
 
   const resetFilters = () => {
     setSearchQuery('');
+    setSelectedCategoryTab('ALL');
     setSelectedEra('ALL');
-    setSelectedTeamType('ALL');
     setSelectedRarity('ALL');
     setSortBy('featured');
   };
@@ -75,94 +79,107 @@ export const Catalog: React.FC<CatalogProps> = ({
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <div className="flex items-center gap-2 text-[#00FF7F] text-xs font-bold tracking-widest uppercase mb-1">
+          <div className="flex items-center gap-2 text-[#00FF7F] text-xs font-black tracking-widest uppercase mb-1">
             <Layers className="w-4 h-4" />
-            ACERVO HISTÓRICO DE MANTO
+            ACERVO COMPLETO SOCCER PIKA
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-white font-['Outfit']">
-            Catálogo de Raridades SoccerPika
+            Garagem de Mantos Raros
           </h2>
           <p className="text-gray-400 text-sm mt-1">
-            Exibindo <span className="text-[#00FF7F] font-bold">{filteredJerseys.length}</span> mantos raros com certificado de autenticidade original.
+            Exibindo <span className="text-[#00FF7F] font-bold font-mono">{filteredJerseys.length}</span> de <span className="text-white font-bold font-mono">{jerseys.length}</span> camisas autênticas em estoque.
           </p>
         </div>
 
         {/* Sorting Dropdown */}
-        <div className="flex items-center gap-2 bg-[#0e131f] p-1.5 rounded-xl border border-white/10">
-          <SlidersHorizontal className="w-4 h-4 text-gray-400 ml-2" />
-          <span className="text-xs text-gray-400 font-semibold hidden sm:inline">Ordenar:</span>
+        <div className="flex items-center gap-2 bg-[#0f1523] p-2 rounded-xl border border-white/10">
+          <SlidersHorizontal className="w-4 h-4 text-gray-400 ml-1" />
+          <span className="text-xs text-gray-400 font-bold hidden sm:inline">Ordenar:</span>
           <select
             value={sortBy}
             onChange={(e: any) => setSortBy(e.target.value)}
-            className="bg-transparent text-white text-xs font-bold py-1.5 pr-3 focus:outline-none cursor-pointer"
+            className="bg-transparent text-white text-xs font-bold py-1 pr-3 focus:outline-none cursor-pointer"
           >
-            <option value="featured" className="bg-[#0e131f]">Destaques Vault</option>
-            <option value="rarity" className="bg-[#0e131f]">Nível de Raridade (Maior)</option>
-            <option value="price-asc" className="bg-[#0e131f]">Menor Preço</option>
-            <option value="price-desc" className="bg-[#0e131f]">Maior Preço</option>
+            <option value="featured" className="bg-[#0f1523]">Destaques Pika</option>
+            <option value="rarity" className="bg-[#0f1523]">Nível de Raridade (Maior)</option>
+            <option value="price-asc" className="bg-[#0f1523]">Menor Preço</option>
+            <option value="price-desc" className="bg-[#0f1523]">Maior Preço</option>
           </select>
         </div>
       </div>
 
-      {/* Filter Tabs & Bar */}
-      <div className="space-y-4 mb-10">
+      {/* Main Category Filter Tabs */}
+      <div className="space-y-4 mb-8">
         
-        {/* Era Filter Buttons */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          <span className="text-xs text-gray-400 font-bold uppercase tracking-wider mr-2 whitespace-nowrap">Época:</span>
           {[
-            { id: 'ALL', label: 'Todas as Décadas' },
-            { id: '80s', label: 'Anos 80 (Retro)' },
-            { id: '90s', label: 'Anos 90 (Vintage)' },
-            { id: '2000s', label: 'Anos 2000 (Classics)' },
-            { id: '2010s', label: 'Anos 2010 (Moderns)' }
+            { id: 'ALL', label: '⚡ Todas as Camisas', count: jerseys.length },
+            { id: 'MATCH_WORN', label: '👕 De Jogo (Match Worn)', count: jerseys.filter(j => j.isMatchWorn).length },
+            { id: 'AUTOGRAPHED', label: '✍️ Autografadas', count: jerseys.filter(j => j.isAutographed).length },
+            { id: 'SUL_AMERICANO', label: '🏆 Sul-Americanos', count: jerseys.filter(j => j.teamType === 'Clube Sul-Americano').length },
+            { id: 'EUROPEU', label: '🇪🇺 Clubes Europeus', count: jerseys.filter(j => j.teamType === 'Clube Europeu').length },
+            { id: 'SELECAO', label: '🇧🇷 Seleções Nacionais', count: jerseys.filter(j => j.teamType === 'Seleção').length }
           ].map(tab => (
             <button
               key={tab.id}
-              onClick={() => setSelectedEra(tab.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
-                selectedEra === tab.id
-                  ? 'bg-[#00FF7F]/15 border-[#00FF7F] text-[#00FF7F] shadow-[0_0_15px_rgba(0,255,127,0.15)]'
+              onClick={() => setSelectedCategoryTab(tab.id)}
+              className={`px-4 py-2.5 rounded-xl text-xs font-black whitespace-nowrap transition-all border flex items-center gap-2 ${
+                selectedCategoryTab === tab.id
+                  ? 'bg-[#00FF7F]/15 border-[#00FF7F] text-[#00FF7F] shadow-[0_0_20px_rgba(0,255,127,0.2)]'
                   : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
               }`}
             >
-              {tab.label}
+              <span>{tab.label}</span>
+              <span className={`px-1.5 py-0.5 rounded text-[10px] ${selectedCategoryTab === tab.id ? 'bg-[#00FF7F] text-[#041209]' : 'bg-white/10 text-gray-400'}`}>
+                {tab.count}
+              </span>
             </button>
           ))}
         </div>
 
-        {/* Sub-Filters (Team Type & Rarity) */}
-        <div className="flex flex-wrap items-center gap-4 pt-2 border-t border-white/10 text-xs">
+        {/* Sub-Filters Bar */}
+        <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-white/10 text-xs">
           
           <div className="flex items-center gap-2">
-            <span className="text-gray-400 font-semibold">Tipo:</span>
-            <select
-              value={selectedTeamType}
-              onChange={(e) => setSelectedTeamType(e.target.value)}
-              className="bg-[#0e131f] text-white font-bold py-1.5 px-3 rounded-lg border border-white/10 focus:outline-none"
-            >
-              <option value="ALL">Todos os Tipos</option>
-              <option value="Seleção">Seleções Nacionais</option>
-              <option value="Clube Europeu">Clubes Europeus</option>
-              <option value="Clube Sul-Americano">Clubes Sul-Americanos</option>
-            </select>
+            <span className="text-gray-400 font-bold">Época:</span>
+            <div className="flex items-center gap-1.5">
+              {[
+                { id: 'ALL', label: 'Todas' },
+                { id: '80s', label: 'Anos 80' },
+                { id: '90s', label: 'Anos 90' },
+                { id: '2000s', label: 'Anos 2000' },
+                { id: '2010s', label: 'Anos 2010+' }
+              ].map(era => (
+                <button
+                  key={era.id}
+                  onClick={() => setSelectedEra(era.id)}
+                  className={`px-2.5 py-1 rounded-lg font-bold border transition-colors ${
+                    selectedEra === era.id 
+                      ? 'bg-white text-black border-white' 
+                      : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
+                  }`}
+                >
+                  {era.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-gray-400 font-semibold">Raridade:</span>
+            <span className="text-gray-400 font-bold">Nível:</span>
             <select
               value={selectedRarity}
               onChange={(e) => setSelectedRarity(e.target.value)}
-              className="bg-[#0e131f] text-white font-bold py-1.5 px-3 rounded-lg border border-white/10 focus:outline-none"
+              className="bg-[#0f1523] text-white font-bold py-1 px-3 rounded-lg border border-white/10 focus:outline-none"
             >
               <option value="ALL">Todas as Raridades</option>
-              <option value="GRAIL">★ GRAIL (Raríssimas)</option>
+              <option value="GRAIL">★ GRAIL (Match Worn / Relíquias)</option>
               <option value="LEGENDARY">Legendárias</option>
               <option value="COLLECTOR">Colecionador</option>
             </select>
           </div>
 
-          {(selectedEra !== 'ALL' || selectedTeamType !== 'ALL' || selectedRarity !== 'ALL' || searchQuery !== '') && (
+          {(selectedEra !== 'ALL' || selectedCategoryTab !== 'ALL' || selectedRarity !== 'ALL' || searchQuery !== '') && (
             <button
               onClick={resetFilters}
               className="text-[#FF3366] hover:underline font-bold flex items-center gap-1 ml-auto"
@@ -196,7 +213,7 @@ export const Catalog: React.FC<CatalogProps> = ({
           </div>
           <h3 className="text-xl font-bold text-white">Nenhum manto encontrado</h3>
           <p className="text-sm text-gray-400">
-            Não encontramos resultados para a sua busca atual com os filtros selecionados.
+            Não encontramos camisas para os filtros selecionados.
           </p>
           <button onClick={resetFilters} className="btn-primary text-xs mx-auto">
             Redefinir Filtros

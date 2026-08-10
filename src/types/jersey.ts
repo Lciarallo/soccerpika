@@ -1,6 +1,6 @@
 export type RarityTier = 'GRAIL' | 'LEGENDARY' | 'COLLECTOR' | 'RARE';
 
-export type Condition = '10/10 (Nova c/ Etiquetas)' | '9.5/10 (Impecável de Época)' | '9/10 (Excelente Estado)' | '8.5/10 (Match Worn com Marcas de Jogo)';
+export type Condition = '10/10 (Nova c/ Etiquetas)' | '9.5/10 (Impecável de Época)' | '9/10 (Excelente Estado)' | '8.5/10 (Match Worn de Jogo)';
 
 export type EraCategory = '80s' | '90s' | '2000s' | '2010s';
 
@@ -16,10 +16,10 @@ export interface Jersey {
   rarityTier: RarityTier;
   condition: Condition;
   price: number;
-  originalPrice?: number;
+  originalPrice?: number | null;
   brand: string;
-  playerNumber?: string;
-  playerName?: string;
+  playerNumber?: string | null;
+  playerName?: string | null;
   description: string;
   history: string;
   authenticityCode: string;
