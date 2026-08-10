@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Check, ExternalLink, PenLine, Shirt, Truck, X } from 'lucide-react';
+import { Check, ExternalLink, X } from 'lucide-react';
 import type { Jersey } from '../types/jersey';
 import { formatPrice, installment } from '../lib/format';
 
@@ -11,7 +11,7 @@ interface ProductModalProps {
 
 export function ProductModal({ jersey, onClose, onAddToCart }: ProductModalProps) {
   const [imageIndex, setImageIndex] = useState(0);
-  const [size, setSize] = useState<string>('');
+  const [size, setSize] = useState('');
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
@@ -43,35 +43,34 @@ export function ProductModal({ jersey, onClose, onAddToCart }: ProductModalProps
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/70 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/60 p-0 sm:items-center sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={jersey.name}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="relative w-full max-w-4xl border-2 border-ink bg-paper">
+      <div className="relative w-full max-w-5xl bg-paper">
         <button
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="absolute top-3 right-3 z-10 border-2 border-ink bg-paper p-1.5 hover:bg-ink hover:text-paper"
+          className="absolute top-4 right-4 z-10 text-ink hover:text-brand"
         >
-          <X size={18} />
+          <X size={24} strokeWidth={1.5} />
         </button>
 
-        <div className="grid md:grid-cols-2">
-          {/* Galeria */}
-          <div className="border-ink md:border-r-2">
-            <div className="aspect-square bg-surface">
+        <div className="grid gap-8 p-5 sm:p-10 md:grid-cols-2">
+          <div>
+            <div className="aspect-square">
               <img
                 src={jersey.images[imageIndex]}
                 alt={`${jersey.name} — foto ${imageIndex + 1}`}
-                className="h-full w-full object-contain p-6"
+                className="h-full w-full object-contain"
               />
             </div>
 
             {jersey.images.length > 1 && (
-              <div className="flex gap-2 border-t-2 border-ink p-3">
+              <div className="mt-4 flex gap-3">
                 {jersey.images.map((src, i) => (
                   <button
                     key={src}
@@ -79,74 +78,48 @@ export function ProductModal({ jersey, onClose, onAddToCart }: ProductModalProps
                     onClick={() => setImageIndex(i)}
                     aria-label={`Ver foto ${i + 1}`}
                     aria-current={i === imageIndex ? 'true' : undefined}
-                    className={`h-16 w-16 shrink-0 border-2 bg-surface ${
-                      i === imageIndex ? 'border-brand' : 'border-line hover:border-ink'
+                    className={`h-16 w-16 shrink-0 bg-surface transition-opacity ${
+                      i === imageIndex ? 'opacity-100' : 'opacity-45 hover:opacity-80'
                     }`}
                   >
-                    <img src={src} alt="" className="h-full w-full object-contain p-1" />
+                    <img src={src} alt="" className="h-full w-full object-contain" />
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Detalhes */}
-          <div className="flex flex-col p-5 sm:p-7">
-            <div className="flex flex-wrap gap-1.5">
-              {jersey.isMatchWorn && (
-                <span className="flex items-center gap-1 bg-navy px-2 py-1 text-[10px] font-bold tracking-wider text-paper uppercase">
-                  <Shirt size={11} /> De jogo
-                </span>
-              )}
-              {jersey.isAutographed && (
-                <span className="flex items-center gap-1 bg-brand px-2 py-1 text-[10px] font-bold tracking-wider text-paper uppercase">
-                  <PenLine size={11} /> Autografada
-                </span>
-              )}
-              {/* A categoria "De Jogo" já aparece como selo — não repetir. */}
-              {!(jersey.isMatchWorn && jersey.category === 'De Jogo') && (
-                <span className="border-2 border-ink px-2 py-1 text-[10px] font-bold tracking-wider uppercase">
-                  {jersey.category}
-                </span>
-              )}
-            </div>
+          <div className="flex flex-col">
+            <p className="text-xs tracking-widest text-muted uppercase">
+              {jersey.category}
+              {jersey.brand && ` · ${jersey.brand}`}
+              {jersey.season && ` · ${jersey.season}`}
+            </p>
 
-            <h2 className="mt-3 font-display text-2xl leading-tight font-900 uppercase">
+            <h2 className="mt-2 font-display text-3xl leading-none font-900 uppercase">
               {jersey.name}
             </h2>
 
-            <p className="mt-1.5 text-sm text-muted">
-              {jersey.brand || 'Marca não informada'}
-              {jersey.season && ` · Temporada ${jersey.season}`}
-              {jersey.colors.length > 0 && ` · ${jersey.colors.join(', ')}`}
+            <p className="mt-5 font-display text-3xl font-900">{formatPrice(jersey.price)}</p>
+            <p className="mt-1 text-sm text-muted">
+              em até {parcela.times}x de {parcela.value} sem juros
             </p>
 
             {jersey.description && (
-              <p className="mt-4 border-t-2 border-line pt-4 text-sm leading-relaxed">
-                {jersey.description}
-              </p>
+              <p className="mt-5 text-sm leading-relaxed">{jersey.description}</p>
             )}
 
-            <div className="mt-5 border-t-2 border-ink pt-4">
-              <p className="font-display text-3xl font-900">{formatPrice(jersey.price)}</p>
-              <p className="mt-1 text-sm text-muted">
-                em até {parcela.times}x de {parcela.value} sem juros
-              </p>
-            </div>
-
             {jersey.sizes.length > 0 && (
-              <div className="mt-5">
-                <p className="mb-2 font-display text-xs font-800 tracking-widest uppercase">
-                  Tamanho
-                </p>
-                <div className="flex flex-wrap gap-2">
+              <div className="mt-6">
+                <p className="text-xs tracking-widest text-muted uppercase">Tamanho</p>
+                <div className="mt-2 flex flex-wrap gap-2">
                   {jersey.sizes.map((option) => (
                     <button
                       key={option}
                       type="button"
                       onClick={() => setSize(option)}
                       aria-pressed={size === option}
-                      className={`min-w-12 border-2 px-3 py-2 text-sm font-bold ${
+                      className={`min-w-12 border px-3 py-2 text-sm font-bold transition-colors ${
                         size === option
                           ? 'border-ink bg-ink text-paper'
                           : 'border-line hover:border-ink'
@@ -159,23 +132,23 @@ export function ProductModal({ jersey, onClose, onAddToCart }: ProductModalProps
               </div>
             )}
 
-            <p className="mt-5 flex items-center gap-2 text-sm font-semibold">
+            <p className="mt-5 flex items-center gap-2 text-sm">
               <span
-                className={`inline-block h-2.5 w-2.5 rounded-full ${
+                className={`inline-block h-2 w-2 rounded-full ${
                   jersey.inStock ? 'bg-success' : 'bg-danger'
                 }`}
               />
               {jersey.inStock
-                ? `Disponível — ${jersey.stockQty} ${jersey.stockQty === 1 ? 'unidade' : 'unidades'} em estoque`
+                ? `Disponível — ${jersey.stockQty} ${jersey.stockQty === 1 ? 'unidade' : 'unidades'}`
                 : 'Esgotado — peça única já vendida'}
             </p>
 
-            <div className="mt-5 space-y-2.5">
+            <div className="mt-6 space-y-3">
               <button
                 type="button"
                 onClick={add}
                 disabled={!jersey.inStock}
-                className={`btn w-full py-3.5 text-sm uppercase ${
+                className={`btn w-full py-4 text-sm tracking-wide uppercase ${
                   added ? 'btn-dark' : 'btn-primary'
                 }`}
               >
@@ -194,15 +167,11 @@ export function ProductModal({ jersey, onClose, onAddToCart }: ProductModalProps
                 href={jersey.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-outline w-full py-3 text-xs uppercase"
+                className="link-underline flex items-center justify-center gap-1.5 text-xs tracking-wide uppercase hover:text-brand"
               >
-                Ver na loja oficial <ExternalLink size={14} />
+                Ver na loja oficial <ExternalLink size={13} />
               </a>
             </div>
-
-            <p className="mt-4 flex items-center gap-2 border-t-2 border-line pt-4 text-xs text-muted">
-              <Truck size={14} /> Enviamos para todo o Brasil · peça única, sem reposição
-            </p>
           </div>
         </div>
       </div>

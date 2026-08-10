@@ -4,10 +4,13 @@ import { jerseys } from './data/jerseys';
 import type { CartItem, FilterState, Jersey } from './types/jersey';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { FeaturedCarousel } from './components/FeaturedCarousel';
 import { Catalog } from './components/Catalog';
 import { ProductModal } from './components/ProductModal';
 import { CartDrawer } from './components/CartDrawer';
+import { CheckoutModal } from './components/CheckoutModal';
 import { AuthenticityChecker } from './components/AuthenticityChecker';
+import { InstagramSection } from './components/InstagramSection';
 import { SellJerseyForm } from './components/SellJerseyForm';
 import { Footer } from './components/Footer';
 
@@ -20,26 +23,15 @@ const INITIAL_FILTERS: FilterState = {
   sortBy: 'destaque',
 };
 
-const ERA_ORDER = ['80s', '90s', '2000s', '2010s+', 'Sem data'];
-
 export default function App() {
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [selected, setSelected] = useState<Jersey | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const categories = useMemo(
     () => ['Todos', ...[...new Set(jerseys.map((j) => j.category))].sort()],
-    [],
-  );
-
-  const eras = useMemo(() => {
-    const present = new Set(jerseys.map((j) => j.era));
-    return ['Todas', ...ERA_ORDER.filter((e) => present.has(e as Jersey['era']))];
-  }, []);
-
-  const brands = useMemo(
-    () => ['Todas', ...[...new Set(jerseys.map((j) => j.brand).filter(Boolean))].sort()],
     [],
   );
 
@@ -48,8 +40,6 @@ export default function App() {
 
     const list = jerseys.filter((j) => {
       if (filters.category !== 'Todos' && j.category !== filters.category) return false;
-      if (filters.era !== 'Todas' && j.era !== filters.era) return false;
-      if (filters.brand !== 'Todas' && j.brand !== filters.brand) return false;
       if (filters.onlyInStock && !j.inStock) return false;
       if (!q) return true;
       return [j.name, j.club, j.brand, j.season, j.description, ...j.categories]
@@ -77,8 +67,7 @@ export default function App() {
     () =>
       jerseys
         .filter((j) => j.inStock)
-        .toSorted((a, b) => b.price - a.price)
-        .slice(0, 3),
+        .toSorted((a, b) => b.price - a.price),
     [],
   );
 
@@ -102,6 +91,7 @@ export default function App() {
       }
       return [...prev, { jersey, size, quantity: 1 }];
     });
+    setSelected(null);
     setCartOpen(true);
   }, []);
 
@@ -136,20 +126,18 @@ export default function App() {
       />
 
       <main>
-        <Hero featured={featured} total={jerseys.length} onSelect={setSelected} />
-
+        <Hero />
+        <FeaturedCarousel jerseys={featured} onSelect={setSelected} />
         <Catalog
           jerseys={visible}
           filters={filters}
           onFilterChange={setFilter}
           onReset={resetFilters}
           categories={categories}
-          eras={eras}
-          brands={brands}
           onSelect={setSelected}
         />
-
         <AuthenticityChecker />
+        <InstagramSection jerseys={featured} />
         <SellJerseyForm />
       </main>
 
@@ -167,6 +155,17 @@ export default function App() {
         onClose={() => setCartOpen(false)}
         onUpdateQuantity={updateQuantity}
         onRemove={removeItem}
+        onCheckout={() => {
+          setCartOpen(false);
+          setCheckoutOpen(true);
+        }}
+      />
+
+      <CheckoutModal
+        open={checkoutOpen}
+        items={cart}
+        onClose={() => setCheckoutOpen(false)}
+        onPaid={() => setCart([])}
       />
     </>
   );

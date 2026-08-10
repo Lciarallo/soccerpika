@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react';
+import { Minus, Plus, X } from 'lucide-react';
 import type { CartItem } from '../types/jersey';
 import { formatPrice, installment } from '../lib/format';
 
@@ -9,6 +9,7 @@ interface CartDrawerProps {
   onClose: () => void;
   onUpdateQuantity: (id: string, size: string, quantity: number) => void;
   onRemove: (id: string, size: string) => void;
+  onCheckout: () => void;
 }
 
 export function CartDrawer({
@@ -17,6 +18,7 @@ export function CartDrawer({
   onClose,
   onUpdateQuantity,
   onRemove,
+  onCheckout,
 }: CartDrawerProps) {
   useEffect(() => {
     if (!open) return;
@@ -35,85 +37,79 @@ export function CartDrawer({
   const count = items.reduce((sum, i) => sum + i.quantity, 0);
   const parcela = installment(total);
 
-  const checkout = () => {
-    const linhas = items
-      .map(
-        (i) =>
-          `• ${i.jersey.name} (${i.size}) × ${i.quantity} — ${formatPrice(
-            i.jersey.price * i.quantity,
-          )}`,
-      )
-      .join('\n');
-    const texto = `Olá! Quero fechar este pedido na Soccer Pika:\n\n${linhas}\n\nTotal: ${formatPrice(total)}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank', 'noopener');
-  };
-
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-ink/70"
+      className="fixed inset-0 z-50 flex justify-end bg-ink/60"
       role="dialog"
       aria-modal="true"
       aria-label="Carrinho"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="flex h-full w-full max-w-md flex-col border-l-2 border-ink bg-paper">
-        <header className="flex items-center justify-between border-b-2 border-ink px-5 py-4">
-          <h2 className="flex items-center gap-2 font-display text-lg font-900 uppercase">
-            <ShoppingBag size={20} />
-            Carrinho
-            {count > 0 && <span className="text-brand">({count})</span>}
+      <div className="flex h-full w-full max-w-md flex-col bg-paper">
+        <header className="flex items-center justify-between px-6 py-5">
+          <h2 className="font-display text-2xl font-900 uppercase">
+            Carrinho {count > 0 && <span className="text-brand">({count})</span>}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Fechar carrinho"
-            className="border-2 border-ink p-1.5 hover:bg-ink hover:text-paper"
+            className="hover:text-brand"
           >
-            <X size={18} />
+            <X size={24} strokeWidth={1.5} />
           </button>
         </header>
 
         {items.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-            <ShoppingBag size={44} className="text-line" strokeWidth={1.5} />
-            <p className="font-display text-lg font-800 uppercase">Carrinho vazio</p>
-            <p className="max-w-xs text-sm text-muted">
-              Escolha uma peça do acervo — todas são únicas e saem de circulação depois da venda.
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 text-center">
+            <p className="font-display text-xl font-800 uppercase">Carrinho vazio</p>
+            <p className="text-sm text-muted">
+              Escolha uma peça do acervo — todas são únicas e saem de circulação
+              depois da venda.
             </p>
-            <button type="button" onClick={onClose} className="btn btn-primary mt-2 px-5 py-2.5 text-sm uppercase">
+            <button
+              type="button"
+              onClick={onClose}
+              className="link-underline mt-2 text-sm tracking-wide uppercase hover:text-brand"
+            >
               Explorar acervo
             </button>
           </div>
         ) : (
           <>
-            <ul className="flex-1 divide-y-2 divide-line overflow-y-auto">
+            <ul className="flex-1 overflow-y-auto px-6">
               {items.map((item) => (
-                <li key={`${item.jersey.id}-${item.size}`} className="flex gap-3 p-4">
-                  <div className="h-24 w-24 shrink-0 border-2 border-line bg-surface">
+                <li
+                  key={`${item.jersey.id}-${item.size}`}
+                  className="flex gap-4 border-b border-line py-5 last:border-b-0"
+                >
+                  <div className="h-24 w-24 shrink-0 bg-surface">
                     <img
                       src={item.jersey.images[0]}
                       alt={item.jersey.name}
-                      className="h-full w-full object-contain p-1.5"
+                      className="h-full w-full object-contain"
                     />
                   </div>
 
                   <div className="flex min-w-0 flex-1 flex-col">
-                    <p className="line-clamp-2 text-xs font-bold uppercase">{item.jersey.name}</p>
+                    <p className="line-clamp-2 text-xs font-bold uppercase">
+                      {item.jersey.name}
+                    </p>
                     <p className="mt-0.5 text-[11px] text-muted">Tamanho {item.size}</p>
 
                     <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-                      <div className="flex items-center border-2 border-ink">
+                      <div className="flex items-center gap-3">
                         <button
                           type="button"
                           onClick={() =>
                             onUpdateQuantity(item.jersey.id, item.size, item.quantity - 1)
                           }
                           aria-label="Diminuir quantidade"
-                          className="px-2 py-1 hover:bg-ink hover:text-paper"
+                          className="text-muted hover:text-ink"
                         >
-                          <Minus size={13} />
+                          <Minus size={14} />
                         </button>
-                        <span className="min-w-8 text-center text-sm font-bold">
+                        <span className="min-w-4 text-center text-sm font-bold tabular-nums">
                           {item.quantity}
                         </span>
                         <button
@@ -123,13 +119,13 @@ export function CartDrawer({
                           }
                           disabled={item.quantity >= item.jersey.stockQty}
                           aria-label="Aumentar quantidade"
-                          className="px-2 py-1 hover:bg-ink hover:text-paper disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink"
+                          className="text-muted hover:text-ink disabled:opacity-30"
                         >
-                          <Plus size={13} />
+                          <Plus size={14} />
                         </button>
                       </div>
 
-                      <p className="font-display text-sm font-900">
+                      <p className="text-sm font-bold">
                         {formatPrice(item.jersey.price * item.quantity)}
                       </p>
                     </div>
@@ -139,19 +135,17 @@ export function CartDrawer({
                     type="button"
                     onClick={() => onRemove(item.jersey.id, item.size)}
                     aria-label={`Remover ${item.jersey.name}`}
-                    className="self-start p-1 text-muted hover:text-brand"
+                    className="self-start text-muted hover:text-brand"
                   >
-                    <Trash2 size={16} />
+                    <X size={16} />
                   </button>
                 </li>
               ))}
             </ul>
 
-            <footer className="border-t-2 border-ink p-5">
+            <footer className="border-t border-line px-6 py-5">
               <div className="flex items-baseline justify-between">
-                <span className="font-display text-sm font-800 tracking-widest uppercase">
-                  Total
-                </span>
+                <span className="text-sm tracking-widest uppercase">Total</span>
                 <span className="font-display text-2xl font-900">{formatPrice(total)}</span>
               </div>
               <p className="mt-1 text-right text-xs text-muted">
@@ -160,13 +154,13 @@ export function CartDrawer({
 
               <button
                 type="button"
-                onClick={checkout}
-                className="btn btn-primary mt-4 w-full py-3.5 text-sm uppercase"
+                onClick={onCheckout}
+                className="btn btn-primary mt-4 w-full py-4 text-sm tracking-wide uppercase"
               >
-                Finalizar pedido
+                Finalizar compra
               </button>
               <p className="mt-2 text-center text-[11px] text-muted">
-                Você será levado ao WhatsApp para combinar pagamento e envio.
+                Pix, cartão em até 12x ou boleto.
               </p>
             </footer>
           </>

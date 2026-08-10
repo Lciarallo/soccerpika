@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Archivo:wght@600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
 /* ---------------------------------------------------------------
-   Paleta oficial soccerpika.com (extraída das CSS vars da loja).
-   Tema claro, alto contraste, sem blur — nitidez em todas as camadas.
+   Paleta e tipografia de soccerpika.com, extraídas da própria loja:
+   CSS custom properties do tema + Nunito/Inter do <head>.
+   Layout editorial e arejado — sem molduras e sem blur.
    --------------------------------------------------------------- */
 @theme {
   --color-ink: #000000;
@@ -11,26 +12,20 @@
   --color-brand: #ff0300;
   --color-brand-dark: #cc0200;
   --color-navy: #020094;
-  --color-navy-dark: #010063;
 
   --color-success: #4bb98c;
   --color-danger: #dd7774;
   --color-warning: #dc8f38;
 
-  --color-line: #e4e4e7;
-  --color-line-strong: #18181b;
-  --color-muted: #71717a;
-  --color-surface: #f6f6f7;
+  --color-line: #e6e6e8;
+  --color-muted: #6b6b73;
+  --color-surface: #f7f7f8;
 
-  --font-display: 'Archivo', system-ui, sans-serif;
+  --font-display: 'Nunito', system-ui, sans-serif;
   --font-sans: 'Inter', system-ui, sans-serif;
 }
 
 @layer base {
-  * {
-    border-color: var(--color-line);
-  }
-
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
@@ -42,16 +37,14 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
-    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
 
   h1,
   h2,
-  h3,
-  h4 {
+  h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
 
@@ -62,7 +55,7 @@
 
   :focus-visible {
     outline: 2px solid var(--color-brand);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
   ::selection {
@@ -72,14 +65,37 @@
 }
 
 @layer components {
-  /* Faixa diagonal vermelho/azul do logo — usada como divisor de seção */
-  .rule-brand {
-    height: 4px;
-    background: linear-gradient(
-      90deg,
-      var(--color-brand) 0 50%,
-      var(--color-navy) 50% 100%
-    );
+  /* Texto vazado, como o "SIGA" de "NOS SIGA NO INSTA!" na loja. */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--color-ink);
+  }
+
+  .text-outline-paper {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--color-paper);
+  }
+
+  /* Letreiro deslizante do topo. */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 38s linear infinite;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      animation: none;
+    }
   }
 
   .btn {
@@ -89,25 +105,22 @@
     gap: 0.5rem;
     font-weight: 700;
     line-height: 1;
-    border: 2px solid var(--color-ink);
-    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
     cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, opacity 0.15s;
   }
 
   .btn:disabled {
     cursor: not-allowed;
-    opacity: 0.4;
+    opacity: 0.35;
   }
 
   .btn-primary {
     background: var(--color-brand);
-    border-color: var(--color-brand);
     color: var(--color-paper);
   }
 
   .btn-primary:not(:disabled):hover {
     background: var(--color-brand-dark);
-    border-color: var(--color-brand-dark);
   }
 
   .btn-dark {
@@ -117,18 +130,25 @@
 
   .btn-dark:not(:disabled):hover {
     background: var(--color-navy);
-    border-color: var(--color-navy);
   }
 
   .btn-outline {
     background: transparent;
     color: var(--color-ink);
+    border: 1px solid var(--color-ink);
   }
 
   .btn-outline:not(:disabled):hover {
     background: var(--color-ink);
     color: var(--color-paper);
   }
+
+  /* Link sublinhado do rodapé/Instagram da loja. */
+  .link-underline {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
 }
 
-/* Sem blur em nenhum lugar: overlays usam cor sólida/opacidade apenas. */
+/* Sem blur em nenhuma camada: overlays usam cor sólida com opacidade. */

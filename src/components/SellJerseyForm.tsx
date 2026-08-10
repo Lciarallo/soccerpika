@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react';
-import { Send } from 'lucide-react';
 
 export function SellJerseyForm() {
   const [sent, setSent] = useState(false);
@@ -24,40 +23,30 @@ export function SellJerseyForm() {
   };
 
   return (
-    <section id="vender" className="mx-auto max-w-7xl px-4 py-14">
-      <div className="grid gap-0 border-2 border-ink lg:grid-cols-[1fr_1.1fr]">
-        <div className="flex flex-col justify-center border-ink bg-navy p-8 text-paper lg:border-r-2">
-          <h2 className="font-display text-3xl font-900 uppercase">
-            Tem uma camisa
-            <br />
-            <span className="underline decoration-brand decoration-4 underline-offset-4">
-              para vender?
-            </span>
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-paper/75">
+    <section id="vender" className="px-5 py-14 sm:px-8">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
+        <div>
+          <h2 className="font-display text-4xl font-900 uppercase sm:text-5xl">Contato</h2>
+          <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
             Compramos e recebemos em consignação camisas de jogo, retrô,
-            autografadas e peças de seleção. Conte o que você tem — respondemos
-            com uma avaliação honesta, mesmo que a resposta seja não.
+            autografadas e de seleção. Conte o que você tem — respondemos com
+            uma avaliação honesta, mesmo que a resposta seja não.
           </p>
-          <ul className="mt-6 space-y-2 text-sm text-paper/75">
-            <li>· Avaliação sem compromisso</li>
-            <li>· Pagamento à vista ou consignação</li>
-            <li>· Aceitamos peças com marcas de uso</li>
-          </ul>
         </div>
 
-        <form onSubmit={submit} className="grid gap-4 bg-paper p-8 sm:grid-cols-2">
+        <form onSubmit={submit} className="grid max-w-2xl gap-6 sm:grid-cols-2">
           <Field name="peca" label="Qual a peça?" placeholder="Ex.: Camisa Grêmio 1995 nº 10" required />
           <Field name="ano" label="Ano / temporada" placeholder="Ex.: 1995" />
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="estado" className="font-display text-xs font-800 tracking-widest uppercase">
+
+          <div>
+            <label htmlFor="estado" className="text-xs tracking-widest text-muted uppercase">
               Estado da peça
             </label>
             <select
               id="estado"
               name="estado"
               required
-              className="border-2 border-line px-3 py-2.5 text-sm focus:border-ink focus:outline-none"
+              className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm focus:outline-none"
             >
               <option value="">Selecione…</option>
               <option>Nova, com etiqueta</option>
@@ -67,10 +56,11 @@ export function SellJerseyForm() {
               <option>Com defeitos</option>
             </select>
           </div>
+
           <Field name="contato" label="Seu contato" placeholder="WhatsApp ou e-mail" required />
 
-          <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <label htmlFor="detalhes" className="font-display text-xs font-800 tracking-widest uppercase">
+          <div className="sm:col-span-2">
+            <label htmlFor="detalhes" className="text-xs tracking-widest text-muted uppercase">
               Detalhes (opcional)
             </label>
             <textarea
@@ -78,18 +68,15 @@ export function SellJerseyForm() {
               name="detalhes"
               rows={3}
               placeholder="Origem da peça, etiquetas, autógrafos, defeitos…"
-              className="resize-y border-2 border-line px-3 py-2.5 text-sm focus:border-ink focus:outline-none"
+              className="mt-1.5 w-full resize-y border-b border-ink bg-transparent py-2.5 text-sm
+                         placeholder:text-muted focus:outline-none"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <button type="submit" className="btn btn-primary w-full py-3.5 text-sm uppercase">
+            <button type="submit" className="btn btn-primary w-full py-4 text-sm tracking-wide uppercase">
               {sent ? 'Abrindo WhatsApp…' : 'Enviar para avaliação'}
-              <Send size={15} />
             </button>
-            <p className="mt-2 text-center text-[11px] text-muted">
-              Abrimos o WhatsApp com sua mensagem pronta — você só confirma o envio.
-            </p>
           </div>
         </form>
       </div>
@@ -106,8 +93,8 @@ interface FieldProps {
 
 function Field({ name, label, placeholder, required }: FieldProps) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={name} className="font-display text-xs font-800 tracking-widest uppercase">
+    <div>
+      <label htmlFor={name} className="text-xs tracking-widest text-muted uppercase">
         {label}
       </label>
       <input
@@ -116,7 +103,8 @@ function Field({ name, label, placeholder, required }: FieldProps) {
         type="text"
         placeholder={placeholder}
         required={required}
-        className="border-2 border-line px-3 py-2.5 text-sm placeholder:text-muted focus:border-ink focus:outline-none"
+        className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm
+                   placeholder:text-muted focus:outline-none"
       />
     </div>
   );

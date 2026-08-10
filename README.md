@@ -15,11 +15,16 @@ oficial [soccerpika.com](https://soccerpika.com/).
 
 ```bash
 npm install
-npm run dev        # servidor de desenvolvimento
-npm run build      # typecheck + build de produção
-npm run preview    # serve o build
+cp .env.example .env   # preencha as credenciais do Mercado Pago
+npm run dev            # front-end
+npm run build          # typecheck (app + api) + build de produção
+npm run preview        # serve o build
 npm run lint
+npm test               # validação de pedido
 ```
+
+As rotas `/api/*` são Vercel Functions e não sobem no `vite dev`. Para exercitar
+o checkout ponta a ponta, use `vercel dev`.
 
 ## Identidade visual
 
@@ -59,17 +64,51 @@ python3 tools/scrape_soccerpika.py    # regrava tools/products.json
 As imagens ficam versionadas em `public/products/` (96 arquivos `.webp`), então
 o site não depende do CDN da loja original em runtime.
 
+## Pagamento
+
+Checkout com **Mercado Pago**, cobrindo Pix, cartão (até 12x) e boleto.
+
+| Rota                        | O que faz                                                     |
+| --------------------------- | ------------------------------------------------------------- |
+| `POST /api/payments`        | cria a cobrança nos três métodos                                |
+| `GET /api/payment-status`   | consulta o estado (a tela do Pix consulta até aprovar)          |
+| `POST /api/webhooks/mercadopago` | recebe as notificações do gateway                          |
+
+Três decisões que sustentam o fluxo:
+
+- **O preço é do servidor.** O navegador manda só `{id, size, quantity}`;
+  `api/_lib/order.ts` recalcula o total pelo catálogo, confere estoque e
+  tamanho. `npm test` cobre isso, incluindo a tentativa de forjar o preço.
+- **Dado de cartão não passa por nós.** Os campos ficam em iframes do Mercado
+  Pago (Secure Fields); o navegador troca por um token de uso único e o
+  servidor cobra com o token.
+- **Webhook não é fonte de verdade.** A notificação traz só o id; o status é
+  sempre relido da API, então um POST forjado não marca pedido como pago.
+  Com `MP_WEBHOOK_SECRET` configurado, a assinatura `x-signature` é conferida
+  antes disso.
+
+Variáveis em `.env.example`. `MP_ACCESS_TOKEN` é secreto e nunca leva o prefixo
+`VITE_` — só `VITE_MP_PUBLIC_KEY` chega ao navegador.
+
+O `notification_url` é montado a partir do host do deploy, então o webhook só
+funciona depois de publicado (em local, use um túnel).
+
 ## Estrutura
 
 ```
+api/
+  _lib/           cliente do Mercado Pago + validação de pedido
+  payments.ts     cria a cobrança
+  payment-status.ts
+  webhooks/
 src/
-  components/     Header, Hero, Catalog, JerseyCard, ProductModal,
-                  CartDrawer, AuthenticityChecker, SellJerseyForm, Footer
+  components/     Header, Hero, FeaturedCarousel, Catalog, JerseyCard,
+                  ProductModal, CartDrawer, CheckoutModal,
+                  AuthenticityChecker, InstagramSection, SellJerseyForm, Footer
   data/           jerseys.ts (gerado)
-  lib/format.ts   preço em BRL e parcelamento
+  hooks/          useMercadoPago (Secure Fields do cartão)
+  lib/            format (BRL) e checkout (chamadas à API)
   types/          modelo de domínio
+test/             testes da validação de pedido
 tools/            scraper + JSON de origem
 ```
-
-O carrinho é local (sem backend): o checkout monta a mensagem do pedido e abre
-o WhatsApp para combinar pagamento e envio.
