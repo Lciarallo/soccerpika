@@ -9,24 +9,29 @@ export type Category =
   | 'Outros';
 
 export interface Jersey {
+  /** UUID vindo do banco — é o que o checkout envia ao servidor. */
   id: string;
+  slug?: string;
   name: string;
   club: string;
   season: string;
-  era: Era;
-  category: Category;
-  categories: string[];
+  era: Era | string;
+  category: Category | string;
+  /** Presente só no catálogo estático gerado pelo scraper. */
+  categories?: string[];
   price: number;
   brand: string;
   description: string;
   images: string[];
   sizes: string[];
-  colors: string[];
+  colors?: string[];
   inStock: boolean;
   stockQty: number;
   isMatchWorn: boolean;
   isAutographed: boolean;
-  sourceUrl: string;
+  /** Só o admin vê produtos despublicados. */
+  isPublished?: boolean;
+  sourceUrl?: string | null;
 }
 
 export interface CartItem {

@@ -1,7 +1,11 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import './App.css';
-import { jerseys } from './data/jerseys';
+import * as api from './lib/api';
 import type { CartItem, FilterState, Jersey } from './types/jersey';
+import { SessionProvider } from './hooks/useSession';
+import { useSession } from './hooks/session-context';
+import { useRoute } from './hooks/useRoute';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { FeaturedCarousel } from './components/FeaturedCarousel';
@@ -9,10 +13,13 @@ import { Catalog } from './components/Catalog';
 import { ProductModal } from './components/ProductModal';
 import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
+import { AuthModal } from './components/AuthModal';
 import { AuthenticityChecker } from './components/AuthenticityChecker';
 import { InstagramSection } from './components/InstagramSection';
 import { SellJerseyForm } from './components/SellJerseyForm';
 import { Footer } from './components/Footer';
+import { AccountPage } from './pages/AccountPage';
+import { AdminDashboard } from './pages/AdminDashboard';
 
 const INITIAL_FILTERS: FilterState = {
   query: '',
@@ -24,15 +31,63 @@ const INITIAL_FILTERS: FilterState = {
 };
 
 export default function App() {
+  return (
+    <SessionProvider>
+      <Routes />
+    </SessionProvider>
+  );
+}
+
+function Routes() {
+  const { path, navigate } = useRoute();
+
+  if (path.startsWith('/admin')) {
+    return <AdminDashboard onExit={() => navigate('/')} />;
+  }
+  if (path.startsWith('/conta')) {
+    return <AccountPage onExit={() => navigate('/')} />;
+  }
+  return <Storefront navigate={navigate} />;
+}
+
+function Storefront({ navigate }: { navigate: (to: string) => void }) {
+  const { user, isAdmin } = useSession();
+
+  const [jerseys, setJerseys] = useState<Jersey[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [selected, setSelected] = useState<Jersey | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [wishlist, setWishlist] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    api
+      .fetchProducts()
+      .then(setJerseys)
+      .catch((e) => setLoadError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // A lista de desejos só existe para quem está logado.
+  useEffect(() => {
+    if (!user) {
+      setWishlist(new Set());
+      return;
+    }
+    api
+      .fetchWishlist()
+      .then((items) => setWishlist(new Set(items.map((i) => i.id))))
+      .catch(() => setWishlist(new Set()));
+  }, [user]);
 
   const categories = useMemo(
     () => ['Todos', ...[...new Set(jerseys.map((j) => j.category))].sort()],
-    [],
+    [jerseys],
   );
 
   const visible = useMemo(() => {
@@ -42,7 +97,7 @@ export default function App() {
       if (filters.category !== 'Todos' && j.category !== filters.category) return false;
       if (filters.onlyInStock && !j.inStock) return false;
       if (!q) return true;
-      return [j.name, j.club, j.brand, j.season, j.description, ...j.categories]
+      return [j.name, j.club, j.brand, j.season, j.description]
         .join(' ')
         .toLowerCase()
         .includes(q);
@@ -61,14 +116,11 @@ export default function App() {
           (a, b) => Number(b.inStock) - Number(a.inStock) || b.price - a.price,
         );
     }
-  }, [filters]);
+  }, [jerseys, filters]);
 
   const featured = useMemo(
-    () =>
-      jerseys
-        .filter((j) => j.inStock)
-        .toSorted((a, b) => b.price - a.price),
-    [],
+    () => jerseys.filter((j) => j.inStock).toSorted((a, b) => b.price - a.price),
+    [jerseys],
   );
 
   const setFilter = useCallback(
@@ -76,8 +128,6 @@ export default function App() {
       setFilters((prev) => ({ ...prev, [key]: value })),
     [],
   );
-
-  const resetFilters = useCallback(() => setFilters(INITIAL_FILTERS), []);
 
   const addToCart = useCallback((jersey: Jersey, size: string) => {
     setCart((prev) => {
@@ -95,20 +145,33 @@ export default function App() {
     setCartOpen(true);
   }, []);
 
-  const updateQuantity = useCallback((id: string, size: string, quantity: number) => {
-    setCart((prev) =>
-      quantity <= 0
-        ? prev.filter((i) => !(i.jersey.id === id && i.size === size))
-        : prev.map((i) =>
-            i.jersey.id === id && i.size === size ? { ...i, quantity } : i,
-          ),
-    );
-  }, []);
-
-  const removeItem = useCallback(
-    (id: string, size: string) =>
-      setCart((prev) => prev.filter((i) => !(i.jersey.id === id && i.size === size))),
-    [],
+  const toggleWishlist = useCallback(
+    async (jersey: Jersey) => {
+      if (!user) {
+        setAuthOpen(true);
+        return;
+      }
+      const saved = wishlist.has(jersey.id);
+      // Atualiza na hora e desfaz se o servidor recusar.
+      setWishlist((prev) => {
+        const next = new Set(prev);
+        if (saved) next.delete(jersey.id);
+        else next.add(jersey.id);
+        return next;
+      });
+      try {
+        if (saved) await api.removeFromWishlist(jersey.id);
+        else await api.addToWishlist(jersey.id);
+      } catch {
+        setWishlist((prev) => {
+          const next = new Set(prev);
+          if (saved) next.add(jersey.id);
+          else next.delete(jersey.id);
+          return next;
+        });
+      }
+    },
+    [user, wishlist],
   );
 
   const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
@@ -123,19 +186,45 @@ export default function App() {
         categories={categories}
         activeCategory={filters.category}
         onCategoryChange={(v) => setFilter('category', v)}
+        user={user}
+        isAdmin={isAdmin}
+        onLogin={() => setAuthOpen(true)}
+        onNavigate={navigate}
       />
 
       <main>
         <Hero />
-        <FeaturedCarousel jerseys={featured} onSelect={setSelected} />
-        <Catalog
-          jerseys={visible}
-          filters={filters}
-          onFilterChange={setFilter}
-          onReset={resetFilters}
-          categories={categories}
-          onSelect={setSelected}
-        />
+
+        {loading ? (
+          <p className="flex items-center justify-center gap-2 py-24 text-sm text-muted">
+            <Loader2 size={16} className="animate-spin" /> Carregando o acervo…
+          </p>
+        ) : loadError ? (
+          <div className="px-5 py-24 text-center sm:px-8">
+            <p className="font-display text-xl font-800 uppercase">
+              Não foi possível carregar o acervo
+            </p>
+            <p className="mx-auto mt-2 max-w-md text-sm text-muted">{loadError}</p>
+            <p className="mx-auto mt-2 max-w-md text-xs text-muted">
+              As rotas /api só existem sob <code>vercel dev</code> ou em produção.
+            </p>
+          </div>
+        ) : (
+          <>
+            <FeaturedCarousel jerseys={featured} onSelect={setSelected} />
+            <Catalog
+              jerseys={visible}
+              filters={filters}
+              onFilterChange={setFilter}
+              onReset={() => setFilters(INITIAL_FILTERS)}
+              categories={categories}
+              onSelect={setSelected}
+              wishlist={wishlist}
+              onToggleWishlist={toggleWishlist}
+            />
+          </>
+        )}
+
         <AuthenticityChecker />
         <InstagramSection jerseys={featured} />
         <SellJerseyForm />
@@ -147,14 +236,26 @@ export default function App() {
         jersey={selected}
         onClose={() => setSelected(null)}
         onAddToCart={addToCart}
+        isSaved={selected ? wishlist.has(selected.id) : false}
+        onToggleWishlist={toggleWishlist}
       />
 
       <CartDrawer
         open={cartOpen}
         items={cart}
         onClose={() => setCartOpen(false)}
-        onUpdateQuantity={updateQuantity}
-        onRemove={removeItem}
+        onUpdateQuantity={(id, size, quantity) =>
+          setCart((prev) =>
+            quantity <= 0
+              ? prev.filter((i) => !(i.jersey.id === id && i.size === size))
+              : prev.map((i) =>
+                  i.jersey.id === id && i.size === size ? { ...i, quantity } : i,
+                ),
+          )
+        }
+        onRemove={(id, size) =>
+          setCart((prev) => prev.filter((i) => !(i.jersey.id === id && i.size === size)))
+        }
         onCheckout={() => {
           setCartOpen(false);
           setCheckoutOpen(true);
@@ -167,6 +268,8 @@ export default function App() {
         onClose={() => setCheckoutOpen(false)}
         onPaid={() => setCart([])}
       />
+
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
 }

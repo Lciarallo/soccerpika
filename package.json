@@ -8,11 +8,16 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node test/order.test.mjs"
+    "test": "node test/order.test.mjs",
+    "db:migrate": "node db/migrate.mjs",
+    "db:seed": "node db/seed.mjs",
+    "test:e2e": "bash test/e2e.sh"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.0",
     "canvas-confetti": "^1.9.4",
     "lucide-react": "^1.31.0",
+    "postgres": "^3.4.9",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

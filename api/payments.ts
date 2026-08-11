@@ -12,6 +12,7 @@
 
 import { randomUUID } from 'node:crypto';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { currentUser } from './_lib/auth';
 import { createPayment, MercadoPagoError } from './_lib/mercadopago';
 import {
   buildOrder,
@@ -20,6 +21,8 @@ import {
   requireEmail,
   requireName,
 } from './_lib/order';
+import { createOrder } from './_lib/orders';
+import { decrementStock } from './_lib/products';
 
 const METHODS = new Set(['pix', 'boleto', 'card']);
 
@@ -36,8 +39,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Método de pagamento inválido.' });
     }
 
-    const { lines, total, title } = buildOrder(body.items);
+    const { lines, total, title } = await buildOrder(body.items);
     const payer = (body.payer ?? {}) as Record<string, unknown>;
+    const user = await currentUser(req);
 
     const email = requireEmail(payer.email);
     const firstName = requireName(payer.firstName, 'Nome');
@@ -106,6 +110,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const payment = await createPayment(payload, base.external_reference);
     const data = payment.point_of_interaction?.transaction_data;
+
+    // Registra o pedido logo na criação: Pix e boleto só são pagos depois, e
+    // sem o registro o webhook não teria a que se referir.
+    await createOrder({
+      userId: user?.id ?? null,
+      email,
+      total,
+      paymentId: String(payment.id),
+      paymentMethod: method,
+      status: payment.status,
+      lines,
+    });
+
+    // Cartão aprovado na hora já baixa o estoque; os demais esperam o webhook.
+    if (payment.status === 'approved') {
+      await decrementStock(lines.map((l) => ({ productId: l.id, quantity: l.quantity })));
+    }
 
     return res.status(201).json({
       id: payment.id,

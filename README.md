@@ -15,16 +15,26 @@ oficial [soccerpika.com](https://soccerpika.com/).
 
 ```bash
 npm install
-cp .env.example .env   # preencha as credenciais do Mercado Pago
-npm run dev            # front-end
-npm run build          # typecheck (app + api) + build de produção
-npm run preview        # serve o build
+cp .env.example .env             # preencha as credenciais
+
+# Postgres local para desenvolver
+podman run -d --name spk-pg -p 5433:5432 \
+  -e POSTGRES_USER=spk -e POSTGRES_PASSWORD=spk -e POSTGRES_DB=soccerpika \
+  docker.io/library/postgres:17-alpine
+
+npm run db:migrate               # cria o schema (idempotente)
+ADMIN_EMAIL=voce@exemplo.com ADMIN_PASSWORD=uma-senha-boa npm run db:seed
+
+npm run dev                      # site + rotas /api juntos
+npm run build                    # typecheck (app + api) + build
 npm run lint
-npm test               # validação de pedido
+npm test                         # validação de pedido, senha e concorrência
+npm run test:e2e                 # fluxo de conta, papéis e CRUD (dev rodando)
 ```
 
-As rotas `/api/*` são Vercel Functions e não sobem no `vite dev`. Para exercitar
-o checkout ponta a ponta, use `vercel dev`.
+`npm run dev` serve a pasta `api/` como middleware do Vite (veja
+`dev-api-plugin.ts`), então o site roda inteiro em local — sem `vercel dev`.
+Em produção quem serve essas rotas é a Vercel.
 
 ## Identidade visual
 
@@ -46,8 +56,11 @@ contraste e um deslocamento sólido no hover dos cards — não de desfoque.
 
 ## Dados
 
-`src/data/jerseys.ts` é **gerado**, não editado à mão. Vem de
-`tools/products.json`, produzido por `tools/scrape_soccerpika.py`.
+O catálogo vive no Postgres e é servido por `GET /api/products`.
+
+`src/data/jerseys.ts` é a **semente**: gerado pelo scraper e consumido por
+`db/seed.mjs` na primeira carga. Depois disso, quem manda é o banco — editar
+esse arquivo não muda a loja.
 
 O scraper extrai, para cada produto:
 
@@ -93,22 +106,54 @@ Variáveis em `.env.example`. `MP_ACCESS_TOKEN` é secreto e nunca leva o prefix
 O `notification_url` é montado a partir do host do deploy, então o webhook só
 funciona depois de publicado (em local, use um túnel).
 
+## Contas e painel
+
+Duas telas além da loja, ambas atrás de sessão:
+
+- `/conta` — pedidos com status de pagamento, dados salvos para checkout
+  rápido e lista de desejos.
+- `/admin` — painel do administrador: cadastra, edita, publica/oculta e
+  remove produtos, com upload de fotos.
+
+O primeiro admin sai do `db:seed`. Contas criadas pelo site são sempre
+`user` — o papel nunca vem do cliente; para promover alguém, rode
+`UPDATE users SET role = 'admin' WHERE email = '…'` ou o seed com esse e-mail.
+
+Como a autenticação é feita:
+
+- **Senha** com `scrypt` do `node:crypto` (N=2^15), sal por usuário guardado
+  junto do hash no formato `scrypt$N$r$p$sal$derivado` — dá para trocar os
+  parâmetros sem invalidar senha antiga. Sem dependência de terceiros.
+- **Sessão** em cookie httpOnly + SameSite=Lax, assinado com HMAC-SHA256 e
+  comparado em tempo constante. Sem estado no servidor; o papel é relido do
+  banco a cada request, então revogar admin tem efeito imediato.
+- **Login não revela quem tem conta**: e-mail inexistente compara contra um
+  hash descartável, para o tempo de resposta não vazar a diferença.
+
 ## Estrutura
 
 ```
 api/
-  _lib/           cliente do Mercado Pago + validação de pedido
-  payments.ts     cria a cobrança
-  payment-status.ts
-  webhooks/
+  _lib/           db, auth, produtos, pedidos, validação, Mercado Pago
+  auth/           register, login, session
+  account/        orders, wishlist, profile
+  products.ts     lista e cria           products/[id].ts  detalhe, edita, remove
+  admin/upload.ts foto -> Vercel Blob
+  payments.ts     cria a cobrança        payment-status.ts  consulta
+  webhooks/       notificações do gateway
+db/
+  schema.sql      tabelas (idempotente)
+  migrate.mjs     aplica o schema        seed.mjs  catálogo + admin inicial
 src/
   components/     Header, Hero, FeaturedCarousel, Catalog, JerseyCard,
-                  ProductModal, CartDrawer, CheckoutModal,
+                  ProductModal, CartDrawer, CheckoutModal, AuthModal,
                   AuthenticityChecker, InstagramSection, SellJerseyForm, Footer
-  data/           jerseys.ts (gerado)
-  hooks/          useMercadoPago (Secure Fields do cartão)
-  lib/            format (BRL) e checkout (chamadas à API)
+  pages/          AccountPage, AdminDashboard
+  hooks/          sessão, rota e Secure Fields do cartão
+  lib/            api (chamadas), checkout, format (BRL)
+  data/           jerseys.ts (semente gerada)
   types/          modelo de domínio
-test/             testes da validação de pedido
+test/             order.test.mjs (banco) e e2e.sh (HTTP)
 tools/            scraper + JSON de origem
+dev-api-plugin.ts serve api/ no `npm run dev`
 ```

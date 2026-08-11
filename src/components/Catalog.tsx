@@ -8,6 +8,8 @@ interface CatalogProps {
   onReset: () => void;
   categories: string[];
   onSelect: (jersey: Jersey) => void;
+  wishlist: Set<string>;
+  onToggleWishlist: (jersey: Jersey) => void;
 }
 
 const SORT_LABELS: Record<SortBy, string> = {
@@ -24,6 +26,8 @@ export function Catalog({
   onReset,
   categories,
   onSelect,
+  wishlist,
+  onToggleWishlist,
 }: CatalogProps) {
   return (
     <section id="catalogo" className="px-5 py-10 sm:px-8" aria-labelledby="acervo-titulo">
@@ -87,7 +91,13 @@ export function Catalog({
         {jerseys.length > 0 ? (
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
             {jerseys.map((jersey) => (
-              <JerseyCard key={jersey.id} jersey={jersey} onSelect={onSelect} />
+              <JerseyCard
+                key={jersey.id}
+                jersey={jersey}
+                onSelect={onSelect}
+                isSaved={wishlist.has(jersey.id)}
+                onToggleWishlist={onToggleWishlist}
+              />
             ))}
           </div>
         ) : (

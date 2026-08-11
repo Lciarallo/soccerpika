@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Check, ExternalLink, X } from 'lucide-react';
+import { Check, ExternalLink, Heart, X } from 'lucide-react';
 import type { Jersey } from '../types/jersey';
 import { formatPrice, installment } from '../lib/format';
 
@@ -7,9 +7,17 @@ interface ProductModalProps {
   jersey: Jersey | null;
   onClose: () => void;
   onAddToCart: (jersey: Jersey, size: string) => void;
+  isSaved: boolean;
+  onToggleWishlist: (jersey: Jersey) => void;
 }
 
-export function ProductModal({ jersey, onClose, onAddToCart }: ProductModalProps) {
+export function ProductModal({
+  jersey,
+  onClose,
+  onAddToCart,
+  isSaved,
+  onToggleWishlist,
+}: ProductModalProps) {
   const [imageIndex, setImageIndex] = useState(0);
   const [size, setSize] = useState('');
   const [added, setAdded] = useState(false);
@@ -163,14 +171,26 @@ export function ProductModal({ jersey, onClose, onAddToCart }: ProductModalProps
                 )}
               </button>
 
-              <a
-                href={jersey.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link-underline flex items-center justify-center gap-1.5 text-xs tracking-wide uppercase hover:text-brand"
+              <button
+                type="button"
+                onClick={() => onToggleWishlist(jersey)}
+                aria-pressed={isSaved}
+                className="btn btn-outline w-full py-3 text-xs uppercase"
               >
-                Ver na loja oficial <ExternalLink size={13} />
-              </a>
+                <Heart size={14} fill={isSaved ? 'currentColor' : 'none'} />
+                {isSaved ? 'Salvo nos desejos' : 'Salvar nos desejos'}
+              </button>
+
+              {jersey.sourceUrl && (
+                <a
+                  href={jersey.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline flex items-center justify-center gap-1.5 text-xs tracking-wide uppercase hover:text-brand"
+                >
+                  Ver na loja oficial <ExternalLink size={13} />
+                </a>
+              )}
             </div>
           </div>
         </div>

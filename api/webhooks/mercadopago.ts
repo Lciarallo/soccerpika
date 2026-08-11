@@ -10,7 +10,10 @@
 
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getPayment } from './../_lib/mercadopago';
+import { sql } from '../_lib/db';
+import { getPayment } from '../_lib/mercadopago';
+import { getOrderByPaymentId, updateOrderStatus } from '../_lib/orders';
+import { decrementStock } from '../_lib/products';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -32,16 +35,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    // Fonte de verdade é a API, não o corpo do POST.
     const payment = await getPayment(paymentId);
-    console.info('pagamento atualizado', {
-      id: payment.id,
-      status: payment.status,
-      detail: payment.status_detail,
-      amount: payment.transaction_amount,
-    });
+    const order = await getOrderByPaymentId(String(payment.id));
 
-    // Ponto de extensão: com um banco conectado, é aqui que o pedido muda de
-    // estado, o estoque baixa e o e-mail de confirmação sai.
+    if (order && order.status !== payment.status) {
+      await updateOrderStatus(String(payment.id), payment.status);
+
+      // Baixa o estoque uma única vez, na transição para aprovado.
+      if (payment.status === 'approved') {
+        const lines = await sql<{ product_id: string; quantity: number }[]>`
+          SELECT product_id, quantity FROM order_items
+          WHERE order_id = ${order.id} AND product_id IS NOT NULL
+        `;
+        const ok = await decrementStock(
+          lines.map((l) => ({ productId: l.product_id, quantity: l.quantity })),
+        );
+        if (!ok) {
+          // Peça única já vendida: marca para conferência manual e estorno.
+          await updateOrderStatus(String(payment.id), 'oversold');
+          console.error('estoque insuficiente ao aprovar', { order: order.id });
+        }
+      }
+    }
   } catch (error) {
     console.error('webhook mercadopago', error);
   }

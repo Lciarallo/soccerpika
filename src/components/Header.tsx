@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Search, X } from 'lucide-react';
+import type { SessionUser } from '../lib/api';
 
 interface HeaderProps {
   cartCount: number;
@@ -9,6 +10,10 @@ interface HeaderProps {
   categories: string[];
   activeCategory: string;
   onCategoryChange: (value: string) => void;
+  user: SessionUser | null;
+  isAdmin: boolean;
+  onLogin: () => void;
+  onNavigate: (to: string) => void;
 }
 
 export function Header({
@@ -19,6 +24,10 @@ export function Header({
   categories,
   activeCategory,
   onCategoryChange,
+  user,
+  isAdmin,
+  onLogin,
+  onNavigate,
 }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -60,14 +69,36 @@ export function Header({
 
         {/* Logo centralizado */}
         <a href="#topo" aria-label="Soccer Pika — início">
-          <img src="./logo.png" alt="Soccer Pika" width={56} height={56} className="h-14 w-14" />
+          <img src="/logo.png" alt="Soccer Pika" width={56} height={56} className="h-14 w-14" />
         </a>
 
         {/* Direita */}
         <div className="flex items-center justify-end gap-5 text-sm tracking-wide uppercase sm:gap-7 sm:text-base">
-          <a href="#vender" className="hidden hover:text-brand sm:inline">
-            Vender
-          </a>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => onNavigate('/admin')}
+              className="hidden uppercase hover:text-brand sm:inline"
+            >
+              Painel
+            </button>
+          )}
+
+          {user ? (
+            <button
+              type="button"
+              onClick={() => onNavigate('/conta')}
+              className="max-w-28 truncate uppercase hover:text-brand"
+              title={user.email}
+            >
+              {user.name.split(' ')[0]}
+            </button>
+          ) : (
+            <button type="button" onClick={onLogin} className="uppercase hover:text-brand">
+              Entrar
+            </button>
+          )}
+
           <button type="button" onClick={onOpenCart} className="relative uppercase hover:text-brand">
             Carrinho
             <span
