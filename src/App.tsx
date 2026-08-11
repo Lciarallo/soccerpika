@@ -121,6 +121,8 @@ function Storefront({ navigate }: { navigate: (to: string) => void }) {
     [jerseys],
   );
 
+  const featuredReversed = useMemo(() => featured.toReversed(), [featured]);
+
   const setFilter = useCallback(
     <K extends keyof FilterState>(key: K, value: FilterState[K]) =>
       setFilters((prev) => ({ ...prev, [key]: value })),
@@ -210,6 +212,12 @@ function Storefront({ navigate }: { navigate: (to: string) => void }) {
         ) : (
           <>
             <FeaturedCarousel jerseys={featured} onSelect={setSelected} />
+            {/* Mesmo carrossel espelhado: entra pela direita e na ordem inversa. */}
+            <FeaturedCarousel
+              jerseys={featuredReversed}
+              onSelect={setSelected}
+              mirrored
+            />
             <Catalog
               jerseys={visible}
               filters={filters}

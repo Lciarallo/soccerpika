@@ -153,6 +153,23 @@
     .section-grid {
       grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
     }
+
+    /*
+     * Versão espelhada: rótulo à direita. Trocar as colunas em vez de inverter
+     * o DOM mantém o título antes do conteúdo que ele nomeia, que é o que
+     * leitor de tela e navegação por teclado esperam.
+     */
+    .section-grid-mirror {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+    }
+
+    .section-grid-mirror > :first-child {
+      grid-area: 1 / 2;
+    }
+
+    .section-grid-mirror > :last-child {
+      grid-area: 1 / 1;
+    }
   }
 
   /*
