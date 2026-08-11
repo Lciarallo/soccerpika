@@ -2,6 +2,9 @@
 # Fluxo ponta a ponta contra o dev server: conta, papéis e CRUD do admin.
 set -u
 B=${BASE_URL:-http://localhost:5173}
+# Credenciais do admin: o seed local usa estas; em produção passe pelo ambiente.
+ADMIN_EMAIL=${ADMIN_EMAIL:-admin@soccerpika.com}
+ADMIN_PASSWORD=${ADMIN_PASSWORD:-trocar-esta-senha}
 PASS=0; FAIL=0
 U=$(mktemp)
 A=$(mktemp)
@@ -39,9 +42,16 @@ check "e-mail inexistente é 401" 401 \
      -d '{"email":"ninguem@teste.com","password":"seja-la-o-que-for"}')"
 check "admin entra" 200 \
   "$(code -X POST "$B/api/auth/login" -H 'Content-Type: application/json' -c "$A" \
-     -d '{"email":"admin@soccerpika.com","password":"trocar-esta-senha"}')"
+     -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\"}")"
 AROLE=$(curl -s -b "$A" "$B/api/auth/session" | grep -o '"role":"[a-z]*"')
 check "papel do admin é admin" '"role":"admin"' "$AROLE"
+
+if [ "$AROLE" != '"role":"admin"' ]; then
+  echo
+  echo "Admin não autenticou — o resto do teste depende disso e seria só ruído."
+  echo "Defina ADMIN_EMAIL e ADMIN_PASSWORD do ambiente alvo."
+  exit 1
+fi
 
 echo
 echo "permissões do catálogo"
@@ -50,16 +60,19 @@ check "anônimo não cria produto" 401 \
   "$(code -X POST "$B/api/products" -H 'Content-Type: application/json' -d "$NOVO")"
 check "cliente comum não cria produto" 403 \
   "$(code -X POST "$B/api/products" -H 'Content-Type: application/json' -b "$U" -d "$NOVO")"
-check "admin cria produto" 201 \
-  "$(code -X POST "$B/api/products" -H 'Content-Type: application/json' -b "$A" -d "$NOVO")"
+CRIADO=$(curl -s -X POST "$B/api/products" -H 'Content-Type: application/json' -b "$A" -d "$NOVO")
+PID=$(printf '%s' "$CRIADO" | grep -o '"id":"[0-9a-f-]\{36\}"' | head -1 | grep -o '[0-9a-f-]\{36\}')
+check "admin cria produto e recebe o id" 36 "${#PID}"
 
-PID=$(curl -s "$B/api/products" | grep -o '"id":"[^"]*","slug":"camisa-de-teste-e2e"' | grep -o '[0-9a-f-]\{36\}')
-check "produto novo aparece no catálogo" 36 "${#PID}"
+if [ "${#PID}" -ne 36 ]; then
+  echo "  resposta: $(printf '%s' "$CRIADO" | head -c 200)"
+  exit 1
+fi
 
 check "admin edita produto" 200 \
   "$(code -X PUT "$B/api/products/$PID" -H 'Content-Type: application/json' -b "$A" \
      -d '{"name":"Camisa de Teste E2E","price":99.9,"stockQty":1,"category":"Brasileiros","era":"90s"}')"
-NEWPRICE=$(curl -s "$B/api/products" | grep -o '"slug":"camisa-de-teste-e2e"[^}]*"price":[0-9.]*' | grep -o '"price":[0-9.]*')
+NEWPRICE=$(curl -s "$B/api/products/$PID" | grep -o '"price":[0-9.]*')
 check "preço foi atualizado" '"price":99.9' "$NEWPRICE"
 
 check "cliente comum não apaga" 403 "$(code -X DELETE "$B/api/products/$PID" -b "$U")"

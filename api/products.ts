@@ -12,11 +12,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method === 'GET') {
       const user = await currentUser(req);
-      const products = await listProducts({
-        includeUnpublished: user?.role === 'admin',
-      });
-      // Catálogo muda pouco; deixa a CDN servir e revalidar em segundo plano.
-      res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+      const isAdmin = user?.role === 'admin';
+      const products = await listProducts({ includeUnpublished: isAdmin });
+
+      // A resposta do admin traz produtos despublicados: cacheá-la na CDN
+      // serviria esse conteúdo a qualquer visitante. Só o catálogo anônimo é
+      // cacheável, e ainda assim com Vary: Cookie para não misturar as duas.
+      res.setHeader('Vary', 'Cookie');
+      res.setHeader(
+        'Cache-Control',
+        user
+          ? 'private, no-store'
+          : 'public, max-age=0, s-maxage=60, stale-while-revalidate=300',
+      );
+
       return res.status(200).json({ products });
     }
 
