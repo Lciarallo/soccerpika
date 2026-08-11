@@ -143,6 +143,34 @@
     color: var(--color-paper);
   }
 
+  /* Seções em duas colunas: rótulo à esquerda, conteúdo à direita. */
+  .section-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (width >= 64rem) {
+    .section-grid {
+      grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+    }
+  }
+
+  /*
+   * Rótulo da seção. O tamanho é limitado pela coluna de 300px: em display
+   * uppercase, "AUTENTICIDADE" mede ~363px a 48px e invadia a coluna vizinha.
+   * A 36px cabe, e a hifenização segura qualquer rótulo mais longo que venha.
+   */
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
+
   /* Link sublinhado do rodapé/Instagram da loja. */
   .link-underline {
     text-decoration: underline;

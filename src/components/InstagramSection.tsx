@@ -13,7 +13,7 @@ export function InstagramSection({ jerseys }: InstagramSectionProps) {
         NOS <span className="text-outline">SIGA</span> NO INSTA!
       </h2>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
+      <div className="section-grid mt-10">
         <div>
           <p className="font-display text-3xl font-900 tracking-tight sm:text-4xl">@SOCCERPIKA</p>
           <a

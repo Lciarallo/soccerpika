@@ -40,14 +40,14 @@ export function FeaturedCarousel({ jerseys, onSelect }: FeaturedCarouselProps) {
 
   return (
     <section className="px-5 py-10 sm:px-8" aria-labelledby="destaques-titulo">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
+      <div className="section-grid">
         <div>
           <p className="text-sm text-muted tabular-nums">
             {index + 1} / {jerseys.length}
           </p>
           <h2
             id="destaques-titulo"
-            className="mt-2 font-display text-4xl font-900 uppercase sm:text-5xl"
+            className="section-title mt-2"
           >
             Destaques
           </h2>

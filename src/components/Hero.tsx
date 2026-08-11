@@ -1,4 +1,9 @@
-const TICKER = ['REDES SOCIAIS', '@SOCCERPIKA', 'PEÇAS ÚNICAS', 'ENVIO PARA TODO O BRASIL'];
+/**
+ * Texto exato do letreiro da loja. É uma frase só, que dá a volta e recomeça —
+ * "@SOCCERPIKA (lá ele) nas redes sociais". A piada depende da ordem e do
+ * parêntese, então nada de separador no meio.
+ */
+const TICKER = ['@SOCCERPIKA', '(LÁ ELE)', 'NAS REDES SOCIAIS'];
 
 export function Hero() {
   return (
@@ -17,10 +22,9 @@ export function Hero() {
               {TICKER.map((word) => (
                 <li
                   key={word}
-                  className="flex items-center gap-8 px-8 font-display text-2xl font-800 tracking-tight whitespace-nowrap uppercase sm:text-4xl"
+                  className="pr-6 font-display text-2xl font-800 tracking-tight whitespace-nowrap uppercase sm:text-4xl"
                 >
                   {word}
-                  <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-brand" />
                 </li>
               ))}
             </ul>

@@ -1,3 +1,4 @@
+import { ALL, type CategoryNode } from '../lib/categories';
 import type { FilterState, Jersey, SortBy } from '../types/jersey';
 import { JerseyCard } from './JerseyCard';
 
@@ -6,7 +7,7 @@ interface CatalogProps {
   filters: FilterState;
   onFilterChange: <K extends keyof FilterState>(key: K, value: FilterState[K]) => void;
   onReset: () => void;
-  categories: string[];
+  categoryTree: CategoryNode[];
   onSelect: (jersey: Jersey) => void;
   wishlist: Set<string>;
   onToggleWishlist: (jersey: Jersey) => void;
@@ -24,40 +25,54 @@ export function Catalog({
   filters,
   onFilterChange,
   onReset,
-  categories,
+  categoryTree,
   onSelect,
   wishlist,
   onToggleWishlist,
 }: CatalogProps) {
   return (
     <section id="catalogo" className="px-5 py-10 sm:px-8" aria-labelledby="acervo-titulo">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
+      <div className="section-grid">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <p className="text-sm text-muted tabular-nums">
             {jerseys.length} {jerseys.length === 1 ? 'peça' : 'peças'}
           </p>
           <h2
             id="acervo-titulo"
-            className="mt-2 font-display text-4xl font-900 uppercase sm:text-5xl"
+            className="section-title mt-2"
           >
             Produtos
           </h2>
 
           <ul className="mt-6 space-y-1">
-            {categories.map((category) => (
-              <li key={category}>
-                <button
-                  type="button"
-                  onClick={() => onFilterChange('category', category)}
-                  aria-current={filters.category === category ? 'true' : undefined}
-                  className={`text-sm tracking-wide uppercase transition-colors ${
-                    filters.category === category
-                      ? 'font-bold text-brand'
-                      : 'text-muted hover:text-ink'
-                  }`}
-                >
-                  {category}
-                </button>
+            <li>
+              <FilterLink
+                label="Todos"
+                active={filters.category === ALL}
+                onClick={() => onFilterChange('category', ALL)}
+              />
+            </li>
+            {categoryTree.map((node) => (
+              <li key={node.label}>
+                <FilterLink
+                  label={node.label}
+                  active={filters.category === node.label}
+                  onClick={() => onFilterChange('category', node.label)}
+                />
+                {node.children.length > 0 && (
+                  <ul className="mb-1 pl-3">
+                    {node.children.map((child) => (
+                      <li key={child}>
+                        <FilterLink
+                          label={child}
+                          nested
+                          active={filters.category === child}
+                          onClick={() => onFilterChange('category', child)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
@@ -117,5 +132,30 @@ export function Catalog({
         )}
       </div>
     </section>
+  );
+}
+
+function FilterLink({
+  label,
+  active,
+  nested = false,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  nested?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-current={active ? 'true' : undefined}
+      className={`py-0.5 tracking-wide uppercase transition-colors ${
+        nested ? 'text-xs' : 'text-sm'
+      } ${active ? 'font-bold text-brand' : 'text-muted hover:text-ink'}`}
+    >
+      {label}
+    </button>
   );
 }

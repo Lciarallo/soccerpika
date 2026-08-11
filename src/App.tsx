@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import './App.css';
 import * as api from './lib/api';
+import { ALL, buildCategoryTree, matchesCategory } from './lib/categories';
 import type { CartItem, FilterState, Jersey } from './types/jersey';
 import { SessionProvider } from './hooks/useSession';
 import { useSession } from './hooks/session-context';
@@ -23,7 +24,7 @@ import { AdminDashboard } from './pages/AdminDashboard';
 
 const INITIAL_FILTERS: FilterState = {
   query: '',
-  category: 'Todos',
+  category: ALL,
   era: 'Todas',
   brand: 'Todas',
   onlyInStock: false,
@@ -85,16 +86,13 @@ function Storefront({ navigate }: { navigate: (to: string) => void }) {
       .catch(() => setWishlist(new Set()));
   }, [user]);
 
-  const categories = useMemo(
-    () => ['Todos', ...[...new Set(jerseys.map((j) => j.category))].sort()],
-    [jerseys],
-  );
+  const categoryTree = useMemo(() => buildCategoryTree(jerseys), [jerseys]);
 
   const visible = useMemo(() => {
     const q = filters.query.trim().toLowerCase();
 
     const list = jerseys.filter((j) => {
-      if (filters.category !== 'Todos' && j.category !== filters.category) return false;
+      if (!matchesCategory(j, filters.category)) return false;
       if (filters.onlyInStock && !j.inStock) return false;
       if (!q) return true;
       return [j.name, j.club, j.brand, j.season, j.description]
@@ -183,7 +181,7 @@ function Storefront({ navigate }: { navigate: (to: string) => void }) {
         onOpenCart={() => setCartOpen(true)}
         query={filters.query}
         onQueryChange={(v) => setFilter('query', v)}
-        categories={categories}
+        categoryTree={categoryTree}
         activeCategory={filters.category}
         onCategoryChange={(v) => setFilter('category', v)}
         user={user}
@@ -217,7 +215,7 @@ function Storefront({ navigate }: { navigate: (to: string) => void }) {
               filters={filters}
               onFilterChange={setFilter}
               onReset={() => setFilters(INITIAL_FILTERS)}
-              categories={categories}
+              categoryTree={categoryTree}
               onSelect={setSelected}
               wishlist={wishlist}
               onToggleWishlist={toggleWishlist}

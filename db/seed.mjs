@@ -50,12 +50,13 @@ try {
   for (const j of catalog) {
     const [row] = await sql`
       INSERT INTO products (
-        slug, name, club, season, era, category, brand, description,
+        slug, name, club, season, era, category, subcategory, brand, description,
         price_cents, stock_qty, sizes, is_match_worn, is_autographed,
         is_published, source_url
       ) VALUES (
         ${j.id}, ${j.name}, ${j.club ?? ''}, ${j.season ?? ''},
-        ${j.era ?? 'Sem data'}, ${j.category ?? 'Outros'}, ${j.brand ?? ''},
+        ${j.era ?? 'Sem data'}, ${j.category ?? 'Outros'}, ${j.subcategory ?? ''},
+        ${j.brand ?? ''},
         ${j.description ?? ''}, ${Math.round(j.price * 100)},
         ${j.stockQty ?? 0}, ${j.sizes ?? []},
         ${Boolean(j.isMatchWorn)}, ${Boolean(j.isAutographed)},
@@ -63,6 +64,7 @@ try {
       )
       ON CONFLICT (slug) DO UPDATE SET
         name = EXCLUDED.name, price_cents = EXCLUDED.price_cents,
+        category = EXCLUDED.category, subcategory = EXCLUDED.subcategory,
         stock_qty = EXCLUDED.stock_qty, description = EXCLUDED.description,
         brand = EXCLUDED.brand, sizes = EXCLUDED.sizes
       RETURNING id

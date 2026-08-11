@@ -17,6 +17,8 @@ export interface Jersey {
   season: string;
   era: Era | string;
   category: Category | string;
+  /** Segundo nível do menu da loja: Autografadas, Espanhóis, Italianos. */
+  subcategory?: string;
   /** Presente só no catálogo estático gerado pelo scraper. */
   categories?: string[];
   price: number;

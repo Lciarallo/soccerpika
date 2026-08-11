@@ -24,9 +24,9 @@ export function SellJerseyForm() {
 
   return (
     <section id="vender" className="px-5 py-14 sm:px-8">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
+      <div className="section-grid">
         <div>
-          <h2 className="font-display text-4xl font-900 uppercase sm:text-5xl">Contato</h2>
+          <h2 className="section-title">Contato</h2>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
             Compramos e recebemos em consignação camisas de jogo, retrô,
             autografadas e de seleção. Conte o que você tem — respondemos com

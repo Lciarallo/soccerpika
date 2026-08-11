@@ -26,7 +26,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": true,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-brasil-1995-96-n-17-de-jogo-fvbca/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-brasil-1995-96-n-17-de-jogo-fvbca/",
+    "subcategory": ""
   },
   {
     "id": "camisa-boca-juniors-2003-de-jogo-no-4-ibarra-18a",
@@ -54,7 +55,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": true,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-boca-juniors-2003-de-jogo-no-4-ibarra-18ack/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-boca-juniors-2003-de-jogo-no-4-ibarra-18ack/",
+    "subcategory": ""
   },
   {
     "id": "camisa-italia-2006-no-21-pirlo-d7cxt",
@@ -82,7 +84,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-italia-2006-no-21-pirlo-d7cxt/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-italia-2006-no-21-pirlo-d7cxt/",
+    "subcategory": ""
   },
   {
     "id": "camisa-napoli-2022-23-no-77-kvaratskhelia-1gagu",
@@ -109,7 +112,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-napoli-2022-23-no-77-kvaratskhelia-1gagu/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-napoli-2022-23-no-77-kvaratskhelia-1gagu/",
+    "subcategory": "Italianos"
   },
   {
     "id": "camisa-milan-125-anos-comemorativa-xa2q7",
@@ -136,7 +140,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-milan-125-anos-comemorativa-xa2q7/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-milan-125-anos-comemorativa-xa2q7/",
+    "subcategory": "Italianos"
   },
   {
     "id": "camisa-juventude-1999-away-no-10-1629t",
@@ -162,7 +167,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-juventude-1999-away-no-10-1629t/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-juventude-1999-away-no-10-1629t/",
+    "subcategory": ""
   },
   {
     "id": "camisa-gremio-1997-no-7-paulo-nunes-qknjt",
@@ -188,7 +194,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-1997-no-7-paulo-nunes-qknjt/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-1997-no-7-paulo-nunes-qknjt/",
+    "subcategory": ""
   },
   {
     "id": "camisa-jamaica-2008-10-no-10-43c0w",
@@ -214,7 +221,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-jamaica-2008-10-no-10-43c0w/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-jamaica-2008-10-no-10-43c0w/",
+    "subcategory": ""
   },
   {
     "id": "camisa-gremio-2017-no-10",
@@ -244,7 +252,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 1,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2017-no-10/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2017-no-10/",
+    "subcategory": ""
   },
   {
     "id": "jaqueta-mundial-gremio-ajax-1995",
@@ -273,7 +282,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": true,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/jaqueta_mundial_gremio_ajax_1995/"
+    "sourceUrl": "https://soccerpika.com/produtos/jaqueta_mundial_gremio_ajax_1995/",
+    "subcategory": ""
   },
   {
     "id": "camisa-de-jogo-gremio-1989-n-10",
@@ -303,7 +313,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": true,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-de-jogo-gremio-1989-n-10/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-de-jogo-gremio-1989-n-10/",
+    "subcategory": ""
   },
   {
     "id": "camisa-sao-paulo-1992-no-10-rai-autografada",
@@ -333,7 +344,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": true,
     "isAutographed": true,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-sao-paulo-1992-no-10-rai-autografada/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-sao-paulo-1992-no-10-rai-autografada/",
+    "subcategory": "Autografadas"
   },
   {
     "id": "camisa-vasco-2007-especial-1000gols-romario",
@@ -363,7 +375,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2007-especial-1000gols-romario/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2007-especial-1000gols-romario/",
+    "subcategory": ""
   },
   {
     "id": "camisa-botafogo-1996",
@@ -393,7 +406,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-botafogo-1996/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-botafogo-1996/",
+    "subcategory": ""
   },
   {
     "id": "camisa-vasco-2000-n-10-5kpap",
@@ -424,7 +438,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2000-n-10-5kpap/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2000-n-10-5kpap/",
+    "subcategory": ""
   },
   {
     "id": "camisa-gremio-2000-goleiro-havana",
@@ -453,7 +468,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2000-goleiro-havana/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2000-goleiro-havana/",
+    "subcategory": ""
   },
   {
     "id": "camisa-boca-juniors-2000-n-15-perez-zkrqb",
@@ -482,7 +498,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-boca-juniors-2000-n-15-perez-zkrqb/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-boca-juniors-2000-n-15-perez-zkrqb/",
+    "subcategory": ""
   },
   {
     "id": "camisa-real-madrid-2006-07",
@@ -514,7 +531,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-real-madrid-2006-07/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-real-madrid-2006-07/",
+    "subcategory": "Espanhóis"
   },
   {
     "id": "camisa-real-madrid-1998-7a-copa-europa",
@@ -546,7 +564,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-real-madrid-1998-7a-copa-europa/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-real-madrid-1998-7a-copa-europa/",
+    "subcategory": "Espanhóis"
   },
   {
     "id": "camisa-inter-2007-n-11-autografada-vqixt",
@@ -577,7 +596,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": true,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-inter-2007-n-11-autografada-vqixt/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-inter-2007-n-11-autografada-vqixt/",
+    "subcategory": ""
   },
   {
     "id": "camisa-gremio-2014-plano-azul-1928-manga-longa-n",
@@ -602,7 +622,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2014-plano-azul-1928-manga-longa-na-etiqueta/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-gremio-2014-plano-azul-1928-manga-longa-na-etiqueta/",
+    "subcategory": ""
   },
   {
     "id": "camisa-vasco-2011-away",
@@ -630,7 +651,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2011-away/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-vasco-2011-away/",
+    "subcategory": ""
   },
   {
     "id": "camisa-juventude-1999-branca-g",
@@ -660,7 +682,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-juventude-1999-branca-g/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-juventude-1999-branca-g/",
+    "subcategory": ""
   },
   {
     "id": "camisa-barcelona-2009",
@@ -686,7 +709,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2009/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2009/",
+    "subcategory": "Espanhóis"
   },
   {
     "id": "camisa-barcelona-2012-third-n-3-pique",
@@ -718,7 +742,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2012-third-n-3-pique/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2012-third-n-3-pique/",
+    "subcategory": "Espanhóis"
   },
   {
     "id": "jaqueta-internacional-2008",
@@ -748,7 +773,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/jaqueta-internacional-2008/"
+    "sourceUrl": "https://soccerpika.com/produtos/jaqueta-internacional-2008/",
+    "subcategory": ""
   },
   {
     "id": "camisa-barcelona-2014-third-n-11-neymar-noloe",
@@ -780,7 +806,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2014-third-n-11-neymar-noloe/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-barcelona-2014-third-n-11-neymar-noloe/",
+    "subcategory": "Espanhóis"
   },
   {
     "id": "camisa-corinthians-2022-third-mundial",
@@ -809,7 +836,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-corinthians-2022-third-mundial/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-corinthians-2022-third-mundial/",
+    "subcategory": ""
   },
   {
     "id": "fluminense-2023-third-cartola",
@@ -838,7 +866,8 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/fluminense-2023-third-cartola/"
+    "sourceUrl": "https://soccerpika.com/produtos/fluminense-2023-third-cartola/",
+    "subcategory": ""
   },
   {
     "id": "camisa-sao-paulo-2004-no9",
@@ -867,6 +896,7 @@ export const jerseys: Jersey[] = [
     "stockQty": 0,
     "isMatchWorn": false,
     "isAutographed": false,
-    "sourceUrl": "https://soccerpika.com/produtos/camisa-sao-paulo-2004-no9/"
+    "sourceUrl": "https://soccerpika.com/produtos/camisa-sao-paulo-2004-no9/",
+    "subcategory": ""
   }
 ];

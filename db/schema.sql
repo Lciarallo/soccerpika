@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS products (
   season          text NOT NULL DEFAULT '',
   era             text NOT NULL DEFAULT 'Sem data',
   category        text NOT NULL DEFAULT 'Outros',
+  -- Segundo nível do menu da loja: Autografadas, Espanhóis, Italianos.
+  subcategory     text NOT NULL DEFAULT '',
   brand           text NOT NULL DEFAULT '',
   description     text NOT NULL DEFAULT '',
   -- Centavos: dinheiro em float acumula erro de arredondamento.
@@ -116,6 +118,15 @@ CREATE TABLE IF NOT EXISTS wishlist (
   created_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (user_id, product_id)
 );
+
+-- ------------------------------------------------------------- evoluções ---
+-- Colunas acrescentadas depois da primeira versão. `CREATE TABLE IF NOT
+-- EXISTS` não altera tabela existente, então mudanças aditivas vêm aqui.
+
+ALTER TABLE products ADD COLUMN IF NOT EXISTS subcategory text NOT NULL DEFAULT '';
+
+CREATE INDEX IF NOT EXISTS products_subcategory_idx
+  ON products (subcategory) WHERE subcategory <> '';
 
 -- ---------------------------------------------------------------- gatilho ---
 

@@ -13,6 +13,7 @@ export interface ProductRow {
   season: string;
   era: string;
   category: string;
+  subcategory: string;
   brand: string;
   description: string;
   price_cents: number;
@@ -34,6 +35,7 @@ export interface Product {
   season: string;
   era: string;
   category: string;
+  subcategory: string;
   brand: string;
   description: string;
   price: number;
@@ -55,6 +57,7 @@ export const toProduct = (r: ProductRow): Product => ({
   season: r.season,
   era: r.era,
   category: r.category,
+  subcategory: r.subcategory ?? '',
   brand: r.brand,
   description: r.description,
   price: toReais(r.price_cents),
@@ -105,6 +108,7 @@ export interface ProductInput {
   season?: string;
   era?: string;
   category?: string;
+  subcategory?: string;
   brand?: string;
   description?: string;
   price: number;
@@ -122,7 +126,7 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
   return sql.begin(async (tx) => {
     const [row] = await tx<{ id: string }[]>`
       INSERT INTO products (
-        slug, name, club, season, era, category, brand, description,
+        slug, name, club, season, era, category, subcategory, brand, description,
         price_cents, stock_qty, sizes, is_match_worn, is_autographed,
         is_published, source_url
       ) VALUES (
@@ -132,6 +136,7 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
         ${input.season ?? ''},
         ${input.era ?? 'Sem data'},
         ${input.category ?? 'Outros'},
+        ${input.subcategory ?? ''},
         ${input.brand ?? ''},
         ${input.description ?? ''},
         ${toCents(input.price)},
@@ -148,6 +153,7 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
         season         = EXCLUDED.season,
         era            = EXCLUDED.era,
         category       = EXCLUDED.category,
+        subcategory    = EXCLUDED.subcategory,
         brand          = EXCLUDED.brand,
         description    = EXCLUDED.description,
         price_cents    = EXCLUDED.price_cents,
