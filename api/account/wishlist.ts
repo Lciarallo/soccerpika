@@ -5,9 +5,9 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireUser, sendAuthError } from '../_lib/auth';
-import { sql } from '../_lib/db';
-import { toProduct, type ProductRow } from '../_lib/products';
+import { requireUser, sendAuthError } from '../_lib/auth.js';
+import { sql } from '../_lib/db.js';
+import { toProduct, type ProductRow } from '../_lib/products.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

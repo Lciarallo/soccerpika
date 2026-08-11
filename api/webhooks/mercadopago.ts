@@ -10,10 +10,10 @@
 
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from '../_lib/db';
-import { getPayment } from '../_lib/mercadopago';
-import { getOrderByPaymentId, updateOrderStatus } from '../_lib/orders';
-import { decrementStock } from '../_lib/products';
+import { sql } from '../_lib/db.js';
+import { getPayment } from '../_lib/mercadopago.js';
+import { getOrderByPaymentId, updateOrderStatus } from '../_lib/orders.js';
+import { decrementStock } from '../_lib/products.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {

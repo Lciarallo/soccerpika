@@ -1,7 +1,7 @@
 /** Repositório de pedidos. */
 
-import { sql, toCents, toReais } from './db';
-import type { Line } from './order';
+import { sql, toCents, toReais } from './db.js';
+import type { Line } from './order.js';
 
 export interface OrderItem {
   name: string;

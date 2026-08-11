@@ -18,7 +18,7 @@ import {
   type ScryptOptions,
 } from 'node:crypto';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from './db';
+import { sql } from './db.js';
 
 /** `promisify` perde a sobrecarga com opções, então envolvemos à mão. */
 const scrypt = (

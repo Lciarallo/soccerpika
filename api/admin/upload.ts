@@ -8,7 +8,7 @@
 import { randomUUID } from 'node:crypto';
 import { put } from '@vercel/blob';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin, sendAuthError } from '../_lib/auth';
+import { requireAdmin, sendAuthError } from '../_lib/auth.js';
 
 const MAX_BYTES = 8 * 1024 * 1024;
 

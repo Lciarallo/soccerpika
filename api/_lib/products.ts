@@ -3,7 +3,7 @@
  * para que preço e estoque tenham uma fonte única.
  */
 
-import { sql, toCents, toReais } from './db';
+import { sql, toCents, toReais } from './db.js';
 
 export interface ProductRow {
   id: string;

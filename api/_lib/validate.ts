@@ -1,6 +1,6 @@
 /** Validação da entrada do dashboard, antes de qualquer escrita no banco. */
 
-import type { ProductInput } from './products';
+import type { ProductInput } from './products.js';
 
 export class ValidationError extends Error {}
 

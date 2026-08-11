@@ -12,17 +12,17 @@
 
 import { randomUUID } from 'node:crypto';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { currentUser } from './_lib/auth';
-import { createPayment, MercadoPagoError } from './_lib/mercadopago';
+import { currentUser } from './_lib/auth.js';
+import { createPayment, MercadoPagoError } from './_lib/mercadopago.js';
 import {
   buildOrder,
   normalizeCpf,
   OrderError,
   requireEmail,
   requireName,
-} from './_lib/order';
-import { createOrder } from './_lib/orders';
-import { decrementStock } from './_lib/products';
+} from './_lib/order.js';
+import { createOrder } from './_lib/orders.js';
+import { decrementStock } from './_lib/products.js';
 
 const METHODS = new Set(['pix', 'boleto', 'card']);
 

@@ -1,8 +1,8 @@
 /** GET /api/account/orders — histórico de pedidos de quem está logado. */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireUser, sendAuthError } from '../_lib/auth';
-import { listOrdersForUser } from '../_lib/orders';
+import { requireUser, sendAuthError } from '../_lib/auth.js';
+import { listOrdersForUser } from '../_lib/orders.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {

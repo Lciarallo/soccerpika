@@ -7,9 +7,9 @@ import {
   hashPassword,
   sendAuthError,
   setSessionCookie,
-} from '../_lib/auth';
-import { sql } from '../_lib/db';
-import { OrderError, requireEmail, requireName } from '../_lib/order';
+} from '../_lib/auth.js';
+import { sql } from '../_lib/db.js';
+import { OrderError, requireEmail, requireName } from '../_lib/order.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {

@@ -6,8 +6,8 @@ import {
   sendAuthError,
   setSessionCookie,
   verifyPassword,
-} from '../_lib/auth';
-import { sql } from '../_lib/db';
+} from '../_lib/auth.js';
+import { sql } from '../_lib/db.js';
 
 /**
  * Hash descartável usado quando o e-mail não existe. Mantém o tempo de

@@ -6,7 +6,7 @@
  * nunca é confiável.
  */
 
-import { sql, toReais } from './db';
+import { sql, toReais } from './db.js';
 
 /** Teto de segurança: um pedido acima disso é erro ou abuso, não venda. */
 const MAX_ORDER_TOTAL = 100_000;

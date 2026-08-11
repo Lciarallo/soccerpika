@@ -5,9 +5,9 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin, sendAuthError } from '../_lib/auth';
-import { deleteProduct, getProduct, updateProduct } from '../_lib/products';
-import { parseProductInput, ValidationError } from '../_lib/validate';
+import { requireAdmin, sendAuthError } from '../_lib/auth.js';
+import { deleteProduct, getProduct, updateProduct } from '../_lib/products.js';
+import { parseProductInput, ValidationError } from '../_lib/validate.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

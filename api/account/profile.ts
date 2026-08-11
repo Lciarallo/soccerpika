@@ -6,9 +6,9 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireUser, sendAuthError } from '../_lib/auth';
-import { sql } from '../_lib/db';
-import { normalizeCpf, OrderError, requireName } from '../_lib/order';
+import { requireUser, sendAuthError } from '../_lib/auth.js';
+import { sql } from '../_lib/db.js';
+import { normalizeCpf, OrderError, requireName } from '../_lib/order.js';
 
 interface AddressRow {
   zip_code: string;

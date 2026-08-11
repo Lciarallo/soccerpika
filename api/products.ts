@@ -4,9 +4,9 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { currentUser, requireAdmin, sendAuthError } from './_lib/auth';
-import { listProducts, upsertProduct } from './_lib/products';
-import { parseProductInput, ValidationError } from './_lib/validate';
+import { currentUser, requireAdmin, sendAuthError } from './_lib/auth.js';
+import { listProducts, upsertProduct } from './_lib/products.js';
+import { parseProductInput, ValidationError } from './_lib/validate.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
