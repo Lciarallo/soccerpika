@@ -23,7 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
-# Credenciais locais
-.env
-.env.local
+# Credenciais locais — .env.example é versionado de propósito
+.env*
+!.env.example
 .vercel
+
+# Skills de agente instaladas pelo CLI da Vercel (reproduzíveis, não são do app)
+.agents/
+.claude/
+skills-lock.json

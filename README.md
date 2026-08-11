@@ -106,6 +106,38 @@ Variáveis em `.env.example`. `MP_ACCESS_TOKEN` é secreto e nunca leva o prefix
 O `notification_url` é montado a partir do host do deploy, então o webhook só
 funciona depois de publicado (em local, use um túnel).
 
+## Deploy
+
+O projeto já está linkado em `brdtbrasil-5736s-projects/soccerpika`, conectado
+ao GitHub, com o Blob criado e o `SESSION_SECRET` configurado nos três
+ambientes. Falta o banco e as credenciais do gateway:
+
+```bash
+# 1. Aceitar os termos do Neon (exige navegador — é aceite legal, tem que ser você)
+#    https://vercel.com/brdtbrasil-5736s-projects/~/integrations/accept-terms/neon
+vercel integration add neon --json          # cria e conecta o banco
+
+# 2. Trazer a DATABASE_URL e preparar o schema
+vercel env pull .env.production --environment production
+DATABASE_URL="$(grep -oP '(?<=^DATABASE_URL=").*(?=")' .env.production)" \
+  npm run db:migrate
+DATABASE_URL="..." ADMIN_EMAIL=voce@exemplo.com ADMIN_PASSWORD='…' npm run db:seed
+
+# 3. Credenciais do Mercado Pago (do painel de desenvolvedor da sua conta)
+vercel env add MP_ACCESS_TOKEN production
+vercel env add VITE_MP_PUBLIC_KEY production
+vercel env add MP_WEBHOOK_SECRET production   # opcional, mas recomendado
+
+# 4. Publicar
+vercel deploy --prod
+```
+
+Depois do deploy, aponte o webhook do Mercado Pago para
+`https://<seu-domínio>/api/webhooks/mercadopago`.
+
+Sem `DATABASE_URL` o site sobe, mas o catálogo responde erro — ele vem todo do
+banco.
+
 ## Contas e painel
 
 Duas telas além da loja, ambas atrás de sessão:
