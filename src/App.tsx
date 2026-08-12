@@ -406,6 +406,14 @@ function Storefront({
     [user, wishlist],
   );
 
+  if (path === '/admin') {
+    return <AdminDashboard onExit={() => navigate('/')} />;
+  }
+
+  if (path === '/conta') {
+    return <AccountPage onExit={() => navigate('/')} />;
+  }
+
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const page = path === '/produtos' || path.startsWith('/produtos/')
     ? 'products'
