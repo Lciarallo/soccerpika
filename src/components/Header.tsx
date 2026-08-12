@@ -197,7 +197,7 @@ export function Header({
           {user ? (
             <button
               type="button"
-              onClick={() => go('/conta')}
+              onClick={() => go(isAdmin ? '/admin' : '/conta')}
               className="store-account-link"
               title={user.email}
             >
