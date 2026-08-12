@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Check, ExternalLink, Heart, X } from 'lucide-react';
 import type { Jersey } from '../types/jersey';
 import { formatPrice, installment } from '../lib/format';
@@ -21,6 +21,9 @@ export function ProductModal({
   const [imageIndex, setImageIndex] = useState(0);
   const [size, setSize] = useState('');
   const [added, setAdded] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
 
   useEffect(() => {
     setImageIndex(0);
@@ -30,14 +33,45 @@ export function ProductModal({
 
   useEffect(() => {
     if (!jersey) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const frame = window.requestAnimationFrame(() =>
+      modalRef.current?.querySelector<HTMLElement>('button')?.focus(),
+    );
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeRef.current();
+        return;
+      }
+      if (event.key !== 'Tab' || !modalRef.current) return;
+      const focusable = [
+        ...modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href]',
+        ),
+      ].filter((element) => element.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable.at(-1)!;
+      if (!modalRef.current.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
     return () => {
+      window.cancelAnimationFrame(frame);
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
     };
-  }, [jersey, onClose]);
+  }, [jersey]);
 
   if (!jersey) return null;
 
@@ -57,7 +91,7 @@ export function ProductModal({
       aria-label={jersey.name}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="relative w-full max-w-5xl bg-paper">
+      <div ref={modalRef} className="relative w-full max-w-5xl bg-paper">
         <button
           type="button"
           onClick={onClose}

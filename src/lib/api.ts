@@ -75,6 +75,21 @@ export const logout = () => request<void>('/api/auth/session', { method: 'DELETE
 export const fetchProducts = () =>
   request<{ products: Jersey[] }>('/api/products').then((r) => r.products);
 
+// --------------------------------------------------------------- Instagram ---
+
+export interface InstagramPost {
+  id: string;
+  href: string;
+  src: string;
+  alt: string;
+}
+
+export const fetchInstagramPosts = (signal?: AbortSignal) =>
+  request<{ posts: InstagramPost[] }>('/api/instagram', {
+    credentials: 'omit',
+    signal,
+  }).then((response) => response.posts);
+
 export const createProduct = (input: unknown) =>
   request<{ product: Jersey }>('/api/products', { method: 'POST', body: json(input) });
 

@@ -10,6 +10,7 @@ import {
 } from '../_lib/auth.js';
 import { sql } from '../_lib/db.js';
 import { OrderError, requireEmail, requireName } from '../_lib/order.js';
+import { clientIp, enforceRateLimit } from '../_lib/rateLimit.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -18,6 +19,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    await enforceRateLimit(`register:ip:${clientIp(req)}`, { max: 10, windowSeconds: 3600 });
+
     const body = (req.body ?? {}) as Record<string, unknown>;
     const email = requireEmail(body.email);
     const name = requireName(body.name, 'Nome');

@@ -77,6 +77,20 @@ python3 tools/scrape_soccerpika.py    # regrava tools/products.json
 As imagens ficam versionadas em `public/products/` (96 arquivos `.webp`), então
 o site não depende do CDN da loja original em runtime.
 
+## Feed do Instagram
+
+A home consulta `GET /api/instagram`, que busca no servidor as três publicações
+mais recentes da conta profissional. O navegador nunca chama a Graph API e
+nunca recebe o token. A resposta pública é reduzida a id, permalink, imagem e
+texto alternativo, com URLs validadas e cache de 15 minutos. Se a Meta estiver
+fora do ar ou o token expirar, as três imagens locais continuam aparecendo.
+
+Configure `INSTAGRAM_USER_ID` apenas como variável server-side e cadastre
+`INSTAGRAM_ACCESS_TOKEN` como **Sensitive** no Vercel; em local, ambos ficam em
+`.env.local`. Jamais use prefixo `VITE_`. A integração usa Business Login for
+Instagram, Graph API v26.0 e a permissão mínima `instagram_business_basic`.
+Tokens de longa duração valem 60 dias e devem ser renovados antes de expirar.
+
 ## Pagamento
 
 Checkout com **Mercado Pago**, cobrindo Pix, cartão (até 12x) e boleto.

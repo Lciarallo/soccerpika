@@ -8,6 +8,7 @@ import {
   verifyPassword,
 } from '../_lib/auth.js';
 import { sql } from '../_lib/db.js';
+import { clientIp, enforceRateLimit } from '../_lib/rateLimit.js';
 
 /**
  * Hash descartável usado quando o e-mail não existe. Mantém o tempo de
@@ -32,6 +33,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!email || !password) {
       throw new AuthError('Informe e-mail e senha.', 400);
     }
+
+    // Por IP (contra spray em várias contas) e por e-mail (contra força
+    // bruta numa conta só, mesmo vinda de IPs diferentes).
+    await enforceRateLimit(`login:ip:${clientIp(req)}`, { max: 20, windowSeconds: 600 });
+    await enforceRateLimit(`login:email:${email}`, { max: 8, windowSeconds: 900 });
 
     const [user] = await sql<
       { id: string; email: string; name: string; role: 'user' | 'admin'; password_hash: string }[]

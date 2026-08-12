@@ -119,6 +119,17 @@ CREATE TABLE IF NOT EXISTS wishlist (
   PRIMARY KEY (user_id, product_id)
 );
 
+-- -------------------------------------------------------- limite de taxa ---
+-- Freia força bruta em login/registro. Uma linha por chave (ex.:
+-- "login:ip:1.2.3.4"), com contagem que reinicia quando a janela expira.
+-- Ver api/_lib/rateLimit.ts.
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key          text PRIMARY KEY,
+  count        integer NOT NULL DEFAULT 1,
+  window_start timestamptz NOT NULL DEFAULT now()
+);
+
 -- ------------------------------------------------------------- evoluções ---
 -- Colunas acrescentadas depois da primeira versão. `CREATE TABLE IF NOT
 -- EXISTS` não altera tabela existente, então mudanças aditivas vêm aqui.

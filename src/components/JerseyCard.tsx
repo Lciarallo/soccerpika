@@ -9,7 +9,6 @@ interface JerseyCardProps {
   onToggleWishlist?: (jersey: Jersey) => void;
 }
 
-/** Frete grátis acima deste valor — mesmo selo vermelho que a loja exibe. */
 const FREE_SHIPPING_FROM = 1000;
 
 export function JerseyCard({
@@ -18,67 +17,53 @@ export function JerseyCard({
   isSaved = false,
   onToggleWishlist,
 }: JerseyCardProps) {
-  const freeShipping = jersey.inStock && jersey.price >= FREE_SHIPPING_FROM;
+  const freeShipping = jersey.price >= FREE_SHIPPING_FROM;
 
   return (
-    <article className="group relative">
+    <article className="store-product-card">
       <button
         type="button"
         onClick={() => onSelect(jersey)}
-        className="relative block w-full"
+        className="store-product-visual"
         aria-label={`Ver detalhes de ${jersey.name}`}
       >
-        <div className="relative aspect-square overflow-hidden">
-          <img
-            src={jersey.images[0]}
-            alt={jersey.name}
-            loading="lazy"
-            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
-          />
-        </div>
+        <span className="store-product-image">
+          {jersey.images[0] ? (
+            <img src={jersey.images[0]} alt={jersey.name} loading="lazy" />
+          ) : null}
+        </span>
 
-        {freeShipping && (
-          <span className="absolute top-0 left-0 bg-brand px-2.5 py-1 text-[11px] font-bold tracking-wide text-paper uppercase">
-            Frete grátis
+        {!jersey.inStock || freeShipping ? (
+          <span className="store-product-labels">
+            {!jersey.inStock ? <span className="store-label-sold">Esgotado</span> : null}
+            {freeShipping ? <span className="store-label-shipping">Frete grátis</span> : null}
           </span>
-        )}
-
-        {!jersey.inStock && (
-          <span className="absolute top-0 left-0 bg-ink px-2.5 py-1 text-[11px] font-bold tracking-wide text-paper uppercase">
-            Esgotado
-          </span>
-        )}
+        ) : null}
       </button>
 
-      {onToggleWishlist && (
+      {onToggleWishlist ? (
         <button
           type="button"
           onClick={() => onToggleWishlist(jersey)}
           aria-pressed={isSaved}
           aria-label={
-            isSaved ? `Remover ${jersey.name} dos desejos` : `Salvar ${jersey.name} nos desejos`
+            isSaved
+              ? `Remover ${jersey.name} dos desejos`
+              : `Salvar ${jersey.name} nos desejos`
           }
-          className={`absolute top-0 right-0 p-2 transition-colors ${
-            isSaved ? 'text-brand' : 'text-muted hover:text-ink'
-          }`}
+          className={`store-product-wishlist${isSaved ? ' is-saved' : ''}`}
         >
           <Heart size={18} fill={isSaved ? 'currentColor' : 'none'} strokeWidth={1.75} />
         </button>
-      )}
+      ) : null}
 
-      <div className="pt-3">
-        <h3 className="text-sm leading-snug font-bold uppercase">
-          <button
-            type="button"
-            onClick={() => onSelect(jersey)}
-            className="text-left transition-colors group-hover:text-brand"
-          >
+      <div className="store-product-description">
+        <h3>
+          <button type="button" onClick={() => onSelect(jersey)}>
             {jersey.name}
           </button>
         </h3>
-        <p className={`mt-1.5 text-sm ${jersey.inStock ? 'text-ink' : 'text-muted line-through'}`}>
-          {formatPrice(jersey.price)}
-        </p>
+        <p>{formatPrice(jersey.price)}</p>
       </div>
     </article>
   );

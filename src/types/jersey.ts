@@ -34,6 +34,7 @@ export interface Jersey {
   /** Só o admin vê produtos despublicados. */
   isPublished?: boolean;
   sourceUrl?: string | null;
+  createdAt?: string;
 }
 
 export interface CartItem {
@@ -42,13 +43,24 @@ export interface CartItem {
   quantity: number;
 }
 
-export type SortBy = 'destaque' | 'preco-asc' | 'preco-desc' | 'nome';
+export type SortBy =
+  | 'preco-asc'
+  | 'preco-desc'
+  | 'nome'
+  | 'nome-desc'
+  | 'novo'
+  | 'antigo'
+  | 'destaque'
+  | 'featured';
 
 export interface FilterState {
   query: string;
   category: string;
   era: string;
-  brand: string;
-  onlyInStock: boolean;
+  brands: string[];
+  colors: string[];
+  sizes: string[];
+  minPrice: number | null;
+  maxPrice: number | null;
   sortBy: SortBy;
 }

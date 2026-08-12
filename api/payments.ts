@@ -12,7 +12,7 @@
 
 import { randomUUID } from 'node:crypto';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { currentUser } from './_lib/auth.js';
+import { AuthError, currentUser } from './_lib/auth.js';
 import { createPayment, MercadoPagoError } from './_lib/mercadopago.js';
 import {
   buildOrder,
@@ -23,6 +23,7 @@ import {
 } from './_lib/order.js';
 import { createOrder } from './_lib/orders.js';
 import { decrementStock } from './_lib/products.js';
+import { clientIp, enforceRateLimit } from './_lib/rateLimit.js';
 
 const METHODS = new Set(['pix', 'boleto', 'card']);
 
@@ -33,6 +34,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    await enforceRateLimit(`payments:ip:${clientIp(req)}`, { max: 30, windowSeconds: 600 });
+
     const body = (req.body ?? {}) as Record<string, unknown>;
     const method = String(body.method ?? '');
     if (!METHODS.has(method)) {
@@ -147,6 +150,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           : null,
     });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return res.status(error.status).json({ error: error.message });
+    }
     if (error instanceof OrderError) {
       return res.status(400).json({ error: error.message });
     }

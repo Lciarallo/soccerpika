@@ -1,29 +1,67 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Loader2, X } from 'lucide-react';
 import { useSession } from '../hooks/session-context';
 
 interface AuthModalProps {
   open: boolean;
+  initialMode?: 'login' | 'register';
   onClose: () => void;
 }
 
-export function AuthModal({ open, onClose }: AuthModalProps) {
+export function AuthModal({ open, initialMode = 'login', onClose }: AuthModalProps) {
   const { login, register } = useSession();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
 
   useEffect(() => {
     if (!open) return;
+    setMode(initialMode);
     setError(null);
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const frame = window.requestAnimationFrame(() =>
+      modalRef.current?.querySelector<HTMLElement>('input, button')?.focus(),
+    );
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeRef.current();
+        return;
+      }
+      if (event.key !== 'Tab' || !modalRef.current) return;
+      const focusable = [
+        ...modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), input:not(:disabled), a[href]',
+        ),
+      ].filter((element) => element.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable.at(-1)!;
+      if (!modalRef.current.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+        return;
+      }
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
     return () => {
+      window.cancelAnimationFrame(frame);
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
     };
-  }, [open, onClose]);
+  }, [initialMode, open]);
 
   if (!open) return null;
 
@@ -59,7 +97,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
       aria-label={mode === 'login' ? 'Entrar' : 'Criar conta'}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="relative w-full max-w-md bg-paper p-6 sm:p-10">
+      <div ref={modalRef} className="relative w-full max-w-md bg-paper p-6 sm:p-10">
         <button
           type="button"
           onClick={onClose}
@@ -144,7 +182,7 @@ function Field({ name, label, hint, ...rest }: FieldProps) {
         id={name}
         name={name}
         {...rest}
-        className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm focus:outline-none"
+        className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm"
       />
       {hint && <p className="mt-1 text-[11px] text-muted">{hint}</p>}
     </div>

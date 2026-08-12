@@ -1,36 +1,35 @@
-/**
- * Texto exato do letreiro da loja. É uma frase só, que dá a volta e recomeça —
- * "@SOCCERPIKA (lá ele) nas redes sociais". A piada depende da ordem e do
- * parêntese, então nada de separador no meio.
- */
 const TICKER = ['@SOCCERPIKA', '(LÁ ELE)', 'NAS REDES SOCIAIS'];
+
+function TickerLine({ reverse = false }: { reverse?: boolean }) {
+  return (
+    <div
+      className={`store-ticker-line${reverse ? ' is-reverse' : ''}`}
+      aria-hidden="true"
+    >
+      {[0, 1, 2, 3, 4].flatMap((copy) =>
+        TICKER.map((text) => (
+          <span key={`${copy}-${text}`} className="store-ticker-text">
+            {text}
+          </span>
+        )),
+      )}
+    </div>
+  );
+}
 
 export function Hero() {
   return (
-    <section className="overflow-hidden pt-6 pb-10">
-      {/* Wordmark — a assinatura da loja */}
-      <h1 className="px-5 font-display text-[15vw] leading-[0.85] font-900 tracking-tighter sm:px-8 lg:text-[11rem]">
-        SOCCER PIKA
-        <span className="align-super text-[0.16em] tracking-normal">™</span>
-      </h1>
-
-      {/* Letreiro deslizante */}
-      <div className="mt-8 overflow-hidden border-y border-line py-3" aria-hidden="true">
-        <div className="marquee">
-          {[0, 1].map((copy) => (
-            <ul key={copy} className="flex shrink-0 items-center">
-              {TICKER.map((word) => (
-                <li
-                  key={word}
-                  className="pr-6 font-display text-2xl font-800 tracking-tight whitespace-nowrap uppercase sm:text-4xl"
-                >
-                  {word}
-                </li>
-              ))}
-            </ul>
-          ))}
+    <>
+      <section className="store-wordmark-section">
+        <div className="store-container">
+          <h1>SOCCER PIKA™</h1>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className="store-ticker-section" aria-label="Soccer Pika nas redes sociais">
+        <TickerLine />
+        <TickerLine reverse />
+      </section>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Minus, Plus, X } from 'lucide-react';
 import type { CartItem } from '../types/jersey';
 import { formatPrice, installment } from '../lib/format';
@@ -20,98 +20,107 @@ export function CartDrawer({
   onRemove,
   onCheckout,
 }: CartDrawerProps) {
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const frame = window.requestAnimationFrame(() =>
+      drawerRef.current?.querySelector<HTMLElement>('button')?.focus(),
+    );
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeRef.current();
+        return;
+      }
+      if (event.key !== 'Tab' || !drawerRef.current) return;
+      const focusable = [
+        ...drawerRef.current.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], input'),
+      ].filter((element) => element.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable.at(-1)!;
+      if (!drawerRef.current.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+        return;
+      }
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
     return () => {
+      window.cancelAnimationFrame(frame);
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
   const total = items.reduce((sum, i) => sum + i.jersey.price * i.quantity, 0);
-  const count = items.reduce((sum, i) => sum + i.quantity, 0);
   const parcela = installment(total);
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-ink/60"
+      className="store-cart-overlay"
       role="dialog"
       aria-modal="true"
       aria-label="Carrinho"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="flex h-full w-full max-w-md flex-col bg-paper">
-        <header className="flex items-center justify-between px-6 py-5">
-          <h2 className="font-display text-2xl font-900 uppercase">
-            Carrinho {count > 0 && <span className="text-brand">({count})</span>}
-          </h2>
+      <div ref={drawerRef} className="store-cart-drawer">
+        <header className="store-cart-header">
+          <h2>Carrinho de compras</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Fechar carrinho"
-            className="hover:text-brand"
           >
-            <X size={24} strokeWidth={1.5} />
+            <X size={24} strokeWidth={2} />
           </button>
         </header>
 
         {items.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 px-8 text-center">
-            <p className="font-display text-xl font-800 uppercase">Carrinho vazio</p>
-            <p className="text-sm text-muted">
-              Escolha uma peça do acervo — todas são únicas e saem de circulação
-              depois da venda.
-            </p>
-            <button
-              type="button"
-              onClick={onClose}
-              className="link-underline mt-2 text-sm tracking-wide uppercase hover:text-brand"
-            >
-              Explorar acervo
-            </button>
-          </div>
+          <p className="store-cart-empty">O carrinho de compras está vazio.</p>
         ) : (
           <>
-            <ul className="flex-1 overflow-y-auto px-6">
+            <ul className="store-cart-items">
               {items.map((item) => (
-                <li
-                  key={`${item.jersey.id}-${item.size}`}
-                  className="flex gap-4 border-b border-line py-5 last:border-b-0"
-                >
-                  <div className="h-24 w-24 shrink-0 bg-surface">
+                <li key={`${item.jersey.id}-${item.size}`}>
+                  <div className="store-cart-image">
                     <img
                       src={item.jersey.images[0]}
                       alt={item.jersey.name}
-                      className="h-full w-full object-contain"
                     />
                   </div>
 
-                  <div className="flex min-w-0 flex-1 flex-col">
-                    <p className="line-clamp-2 text-xs font-bold uppercase">
-                      {item.jersey.name}
-                    </p>
-                    <p className="mt-0.5 text-[11px] text-muted">Tamanho {item.size}</p>
+                  <div className="store-cart-item-copy">
+                    <p className="store-cart-item-name">{item.jersey.name}</p>
+                    <p className="store-cart-item-size">Tamanho {item.size}</p>
 
-                    <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-                      <div className="flex items-center gap-3">
+                    <div className="store-cart-item-bottom">
+                      <div className="store-cart-quantity">
                         <button
                           type="button"
                           onClick={() =>
                             onUpdateQuantity(item.jersey.id, item.size, item.quantity - 1)
                           }
                           aria-label="Diminuir quantidade"
-                          className="text-muted hover:text-ink"
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="min-w-4 text-center text-sm font-bold tabular-nums">
-                          {item.quantity}
-                        </span>
+                        <span>{item.quantity}</span>
                         <button
                           type="button"
                           onClick={() =>
@@ -119,13 +128,12 @@ export function CartDrawer({
                           }
                           disabled={item.quantity >= item.jersey.stockQty}
                           aria-label="Aumentar quantidade"
-                          className="text-muted hover:text-ink disabled:opacity-30"
                         >
                           <Plus size={14} />
                         </button>
                       </div>
 
-                      <p className="text-sm font-bold">
+                      <p className="store-cart-item-price">
                         {formatPrice(item.jersey.price * item.quantity)}
                       </p>
                     </div>
@@ -135,7 +143,7 @@ export function CartDrawer({
                     type="button"
                     onClick={() => onRemove(item.jersey.id, item.size)}
                     aria-label={`Remover ${item.jersey.name}`}
-                    className="self-start text-muted hover:text-brand"
+                    className="store-cart-remove"
                   >
                     <X size={16} />
                   </button>
@@ -143,23 +151,23 @@ export function CartDrawer({
               ))}
             </ul>
 
-            <footer className="border-t border-line px-6 py-5">
-              <div className="flex items-baseline justify-between">
-                <span className="text-sm tracking-widest uppercase">Total</span>
-                <span className="font-display text-2xl font-900">{formatPrice(total)}</span>
+            <footer className="store-cart-footer">
+              <div className="store-cart-total">
+                <span>Total</span>
+                <strong>{formatPrice(total)}</strong>
               </div>
-              <p className="mt-1 text-right text-xs text-muted">
+              <p className="store-cart-installments">
                 ou {parcela.times}x de {parcela.value} sem juros
               </p>
 
               <button
                 type="button"
                 onClick={onCheckout}
-                className="btn btn-primary mt-4 w-full py-4 text-sm tracking-wide uppercase"
+                className="store-cart-checkout"
               >
                 Finalizar compra
               </button>
-              <p className="mt-2 text-center text-[11px] text-muted">
+              <p className="store-cart-methods">
                 Pix, cartão em até 12x ou boleto.
               </p>
             </footer>

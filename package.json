@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node test/order.test.mjs",
+    "test": "node test/instagram.test.mjs && node test/order.test.mjs",
     "db:migrate": "node db/migrate.mjs",
     "db:seed": "node db/seed.mjs",
     "test:e2e": "bash test/e2e.sh"

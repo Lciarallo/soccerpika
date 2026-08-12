@@ -1,34 +1,38 @@
+import type { MouseEvent } from 'react';
+
 const YEAR = new Date().getFullYear();
 
-const LINKS: [string, string][] = [
-  ['Início', '#topo'],
-  ['Produtos', '#catalogo'],
-  ['Contato', '#vender'],
-];
+const LINKS = [
+  ['Início', '/'],
+  ['Produtos', '/produtos'],
+  ['Contato', '/contato'],
+] as const;
 
-/** Bandeiras aceitas, como o rodapé da loja lista. */
-const PAYMENTS = [
-  'Visa',
-  'Mastercard',
-  'Amex',
-  'Elo',
-  'Hipercard',
-  'Pix',
-  'Boleto',
-];
+const PAYMENT_LOGOS = [
+  ['visa', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/visa@2x.png'],
+  ['mastercard', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/mastercard@2x.png'],
+  ['amex', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/amex@2x.png'],
+  ['bradesco', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/br/bradesco@2x.png'],
+  ['elo', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/br/elo@2x.png'],
+  ['hipercard', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/br/hipercard@2x.png'],
+  ['pix', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/payment-method-types/pix@2x.png'],
+  ['nuvem envio', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/shipping/api/4190@2x.png'],
+] as const;
 
-export function Footer() {
+export function Footer({ onNavigate }: { onNavigate: (to: string) => void }) {
+  const navigate = (event: MouseEvent<HTMLAnchorElement>, to: string) => {
+    event.preventDefault();
+    onNavigate(to);
+  };
+
   return (
-    <footer className="bg-navy text-paper">
-      <div className="grid gap-12 px-5 py-16 sm:px-8 lg:grid-cols-2">
+    <footer className="store-footer">
+      <div className="store-footer-grid">
         <nav aria-label="Rodapé">
-          <ul>
+          <ul className="store-footer-menu">
             {LINKS.map(([label, href]) => (
-              <li key={label} className="border-b border-paper/40">
-                <a
-                  href={href}
-                  className="block py-4 font-display text-4xl font-900 uppercase transition-colors hover:text-brand sm:text-5xl"
-                >
+              <li key={href}>
+                <a href={href} onClick={(event) => navigate(event, href)}>
                   {label}
                 </a>
               </li>
@@ -36,46 +40,31 @@ export function Footer() {
           </ul>
         </nav>
 
-        <div>
-          <div className="flex gap-6">
-            <a
-              href="https://instagram.com/soccerpika"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-underline hover:text-brand"
-            >
+        <div className="store-footer-meta">
+          <div className="store-footer-socials">
+            <a href="https://instagram.com/soccerpika" target="_blank" rel="noopener noreferrer">
               Instagram
             </a>
-            <a
-              href="https://www.tiktok.com/@soccerpika"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-underline hover:text-brand"
-            >
+            <a href="https://www.tiktok.com/@soccerpika" target="_blank" rel="noopener noreferrer">
               Tiktok
             </a>
           </div>
 
-          <ul className="mt-6 flex flex-wrap gap-2">
-            {PAYMENTS.map((brand) => (
-              <li
-                key={brand}
-                className="rounded-sm bg-paper px-2.5 py-1.5 text-[11px] font-bold text-navy"
-              >
-                {brand}
+          <ul className="store-footer-payments" aria-label="Formas de pagamento e envio">
+            {PAYMENT_LOGOS.map(([name, src]) => (
+              <li key={name}>
+                <img src={src} alt={name} width={40} height={25} loading="lazy" />
               </li>
             ))}
           </ul>
-
-          <p className="mt-6 max-w-sm text-sm text-paper/70">
-            Parcele em até 12x sem juros no cartão, ou pague à vista no Pix e no
-            boleto. Enviamos para todo o Brasil com rastreio.
-          </p>
         </div>
       </div>
 
-      <p className="px-5 pb-10 text-center text-sm text-paper/70 sm:px-8">
-        Copyright Soccer Pika — {YEAR}. Todos os direitos reservados.
+      <div className="store-powered-by" aria-label="Criado com Nuvemshop">
+        criado com <span aria-hidden="true">∞</span> nuvemshop
+      </div>
+      <p className="store-copyright">
+        Copyright Soccer Pika - {YEAR}. Todos os direitos reservados.
       </p>
     </footer>
   );

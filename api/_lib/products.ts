@@ -23,6 +23,7 @@ export interface ProductRow {
   is_autographed: boolean;
   is_published: boolean;
   source_url: string | null;
+  created_at: Date;
   images: string[];
 }
 
@@ -47,6 +48,7 @@ export interface Product {
   isAutographed: boolean;
   isPublished: boolean;
   sourceUrl: string | null;
+  createdAt: string;
 }
 
 export const toProduct = (r: ProductRow): Product => ({
@@ -69,6 +71,7 @@ export const toProduct = (r: ProductRow): Product => ({
   isAutographed: r.is_autographed,
   isPublished: r.is_published,
   sourceUrl: r.source_url,
+  createdAt: new Date(r.created_at).toISOString(),
 });
 
 /** Imagens agregadas na ordem de exibição, em uma consulta só. */

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Check, Copy, ExternalLink, Loader2, X } from 'lucide-react';
 import type { CartItem } from '../types/jersey';
 import {
@@ -34,6 +34,8 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
   const [status, setStatus] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [installments, setInstallments] = useState(1);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeActionRef = useRef<() => void>(() => undefined);
 
   const total = useMemo(
     () => items.reduce((sum, i) => sum + i.jersey.price * i.quantity, 0),
@@ -42,16 +44,60 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
 
   const mp = useMercadoPago({ enabled: open && method === 'card' && !result, amount: total });
 
+  const reset = () => {
+    setResult(null);
+    setStatus(null);
+    setError(null);
+    setCopied(false);
+  };
+
+  const close = () => {
+    reset();
+    onClose();
+  };
+  closeActionRef.current = close;
+
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const frame = window.requestAnimationFrame(() =>
+      modalRef.current?.querySelector<HTMLElement>('button')?.focus(),
+    );
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeActionRef.current();
+        return;
+      }
+      if (event.key !== 'Tab' || !modalRef.current) return;
+      const focusable = [
+        ...modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href]',
+        ),
+      ].filter((element) => element.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable.at(-1)!;
+      if (!modalRef.current.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
     return () => {
+      window.cancelAnimationFrame(frame);
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   // Pix e boleto são assíncronos: consulta o estado até aprovar.
   useEffect(() => {
@@ -82,18 +128,6 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
   }, [result, onPaid]);
 
   if (!open) return null;
-
-  const reset = () => {
-    setResult(null);
-    setStatus(null);
-    setError(null);
-    setCopied(false);
-  };
-
-  const close = () => {
-    reset();
-    onClose();
-  };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -171,7 +205,7 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
       aria-label="Pagamento"
       onClick={(e) => e.target === e.currentTarget && close()}
     >
-      <div className="relative w-full max-w-2xl bg-paper">
+      <div ref={modalRef} className="relative w-full max-w-2xl bg-paper">
         <button
           type="button"
           onClick={close}
@@ -343,7 +377,7 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
                         <select
                           value={installments}
                           onChange={(e) => setInstallments(Number(e.target.value))}
-                          className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm focus:outline-none"
+                          className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm"
                         >
                           {mp.installmentOptions.length > 0 ? (
                             mp.installmentOptions.map((p) => (
@@ -425,7 +459,7 @@ function Field({ name, label, className = '', ...rest }: FieldProps) {
         name={name}
         {...rest}
         className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm
-                   placeholder:text-muted focus:outline-none"
+                   placeholder:text-muted"
       />
     </div>
   );
