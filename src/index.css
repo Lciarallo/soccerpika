@@ -1,199 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
-/* ---------------------------------------------------------------
-   Paleta e tipografia de soccerpika.com, extraídas da própria loja:
-   CSS custom properties do tema + Nunito/Inter do <head>.
-   Layout editorial e arejado — sem molduras e sem blur.
-   --------------------------------------------------------------- */
-@theme {
-  --color-ink: #000000;
-  --color-paper: #ffffff;
-  --color-brand: #ff0300;
-  --color-brand-dark: #cc0200;
-  --color-navy: #020094;
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  font-display: optional;
+  src: url('/fonts/Nunito-700.woff2') format('woff2');
+}
 
-  --color-success: #4bb98c;
-  --color-danger: #dd7774;
-  --color-warning: #dc8f38;
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/Inter-400.woff2') format('woff2');
+}
 
-  --color-line: #e6e6e8;
-  --color-muted: #6b6b73;
-  --color-surface: #f7f7f8;
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: optional;
+  src: url('/fonts/Inter-600.woff2') format('woff2');
+}
 
-  --font-display: 'Nunito', system-ui, sans-serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: optional;
+  src: url('/fonts/Inter-700.woff2') format('woff2');
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
-  }
-
   body {
-    margin: 0;
-    background: var(--color-paper);
-    color: var(--color-ink);
-    font-family: var(--font-sans);
-    font-synthesis-weight: none;
+    background-color: #f7f7f7;
+    color: #111111;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
-  }
-
-  h1,
-  h2,
-  h3 {
-    font-family: var(--font-display);
-    letter-spacing: -0.03em;
-    text-wrap: balance;
-  }
-
-  img {
-    display: block;
-    max-width: 100%;
-  }
-
-  :focus-visible {
-    outline: 2px solid var(--color-brand);
-    outline-offset: 3px;
-  }
-
-  ::selection {
-    background: var(--color-brand);
-    color: var(--color-paper);
+    -moz-osx-font-smoothing: grayscale;
   }
 }
-
-@layer components {
-  /* Texto vazado, como o "SIGA" de "NOS SIGA NO INSTA!" na loja. */
-  .text-outline {
-    color: transparent;
-    -webkit-text-stroke: 2px var(--color-ink);
-  }
-
-  .text-outline-paper {
-    color: transparent;
-    -webkit-text-stroke: 2px var(--color-paper);
-  }
-
-  /* Letreiro deslizante do topo. */
-  .marquee {
-    display: flex;
-    width: max-content;
-    animation: marquee 38s linear infinite;
-  }
-
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .marquee {
-      animation: none;
-    }
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-weight: 700;
-    line-height: 1;
-    cursor: pointer;
-    transition: background-color 0.15s, color 0.15s, opacity 0.15s;
-  }
-
-  .btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.35;
-  }
-
-  .btn-primary {
-    background: var(--color-brand);
-    color: var(--color-paper);
-  }
-
-  .btn-primary:not(:disabled):hover {
-    background: var(--color-brand-dark);
-  }
-
-  .btn-dark {
-    background: var(--color-ink);
-    color: var(--color-paper);
-  }
-
-  .btn-dark:not(:disabled):hover {
-    background: var(--color-navy);
-  }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--color-ink);
-    border: 1px solid var(--color-ink);
-  }
-
-  .btn-outline:not(:disabled):hover {
-    background: var(--color-ink);
-    color: var(--color-paper);
-  }
-
-  /* Seções em duas colunas: rótulo à esquerda, conteúdo à direita. */
-  .section-grid {
-    display: grid;
-    gap: 2rem;
-  }
-
-  @media (width >= 64rem) {
-    .section-grid {
-      grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
-    }
-
-    /*
-     * Versão espelhada: rótulo à direita. Trocar as colunas em vez de inverter
-     * o DOM mantém o título antes do conteúdo que ele nomeia, que é o que
-     * leitor de tela e navegação por teclado esperam.
-     */
-    .section-grid-mirror {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
-    }
-
-    .section-grid-mirror > :first-child {
-      grid-area: 1 / 2;
-    }
-
-    .section-grid-mirror > :last-child {
-      grid-area: 1 / 1;
-    }
-  }
-
-  /*
-   * Rótulo da seção. O tamanho é limitado pela coluna de 300px: em display
-   * uppercase, "AUTENTICIDADE" mede ~363px a 48px e invadia a coluna vizinha.
-   * A 36px cabe, e a hifenização segura qualquer rótulo mais longo que venha.
-   */
-  .section-title {
-    font-family: var(--font-display);
-    font-size: 2.25rem;
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    text-transform: uppercase;
-    hyphens: auto;
-    overflow-wrap: break-word;
-  }
-
-  /* Link sublinhado do rodapé/Instagram da loja. */
-  .link-underline {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    text-decoration-thickness: 1px;
-  }
-}
-
-/* Sem blur em nenhuma camada: overlays usam cor sólida com opacidade. */

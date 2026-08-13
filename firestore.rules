@@ -1,0 +1,81 @@
+rules_version = '2';
+
+/**
+ * Regras de Segurança do Cloud Firestore — Soccer Pika
+ *
+ * Princípio Fundamental: Zero Confiança no Cliente.
+ * Todas as operações financeiras, criação de pedidos, reserva de estoque
+ * e manipulação de catálogo passam por Cloud Functions com Admin SDK.
+ */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Catálogo de Camisas (Products)                                   */
+    /* ---------------------------------------------------------------- */
+    match /products/{productId} {
+      // Público pode ler camisas ativas/disponíveis e vendidas na vitrine.
+      // Admin pode ver qualquer produto, incluindo rascunhos.
+      allow get, list: if resource.data.status != 'draft' || isAdmin();
+
+      // Escrita direta pelo cliente bloqueada para evitar adulteração de preço.
+      // Modificações são feitas exclusivamente via Cloud Functions autenticadas.
+      allow write: if false;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Pedidos (Orders)                                                 */
+    /* ---------------------------------------------------------------- */
+    match /orders/{orderId} {
+      // O cliente dono do pedido ou admin pode visualizar o pedido.
+      allow get: if isAdmin() || (signedIn() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.customer.email == request.auth.token.email
+      ));
+
+      // Apenas admin pode listar todos os pedidos da loja no painel.
+      allow list: if isAdmin();
+
+      // Criação e atualização de pedidos ocorrem exclusivamente via Cloud Functions
+      // (`placeOrder` e webhook do Mercado Pago) com verificação de preços no servidor.
+      allow write: if false;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Usuários e Perfis                                                */
+    /* ---------------------------------------------------------------- */
+    match /users/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
+
+      // Lista de desejos (Wishlist)
+      match /wishlist/{productId} {
+        allow read, write: if isOwner(uid) || isAdmin();
+      }
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Configurações e Cache Interno                                    */
+    /* ---------------------------------------------------------------- */
+    match /system/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Bloqueia qualquer outra coleção não declarada
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

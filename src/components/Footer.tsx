@@ -9,14 +9,14 @@ const LINKS = [
 ] as const;
 
 const PAYMENT_LOGOS = [
-  ['visa', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/visa@2x.png'],
-  ['mastercard', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/mastercard@2x.png'],
-  ['amex', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/amex@2x.png'],
-  ['bradesco', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/br/bradesco@2x.png'],
-  ['elo', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/br/elo@2x.png'],
-  ['hipercard', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/br/hipercard@2x.png'],
-  ['pix', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/payment-method-types/pix@2x.png'],
-  ['nuvem envio', 'https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/shipping/api/4190@2x.png'],
+  ['visa', '/payments/visa.webp'],
+  ['mastercard', '/payments/mastercard.webp'],
+  ['amex', '/payments/amex.webp'],
+  ['bradesco', '/payments/bradesco.webp'],
+  ['elo', '/payments/elo.webp'],
+  ['hipercard', '/payments/hipercard.webp'],
+  ['pix', '/payments/pix.webp'],
+  ['nuvem envio', '/payments/nuvem-envio.webp'],
 ] as const;
 
 export function Footer({ onNavigate }: { onNavigate: (to: string) => void }) {

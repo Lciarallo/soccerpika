@@ -139,6 +139,13 @@ ALTER TABLE products ADD COLUMN IF NOT EXISTS subcategory text NOT NULL DEFAULT 
 CREATE INDEX IF NOT EXISTS products_subcategory_idx
   ON products (subcategory) WHERE subcategory <> '';
 
+ALTER TABLE products ADD COLUMN IF NOT EXISTS weight_grams integer NOT NULL DEFAULT 300;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS is_free_shipping boolean NOT NULL DEFAULT false;
+
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_cents integer NOT NULL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_method text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_cep text;
+
 -- ---------------------------------------------------------------- gatilho ---
 
 CREATE OR REPLACE FUNCTION touch_updated_at() RETURNS trigger AS $$

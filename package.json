@@ -16,6 +16,8 @@
   "dependencies": {
     "@vercel/blob": "^2.8.0",
     "canvas-confetti": "^1.9.4",
+    "correios-brasil": "^3.0.6",
+    "firebase": "^12.17.1",
     "lucide-react": "^1.31.0",
     "postgres": "^3.4.9",
     "react": "^19.2.8",

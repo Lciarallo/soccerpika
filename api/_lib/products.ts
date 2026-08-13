@@ -22,6 +22,8 @@ export interface ProductRow {
   is_match_worn: boolean;
   is_autographed: boolean;
   is_published: boolean;
+  weight_grams: number;
+  is_free_shipping: boolean;
   source_url: string | null;
   created_at: Date;
   images: string[];
@@ -47,6 +49,8 @@ export interface Product {
   isMatchWorn: boolean;
   isAutographed: boolean;
   isPublished: boolean;
+  weightGrams: number;
+  isFreeShipping: boolean;
   sourceUrl: string | null;
   createdAt: string;
 }
@@ -70,6 +74,8 @@ export const toProduct = (r: ProductRow): Product => ({
   isMatchWorn: r.is_match_worn,
   isAutographed: r.is_autographed,
   isPublished: r.is_published,
+  weightGrams: r.weight_grams,
+  isFreeShipping: r.is_free_shipping,
   sourceUrl: r.source_url,
   createdAt: new Date(r.created_at).toISOString(),
 });
@@ -121,6 +127,8 @@ export interface ProductInput {
   isMatchWorn?: boolean;
   isAutographed?: boolean;
   isPublished?: boolean;
+  weightGrams?: number;
+  isFreeShipping?: boolean;
   sourceUrl?: string | null;
 }
 
@@ -131,7 +139,7 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
       INSERT INTO products (
         slug, name, club, season, era, category, subcategory, brand, description,
         price_cents, stock_qty, sizes, is_match_worn, is_autographed,
-        is_published, source_url
+        is_published, weight_grams, is_free_shipping, source_url
       ) VALUES (
         ${input.slug},
         ${input.name},
@@ -148,6 +156,8 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
         ${input.isMatchWorn ?? false},
         ${input.isAutographed ?? false},
         ${input.isPublished ?? true},
+        ${input.weightGrams ?? 300},
+        ${input.isFreeShipping ?? false},
         ${input.sourceUrl ?? null}
       )
       ON CONFLICT (slug) DO UPDATE SET
@@ -165,6 +175,8 @@ export async function upsertProduct(input: ProductInput): Promise<Product> {
         is_match_worn  = EXCLUDED.is_match_worn,
         is_autographed = EXCLUDED.is_autographed,
         is_published   = EXCLUDED.is_published,
+        weight_grams   = EXCLUDED.weight_grams,
+        is_free_shipping = EXCLUDED.is_free_shipping,
         source_url     = EXCLUDED.source_url
       RETURNING id
     `;

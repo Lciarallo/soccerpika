@@ -96,6 +96,9 @@ export function InstagramSection() {
                       src={post.src}
                       alt={post.alt}
                       loading="lazy"
+                      decoding="async"
+                      width="400"
+                      height="400"
                       referrerPolicy="no-referrer"
                       onError={() => {
                         setPosts((currentPosts) => {

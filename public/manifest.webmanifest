@@ -1,0 +1,16 @@
+{
+  "name": "Soccer Pika",
+  "short_name": "SoccerPika",
+  "description": "Vitrine de camisas de futebol raras, de jogo, retrô e autografadas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff0300",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}

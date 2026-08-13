@@ -38,11 +38,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const body = (req.body ?? {}) as Record<string, unknown>;
     const method = String(body.method ?? '');
+    const shippingMethod = String(body.shippingMethod ?? '');
+    const shippingCep = String(body.shippingCep ?? '');
+    
     if (!METHODS.has(method)) {
       return res.status(400).json({ error: 'Método de pagamento inválido.' });
     }
 
-    const { lines, total, title } = await buildOrder(body.items);
+    const { lines, total, title, shippingCents, shippingMethodStr } = await buildOrder(body.items, shippingCep, shippingMethod);
     const payer = (body.payer ?? {}) as Record<string, unknown>;
     const user = await currentUser(req);
 
@@ -124,6 +127,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       paymentMethod: method,
       status: payment.status,
       lines,
+      shippingCents,
+      shippingMethod: shippingMethodStr,
+      shippingCep,
     });
 
     // Cartão aprovado na hora já baixa o estoque; os demais esperam o webhook.

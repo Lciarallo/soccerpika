@@ -391,9 +391,12 @@
   margin-top: -30px;
   overflow: hidden;
   padding-block: 20px;
+  contain: layout paint;
 }
 
 .store-ticker-line {
+  display: flex;
+  align-items: center;
   width: max-content;
   height: 50px;
   animation: storefront-marquee 151.675s linear infinite;
@@ -415,7 +418,9 @@
 }
 
 .store-ticker-text {
+  display: inline-block;
   margin-right: 24px;
+  line-height: 50px;
 }
 
 .store-ticker-text:nth-child(even),
@@ -1517,12 +1522,14 @@
   z-index: 30;
   width: calc(100% - 30px);
   max-width: 360px;
+  min-height: 58px;
   border: 1px solid #000;
   padding: 9px 10px;
   background: #fff;
   color: #000;
   font-size: 12px;
   line-height: 19px;
+  contain: layout style;
 }
 
 .store-cookie button {

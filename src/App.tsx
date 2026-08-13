@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import './App.css';
 import * as api from './lib/api';
@@ -10,19 +10,38 @@ import { useRoute } from './hooks/useRoute';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { FeaturedCarousel } from './components/FeaturedCarousel';
-import { Catalog } from './components/Catalog';
-import { ProductModal } from './components/ProductModal';
-import { CartDrawer } from './components/CartDrawer';
-import { CheckoutModal } from './components/CheckoutModal';
-import { AuthModal } from './components/AuthModal';
-import { AuthenticityChecker } from './components/AuthenticityChecker';
 import { InstagramSection } from './components/InstagramSection';
-import { SellJerseyForm } from './components/SellJerseyForm';
 import { Footer } from './components/Footer';
 import { CookieBanner } from './components/CookieBanner';
-import { AccountPage } from './pages/AccountPage';
-import { AdminDashboard } from './pages/AdminDashboard';
-import { jerseys as referenceCatalog } from './data/jerseys';
+import { initialFeaturedJerseys } from './data/featured';
+
+const Catalog = lazy(() =>
+  import('./components/Catalog').then((m) => ({ default: m.Catalog })),
+);
+const SellJerseyForm = lazy(() =>
+  import('./components/SellJerseyForm').then((m) => ({ default: m.SellJerseyForm })),
+);
+const AuthenticityChecker = lazy(() =>
+  import('./components/AuthenticityChecker').then((m) => ({ default: m.AuthenticityChecker })),
+);
+const ProductModal = lazy(() =>
+  import('./components/ProductModal').then((m) => ({ default: m.ProductModal })),
+);
+const CartDrawer = lazy(() =>
+  import('./components/CartDrawer').then((m) => ({ default: m.CartDrawer })),
+);
+const CheckoutModal = lazy(() =>
+  import('./components/CheckoutModal').then((m) => ({ default: m.CheckoutModal })),
+);
+const AuthModal = lazy(() =>
+  import('./components/AuthModal').then((m) => ({ default: m.AuthModal })),
+);
+const AccountPage = lazy(() =>
+  import('./pages/AccountPage').then((m) => ({ default: m.AccountPage })),
+);
+const AdminDashboard = lazy(() =>
+  import('./pages/AdminDashboard').then((m) => ({ default: m.AdminDashboard })),
+);
 
 const INITIAL_FILTERS: FilterState = {
   query: '',
@@ -206,7 +225,7 @@ const KNOWN_COLORS = new Set([
 ]);
 const KNOWN_SIZES = new Set(['G (justo)', 'M', 'G', 'GG']);
 const REFERENCE_METADATA = new Map(
-  referenceCatalog.map((jersey) => [
+  initialFeaturedJerseys.map((jersey) => [
     jersey.id,
     {
       colors: (jersey.colors ?? []).filter((value) => KNOWN_COLORS.has(value)),
@@ -230,10 +249,18 @@ function Routes() {
   const { path, navigate } = useRoute();
 
   if (path === '/admin' || path.startsWith('/admin/')) {
-    return <AdminDashboard onExit={() => navigate('/')} />;
+    return (
+      <Suspense fallback={<LoadingStorefront />}>
+        <AdminDashboard onExit={() => navigate('/')} />
+      </Suspense>
+    );
   }
   if (path === '/conta' || path.startsWith('/conta/')) {
-    return <AccountPage onExit={() => navigate('/')} />;
+    return (
+      <Suspense fallback={<LoadingStorefront />}>
+        <AccountPage onExit={() => navigate('/')} />
+      </Suspense>
+    );
   }
   return <Storefront path={path} navigate={navigate} />;
 }
@@ -247,9 +274,9 @@ function Storefront({
 }) {
   const { user, isAdmin } = useSession();
 
-  const [jerseys, setJerseys] = useState<Jersey[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [jerseys, setJerseys] = useState<Jersey[]>(() => initialFeaturedJerseys);
+  const [loading, setLoading] = useState(false);
+  const [loadError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [selected, setSelected] = useState<Jersey | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -262,20 +289,26 @@ function Storefront({
   useEffect(() => {
     api
       .fetchProducts()
-      .then((products) =>
-        setJerseys(
-          products.map((product) => {
-            const metadata = REFERENCE_METADATA.get(product.slug ?? product.id);
-            if (!metadata) return product;
-            return {
-              ...product,
-              colors: product.colors?.length ? product.colors : metadata.colors,
-              sizes: [...new Set([...product.sizes, ...metadata.sizes])],
-            };
-          }),
-        ),
-      )
-      .catch((error: Error) => setLoadError(error.message))
+      .then((products) => {
+        if (products && products.length > 0) {
+          setJerseys(
+            products.map((product) => {
+              const metadata = REFERENCE_METADATA.get(product.slug ?? product.id);
+              if (!metadata) return product;
+              return {
+                ...product,
+                colors: product.colors?.length ? product.colors : metadata.colors,
+                sizes: [...new Set([...product.sizes, ...metadata.sizes])],
+              };
+            }),
+          );
+        } else {
+          import('./data/jerseys').then((m) => setJerseys(m.jerseys));
+        }
+      })
+      .catch(() => {
+        import('./data/jerseys').then((m) => setJerseys(m.jerseys));
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -460,85 +493,103 @@ function Storefront({
             <InstagramSection />
           </>
         ) : page === 'products' ? (
-          loading ? (
-            <LoadingStorefront />
-          ) : loadError ? (
-            <StorefrontError message={loadError} />
-          ) : (
-            <Catalog
-              jerseys={visible}
-              allJerseys={jerseys}
-              filters={filters}
-              onFilterChange={setFilter}
-              onReset={() => setFilters(INITIAL_FILTERS)}
-              categoryTree={categoryTree}
-              onSelect={setSelected}
-              wishlist={wishlist}
-              onToggleWishlist={toggleWishlist}
-              onNavigate={navigate}
-            />
-          )
+          <Suspense fallback={<LoadingStorefront />}>
+            {loading ? (
+              <LoadingStorefront />
+            ) : loadError ? (
+              <StorefrontError message={loadError} />
+            ) : (
+              <Catalog
+                jerseys={visible}
+                allJerseys={jerseys}
+                filters={filters}
+                onFilterChange={setFilter}
+                onReset={() => setFilters(INITIAL_FILTERS)}
+                categoryTree={categoryTree}
+                onSelect={setSelected}
+                wishlist={wishlist}
+                onToggleWishlist={toggleWishlist}
+                onNavigate={navigate}
+              />
+            )}
+          </Suspense>
         ) : (
-          <>
+          <Suspense fallback={<LoadingStorefront />}>
             <SellJerseyForm />
             <AuthenticityChecker />
-          </>
+          </Suspense>
         )}
       </main>
 
       <Footer onNavigate={navigate} />
       <CookieBanner />
 
-      <ProductModal
-        jersey={selected}
-        onClose={() => setSelected(null)}
-        onAddToCart={addToCart}
-        isSaved={selected ? wishlist.has(selected.id) : false}
-        onToggleWishlist={toggleWishlist}
-      />
+      {selected ? (
+        <Suspense fallback={null}>
+          <ProductModal
+            jersey={selected}
+            onClose={() => setSelected(null)}
+            onAddToCart={addToCart}
+            isSaved={selected ? wishlist.has(selected.id) : false}
+            onToggleWishlist={toggleWishlist}
+          />
+        </Suspense>
+      ) : null}
 
-      <CartDrawer
-        open={cartOpen}
-        items={cart}
-        onClose={() => setCartOpen(false)}
-        onUpdateQuantity={(id, size, quantity) =>
-          setCart((previous) =>
-            quantity <= 0
-              ? previous.filter(
+      {cartOpen ? (
+        <Suspense fallback={null}>
+          <CartDrawer
+            open={cartOpen}
+            items={cart}
+            onClose={() => setCartOpen(false)}
+            onUpdateQuantity={(id, size, quantity) =>
+              setCart((previous) =>
+                quantity <= 0
+                  ? previous.filter(
+                      (item) => !(item.jersey.id === id && item.size === size),
+                    )
+                  : previous.map((item) =>
+                      item.jersey.id === id && item.size === size
+                        ? { ...item, quantity }
+                        : item,
+                    ),
+              )
+            }
+            onRemove={(id, size) =>
+              setCart((previous) =>
+                previous.filter(
                   (item) => !(item.jersey.id === id && item.size === size),
-                )
-              : previous.map((item) =>
-                  item.jersey.id === id && item.size === size
-                    ? { ...item, quantity }
-                    : item,
                 ),
-          )
-        }
-        onRemove={(id, size) =>
-          setCart((previous) =>
-            previous.filter(
-              (item) => !(item.jersey.id === id && item.size === size),
-            ),
-          )
-        }
-        onCheckout={() => {
-          setCartOpen(false);
-          setCheckoutOpen(true);
-        }}
-      />
+              )
+            }
+            onCheckout={() => {
+              setCartOpen(false);
+              setCheckoutOpen(true);
+            }}
+          />
+        </Suspense>
+      ) : null}
 
-      <CheckoutModal
-        open={checkoutOpen}
-        items={cart}
-        onClose={() => setCheckoutOpen(false)}
-        onPaid={() => setCart([])}
-      />
+      {checkoutOpen ? (
+        <Suspense fallback={null}>
+          <CheckoutModal
+            open={checkoutOpen}
+            items={cart}
+            onClose={() => setCheckoutOpen(false)}
+            onPaid={() => setCart([])}
+          />
+        </Suspense>
+      ) : null}
 
-      <AuthModal
-        open={authOpen}
-        initialMode={authMode}
-        onClose={() => setAuthOpen(false)}
-      />
+      {authOpen ? (
+        <Suspense fallback={null}>
+          <AuthModal
+            open={authOpen}
+            initialMode={authMode}
+            onClose={() => setAuthOpen(false)}
+          />
+        </Suspense>
+      ) : null}
     </div>
   );
 }

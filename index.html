@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="canonical" href="https://soccerpika.com.br/" />
     <meta name="theme-color" content="#ff0300" />
 
     <title>Soccer Pika | Camisas de futebol raras, de jogo e retrô</title>
@@ -27,11 +30,103 @@
     <meta property="og:image" content="/logo.png" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "OnlineStore",
+        "name": "Soccer Pika",
+        "description": "Acervo de camisas raras de futebol: peças de jogo, retrô, autografadas e de seleção.",
+        "url": "https://soccerpika.com.br/",
+        "logo": "https://soccerpika.com.br/logo.png",
+        "currenciesAccepted": "BRL",
+        "paymentAccepted": "PIX, Cartão de Crédito, Boleto",
+        "priceRange": "$$$",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "BR"
+        }
+      }
+    </script>
+
+    <!-- Hero Image Preload -->
+    <link rel="preload" as="image" href="/products/camisa-brasil-1995-96-n-17-de-jogo-fvbca-0.webp" type="image/webp" fetchpriority="high" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="storefront">
+        <header class="store-header">
+          <div class="store-header-row">
+            <div class="store-header-side">
+              <button type="button" aria-label="Abrir menu de navegação">Menu</button>
+              <button type="button" class="store-header-search-trigger" aria-label="Buscar produtos">Buscar</button>
+            </div>
+            <div class="store-logo" aria-label="Soccer Pika">
+              <img src="/logo.png" alt="Soccer Pika" width="70" height="70" />
+            </div>
+            <div class="store-header-side store-header-right">
+              <button type="button" class="store-cart-link" aria-label="Carrinho">
+                Carrinho
+                <span class="store-cart-count" aria-hidden="true">0</span>
+              </button>
+            </div>
+          </div>
+        </header>
+        <main>
+          <section class="store-wordmark-section">
+            <div class="store-container">
+              <h1>SOCCER PIKA™</h1>
+            </div>
+          </section>
+          <section class="store-ticker-section" aria-label="Soccer Pika nas redes sociais">
+            <div class="store-ticker-line" aria-hidden="true">
+              <span class="store-ticker-text">@SOCCERPIKA</span>
+              <span class="store-ticker-text">(LÁ ELE)</span>
+              <span class="store-ticker-text">NAS REDES SOCIAIS</span>
+              <span class="store-ticker-text">@SOCCERPIKA</span>
+              <span class="store-ticker-text">(LÁ ELE)</span>
+              <span class="store-ticker-text">NAS REDES SOCIAIS</span>
+            </div>
+            <div class="store-ticker-line is-reverse" aria-hidden="true">
+              <span class="store-ticker-text">@SOCCERPIKA</span>
+              <span class="store-ticker-text">(LÁ ELE)</span>
+              <span class="store-ticker-text">NAS REDES SOCIAIS</span>
+              <span class="store-ticker-text">@SOCCERPIKA</span>
+              <span class="store-ticker-text">(LÁ ELE)</span>
+              <span class="store-ticker-text">NAS REDES SOCIAIS</span>
+            </div>
+          </section>
+          <section class="store-featured" aria-labelledby="featured-heading-preload">
+            <div class="store-container">
+              <div class="store-featured-layout">
+                <div class="store-featured-heading">
+                  <p class="store-featured-count">1 / 10</p>
+                  <h2 id="featured-heading-preload">Destaques</h2>
+                </div>
+                <ul class="store-featured-track">
+                  <li class="store-featured-slide">
+                    <article class="store-product-card">
+                      <button type="button" class="store-product-visual" aria-label="Ver detalhes de CAMISA BRASIL 1995-96 Nº 17 DE JOGO">
+                        <span class="store-product-image">
+                          <img src="/products/camisa-brasil-1995-96-n-17-de-jogo-fvbca-0.webp" alt="CAMISA BRASIL 1995-96 Nº 17 DE JOGO" width="400" height="400" loading="eager" fetchpriority="high" decoding="sync" />
+                        </span>
+                        <span class="store-product-labels">
+                          <span class="store-label-sold">Esgotado</span>
+                        </span>
+                      </button>
+                      <div class="store-product-description">
+                        <h3><button type="button">CAMISA BRASIL 1995-96 Nº 17 DE JOGO</button></h3>
+                        <p>R$&nbsp;3.499,90</p>
+                      </div>
+                    </article>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

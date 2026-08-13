@@ -7,8 +7,10 @@ import {
   fetchPaymentStatus,
   isApproved,
   STATUS_LABEL,
+  fetchShipping,
   type PaymentMethod,
   type PaymentResult,
+  type ShippingOption,
 } from '../lib/checkout';
 import { useMercadoPago } from '../hooks/useMercadoPago';
 import { formatPrice } from '../lib/format';
@@ -34,13 +36,31 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
   const [status, setStatus] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [installments, setInstallments] = useState(1);
+  
+  // Shipping states
+  const [shippingCep, setShippingCep] = useState('');
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[] | null>(null);
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState<string | null>(null);
+  const [loadingShipping, setLoadingShipping] = useState(false);
+  const [shippingError, setShippingError] = useState<string | null>(null);
+
   const modalRef = useRef<HTMLDivElement>(null);
   const closeActionRef = useRef<() => void>(() => undefined);
 
-  const total = useMemo(
+  const itemsTotal = useMemo(
     () => items.reduce((sum, i) => sum + i.jersey.price * i.quantity, 0),
     [items],
   );
+
+  const itemCount = useMemo(() => items.reduce((s, i) => s + i.quantity, 0), [items]);
+
+  const shippingCost = useMemo(() => {
+    if (!selectedShippingMethod || !shippingOptions) return 0;
+    const opt = shippingOptions.find(o => o.method === selectedShippingMethod);
+    return opt ? opt.priceCents / 100 : 0;
+  }, [selectedShippingMethod, shippingOptions]);
+
+  const total = itemsTotal + shippingCost;
 
   const mp = useMercadoPago({ enabled: open && method === 'card' && !result, amount: total });
 
@@ -127,6 +147,43 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
     };
   }, [result, onPaid]);
 
+  // Calcula frete quando o CEP tiver 8 dígitos
+  useEffect(() => {
+    const cepDigits = shippingCep.replace(/\\D/g, '');
+    if (cepDigits.length !== 8) {
+      setShippingOptions(null);
+      setSelectedShippingMethod(null);
+      setShippingError(null);
+      return;
+    }
+    let active = true;
+    const loadShipping = async () => {
+      setLoadingShipping(true);
+      setShippingError(null);
+      try {
+        const options = await fetchShipping(cepDigits, items);
+        if (!active) return;
+        setShippingOptions(options);
+        if (options.length > 0) {
+          setSelectedShippingMethod(options[0].method);
+        }
+      } catch (e) {
+        if (!active) return;
+        setShippingError('Erro ao calcular o frete.');
+        setShippingOptions(null);
+      } finally {
+        if (active) setLoadingShipping(false);
+      }
+    };
+    
+    // Pequeno debounce
+    const timeout = setTimeout(loadShipping, 500);
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+    };
+  }, [shippingCep, items]);
+
   if (!open) return null;
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -171,6 +228,8 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
         installments: method === 'card' ? installments : undefined,
         paymentMethodId: mp.paymentMethodId ?? undefined,
         issuerId: mp.issuerId ?? undefined,
+        shippingMethod: selectedShippingMethod ?? undefined,
+        shippingCep: shippingCep.replace(/\\D/g, '') || undefined,
       });
 
       setResult(payment);
@@ -220,7 +279,7 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
             {approved ? 'Pagamento aprovado' : 'Pagamento'}
           </h2>
           <p className="mt-1 text-sm text-muted">
-            {items.reduce((s, i) => s + i.quantity, 0)} item(s) ·{' '}
+            {itemCount} item(s) ·{' '}
             <strong className="text-ink">{formatPrice(total)}</strong>
           </p>
 
@@ -358,6 +417,76 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
                 />
               </div>
 
+              {/* Seção de Frete (Obrigatório) */}
+              <div className="mt-6 border-t border-line pt-6">
+                <h3 className="text-xs font-bold uppercase tracking-widest mb-3">Entrega</h3>
+                
+                <div className="grid gap-5 sm:grid-cols-6">
+                  <div className="sm:col-span-2">
+                    <label htmlFor="shippingCep" className="text-xs tracking-widest text-muted uppercase">
+                      CEP
+                    </label>
+                    <input
+                      id="shippingCep"
+                      name="zipCode"
+                      required
+                      inputMode="numeric"
+                      maxLength={9}
+                      value={shippingCep}
+                      onChange={(e) => setShippingCep(e.target.value)}
+                      placeholder="00000-000"
+                      className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm placeholder:text-muted"
+                    />
+                  </div>
+                  {/* Se método não for boleto, a gente ainda precisa coletar endereço de entrega. Para simplificar, num e-commerce real coletaríamos todo o endereço aqui. Por hora, coletamos Rua, Nº etc se tiver CEP. */}
+                  {shippingCep.replace(/\\D/g, '').length === 8 && (
+                    <>
+                      <Field name="street" label="Rua" required className="sm:col-span-3" />
+                      <Field name="number" label="Nº" required className="sm:col-span-1" />
+                      <Field name="neighborhood" label="Bairro" required className="sm:col-span-2" />
+                      <Field name="city" label="Cidade" required className="sm:col-span-3" />
+                      <Field name="state" label="UF" required maxLength={2} className="sm:col-span-1" />
+                    </>
+                  )}
+                </div>
+
+                {loadingShipping && (
+                  <p className="mt-3 flex items-center gap-2 text-xs text-muted">
+                    <Loader2 size={13} className="animate-spin" />
+                    Calculando frete…
+                  </p>
+                )}
+                {shippingError && <p className="mt-3 text-xs text-danger">{shippingError}</p>}
+                
+                {shippingOptions && shippingOptions.length > 0 && (
+                  <div className="mt-4 grid gap-2">
+                    {shippingOptions.map(opt => {
+                      const isFree = opt.priceCents === 0;
+                      return (
+                        <button
+                          key={opt.method}
+                          type="button"
+                          onClick={() => setSelectedShippingMethod(opt.method)}
+                          className={`flex items-center justify-between border p-3 transition-colors ${
+                            selectedShippingMethod === opt.method
+                              ? 'border-ink bg-ink/5'
+                              : 'border-line hover:border-ink/50'
+                          }`}
+                        >
+                          <div className="text-left">
+                            <span className="block text-sm font-bold uppercase">{opt.method}</span>
+                            <span className="text-[10px] text-muted">Em até {opt.deliveryDays} dias úteis</span>
+                          </div>
+                          <span className="text-sm font-bold">
+                            {isFree ? 'Grátis' : formatPrice(opt.priceCents / 100)}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {method === 'card' && (
                 <div className="mt-6">
                   {mp.error ? (
@@ -403,13 +532,11 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
               )}
 
               {method === 'boleto' && (
-                <div className="mt-6 grid gap-5 sm:grid-cols-6">
-                  <Field name="zipCode" label="CEP" required inputMode="numeric" className="sm:col-span-2" />
-                  <Field name="street" label="Rua" required className="sm:col-span-3" />
-                  <Field name="number" label="Nº" required className="sm:col-span-1" />
-                  <Field name="neighborhood" label="Bairro" required className="sm:col-span-2" />
-                  <Field name="city" label="Cidade" required className="sm:col-span-3" />
-                  <Field name="state" label="UF" required maxLength={2} className="sm:col-span-1" />
+                <div className="mt-6 border-t border-line pt-6">
+                  <p className="text-xs tracking-widest text-muted uppercase">Informações do Boleto</p>
+                  <p className="text-[11px] text-muted mt-1">
+                    Os dados de endereço acima já serão utilizados para a emissão do boleto.
+                  </p>
                 </div>
               )}
 
@@ -417,8 +544,8 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
 
               <button
                 type="submit"
-                disabled={submitting || (method === 'card' && !mp.ready)}
-                className="btn btn-primary mt-7 w-full py-4 text-sm tracking-wide uppercase"
+                disabled={submitting || (method === 'card' && !mp.ready) || !selectedShippingMethod}
+                className="btn btn-primary mt-7 w-full py-4 text-sm tracking-wide uppercase disabled:opacity-50"
               >
                 {submitting && <Loader2 size={16} className="animate-spin" />}
                 {submitting ? 'Processando…' : `Pagar ${formatPrice(total)}`}

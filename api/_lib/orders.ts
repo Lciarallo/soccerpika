@@ -32,17 +32,23 @@ export async function createOrder(input: {
   paymentMethod: string;
   status: string;
   lines: Line[];
+  shippingCents: number;
+  shippingMethod: string;
+  shippingCep: string;
 }): Promise<string> {
   return sql.begin(async (tx) => {
     const [order] = await tx<{ id: string }[]>`
-      INSERT INTO orders (user_id, email, total_cents, status, payment_id, payment_method)
+      INSERT INTO orders (user_id, email, total_cents, status, payment_id, payment_method, shipping_cents, shipping_method, shipping_cep)
       VALUES (
         ${input.userId},
         ${input.email},
         ${toCents(input.total)},
         ${input.status},
         ${input.paymentId},
-        ${input.paymentMethod}
+        ${input.paymentMethod},
+        ${input.shippingCents},
+        ${input.shippingMethod},
+        ${input.shippingCep}
       )
       RETURNING id
     `;

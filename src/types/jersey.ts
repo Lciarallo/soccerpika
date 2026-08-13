@@ -31,8 +31,9 @@ export interface Jersey {
   stockQty: number;
   isMatchWorn: boolean;
   isAutographed: boolean;
-  /** Só o admin vê produtos despublicados. */
   isPublished?: boolean;
+  weightGrams?: number;
+  isFreeShipping?: boolean;
   sourceUrl?: string | null;
   createdAt?: string;
 }

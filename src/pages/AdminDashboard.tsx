@@ -26,6 +26,8 @@ interface Draft {
   isMatchWorn: boolean;
   isAutographed: boolean;
   isPublished: boolean;
+  weightGrams: string;
+  isFreeShipping: boolean;
 }
 
 const emptyDraft = (): Draft => ({
@@ -44,6 +46,8 @@ const emptyDraft = (): Draft => ({
   isMatchWorn: false,
   isAutographed: false,
   isPublished: true,
+  weightGrams: '300',
+  isFreeShipping: false,
 });
 
 const toDraft = (p: Jersey): Draft => ({
@@ -63,6 +67,8 @@ const toDraft = (p: Jersey): Draft => ({
   isMatchWorn: p.isMatchWorn,
   isAutographed: p.isAutographed,
   isPublished: p.isPublished ?? true,
+  weightGrams: String(p.weightGrams ?? 300),
+  isFreeShipping: p.isFreeShipping ?? false,
 });
 
 export function AdminDashboard({ onExit }: { onExit: () => void }) {
@@ -346,6 +352,8 @@ function ProductForm({
       isMatchWorn: form.isMatchWorn,
       isAutographed: form.isAutographed,
       isPublished: form.isPublished,
+      weightGrams: Number(form.weightGrams),
+      isFreeShipping: form.isFreeShipping,
     };
 
     try {
@@ -394,7 +402,8 @@ function ProductForm({
           <Input label="Preço (R$)" value={form.price} onChange={(v) => set('price', v)} type="number" step="0.01" required />
           <Input label="Estoque" value={form.stockQty} onChange={(v) => set('stockQty', v)} type="number" required />
 
-          <Input label="Tamanhos (separados por vírgula)" value={form.sizes} onChange={(v) => set('sizes', v)} placeholder="P, M, G, GG" className="sm:col-span-2" />
+          <Input label="Tamanhos (separados por vírgula)" value={form.sizes} onChange={(v) => set('sizes', v)} placeholder="P, M, G, GG" />
+          <Input label="Peso (g)" value={form.weightGrams} onChange={(v) => set('weightGrams', v)} type="number" step="1" required />
 
           <div className="sm:col-span-2">
             <label htmlFor="descricao" className="text-xs tracking-widest text-muted uppercase">
@@ -448,6 +457,7 @@ function ProductForm({
             <Check label="Peça de jogo" checked={form.isMatchWorn} onChange={(v) => set('isMatchWorn', v)} />
             <Check label="Autografada" checked={form.isAutographed} onChange={(v) => set('isAutographed', v)} />
             <Check label="Publicado na loja" checked={form.isPublished} onChange={(v) => set('isPublished', v)} />
+            <Check label="Frete Grátis" checked={form.isFreeShipping} onChange={(v) => set('isFreeShipping', v)} />
           </div>
         </div>
 

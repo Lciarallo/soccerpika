@@ -7,6 +7,7 @@
  */
 
 import { sql, toReais } from './db.js';
+import { calculateShipping } from './shipping.js';
 
 /** Teto de segurança: um pedido acima disso é erro ou abuso, não venda. */
 const MAX_ORDER_TOTAL = 100_000;
@@ -33,7 +34,9 @@ interface CatalogRow {
 
 export async function buildOrder(
   rawItems: unknown,
-): Promise<{ lines: Line[]; total: number; title: string }> {
+  shippingCep?: string,
+  shippingMethod?: string,
+): Promise<{ lines: Line[]; total: number; title: string; shippingCents: number; shippingMethodStr: string }> {
   if (!Array.isArray(rawItems) || rawItems.length === 0) {
     throw new OrderError('Carrinho vazio.');
   }
@@ -88,9 +91,30 @@ export async function buildOrder(
     });
   }
 
-  const total = Number(
+  let total = Number(
     lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0).toFixed(2),
   );
+
+  let shippingCents = 0;
+  let shippingMethodStr = '';
+
+  const shippingItems = lines.map(l => ({ id: l.id, quantity: l.quantity }));
+
+  // Calculate shipping if provided (orders without shipping should default to 0 or fail, here we assume it's mandatory if provided)
+  if (shippingCep && shippingMethod) {
+    const shippingOptions = await calculateShipping(shippingCep, shippingItems);
+    const selectedShipping = shippingOptions.find(o => o.method === shippingMethod);
+    if (!selectedShipping) {
+      throw new OrderError('Método de frete selecionado inválido para este CEP.');
+    }
+    
+    // Frete grátis agora é definido pela função calculateShipping (se o CEP for SP ou se o produto permitir)
+    shippingCents = selectedShipping.priceCents;
+    shippingMethodStr = selectedShipping.method;
+    total += toReais(shippingCents);
+  } else {
+    throw new OrderError('CEP e método de frete são obrigatórios.');
+  }
 
   if (total <= 0 || total > MAX_ORDER_TOTAL) {
     throw new OrderError('Valor do pedido fora do intervalo aceito.');
@@ -98,7 +122,7 @@ export async function buildOrder(
 
   const title = lines.length === 1 ? lines[0].name : `Soccer Pika — ${lines.length} peças`;
 
-  return { lines, total, title };
+  return { lines, total, title, shippingCents, shippingMethodStr };
 }
 
 /** CPF com validação de dígitos verificadores. */

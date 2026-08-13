@@ -32,3 +32,9 @@ dist-ssr
 .agents/
 .claude/
 skills-lock.json
+
+# Firebase
+.firebase/
+functions/lib/
+functions/node_modules/
+

@@ -72,9 +72,9 @@ export function FeaturedCarousel({ jerseys, onSelect }: FeaturedCarouselProps) {
           </div>
 
           <ul ref={trackRef} className="store-featured-track">
-            {jerseys.map((jersey) => (
+            {jerseys.map((jersey, idx) => (
               <li key={jersey.id} className="store-featured-slide">
-                <JerseyCard jersey={jersey} onSelect={onSelect} />
+                <JerseyCard jersey={jersey} onSelect={onSelect} priority={idx < 2} />
               </li>
             ))}
           </ul>

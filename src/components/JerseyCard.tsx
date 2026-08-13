@@ -7,17 +7,17 @@ interface JerseyCardProps {
   onSelect: (jersey: Jersey) => void;
   isSaved?: boolean;
   onToggleWishlist?: (jersey: Jersey) => void;
+  priority?: boolean;
 }
-
-const FREE_SHIPPING_FROM = 1000;
 
 export function JerseyCard({
   jersey,
   onSelect,
   isSaved = false,
   onToggleWishlist,
+  priority = false,
 }: JerseyCardProps) {
-  const freeShipping = jersey.price >= FREE_SHIPPING_FROM;
+  const freeShipping = jersey.isFreeShipping;
 
   return (
     <article className="store-product-card">
@@ -29,7 +29,15 @@ export function JerseyCard({
       >
         <span className="store-product-image">
           {jersey.images[0] ? (
-            <img src={jersey.images[0]} alt={jersey.name} loading="lazy" />
+            <img
+              src={jersey.images[0]}
+              alt={jersey.name}
+              loading={priority ? 'eager' : 'lazy'}
+              fetchPriority={priority ? 'high' : 'auto'}
+              decoding={priority ? 'sync' : 'async'}
+              width="400"
+              height="400"
+            />
           ) : null}
         </span>
 
