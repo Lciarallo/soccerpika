@@ -47,9 +47,6 @@ export default defineConfig({
           if (id.includes('node_modules/lucide-react/')) {
             return 'lucide-vendor';
           }
-          if (id.includes('node_modules/firebase/') || id.includes('node_modules/@firebase/')) {
-            return 'firebase-vendor';
-          }
         },
       },
     },

@@ -1,6 +1,5 @@
 /**
- * Camada de API do Soccer Pika integrada com Firebase (Firestore, Auth, Storage, Functions)
- * Utiliza importação dinâmica para manter o bundle inicial leve e instantâneo.
+ * Camada de API do Soccer Pika integrada com Vercel Serverless Functions (/api/*)
  */
 
 import type { Jersey } from '../types/jersey';
@@ -27,147 +26,95 @@ export interface SessionUser {
 }
 
 export const getSession = async (): Promise<SessionUser | null> => {
-  const { auth, db } = await import('./firebase');
-  const user = auth.currentUser;
-  if (!user) return null;
-  const tokenResult = await user.getIdTokenResult();
-  const isAdmin = tokenResult.claims.admin === true;
-
-  let profileData: Record<string, unknown> = {};
   try {
-    const { doc, getDoc } = await import('firebase/firestore');
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    if (snap.exists()) profileData = snap.data();
+    const res = await fetch('/api/auth/session', { credentials: 'same-origin' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.user || null;
   } catch {
-    // fallback
+    return null;
   }
-
-  return {
-    id: user.uid,
-    email: user.email || '',
-    name: user.displayName || (profileData.name as string) || 'Cliente',
-    role: isAdmin || profileData.role === 'admin' ? 'admin' : 'user',
-    cpf: (profileData.cpf as string) || null,
-    phone: (profileData.phone as string) || null,
-  };
 };
 
 export const logout = async (): Promise<void> => {
-  const { auth } = await import('./firebase');
-  await auth.signOut();
+  await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
 };
 
 // ---------------------------------------------------------------- produtos ---
 
 export const fetchProducts = async (): Promise<Jersey[]> => {
   try {
-    const [{ db }, { collection, query, where, limit, getDocs }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/firestore'),
-    ]);
-
-    const productsRef = collection(db, 'products');
-    const q = query(productsRef, where('status', '!=', 'draft'), limit(100));
-    const snapshot = await getDocs(q);
-
-    if (!snapshot.empty) {
-      return snapshot.docs.map((docSnap) => {
-        const data = docSnap.data();
-        const jersey: Jersey = {
-          id: data.id || docSnap.id,
-          slug: data.slug || docSnap.id,
-          name: data.name,
-          club: data.club || '',
-          season: data.year || data.season || '',
-          era: data.era || 'Sem data',
-          category: data.category || 'Outros',
-          price: (data.priceInCents ?? 0) / 100,
-          brand: data.badge || data.brand || '',
-          description: data.description || '',
-          images: data.images || ['/logo.png'],
-          sizes: data.sizes || ['M'],
-          colors: data.colors || [],
-          inStock: data.status !== 'sold',
-          stockQty: data.status === 'sold' ? 0 : (data.stockQty ?? 1),
-          isMatchWorn: data.isMatchWorn ?? false,
-          isAutographed: data.isAutographed ?? false,
-          isPublished: data.status !== 'draft',
-          createdAt: data.createdAt,
-        };
-        return jersey;
-      });
+    const res = await fetch('/api/products', { credentials: 'same-origin' });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data.products) && data.products.length > 0) {
+        return data.products;
+      }
     }
   } catch (err) {
-    console.warn('Firestore indisponível, usando catálogo semente:', err);
+    console.warn('API indisponível, usando catálogo semente:', err);
   }
 
-  // Fallback para semente local se Firestore estiver vazio ou offline
   return initialFeaturedJerseys;
 };
 
 export const createProduct = async (input: unknown): Promise<{ product: Jersey }> => {
-  try {
-    const [{ functions }, { httpsCallable }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/functions'),
-    ]);
-    const adminCreateProductFn = httpsCallable<unknown, { product: Jersey }>(
-      functions,
-      'adminCreateProduct',
-    );
-    const res = await adminCreateProductFn(input);
-    return { product: res.data.product };
-  } catch (err: unknown) {
-    throw new ApiError((err as Error).message || 'Erro ao criar produto.');
+  const res = await fetch('/api/products', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify(input),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(data.error || 'Erro ao criar produto.', res.status);
   }
+  return data;
 };
 
 export const updateProduct = async (id: string, input: unknown): Promise<{ product: Jersey }> => {
-  try {
-    const [{ functions }, { httpsCallable }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/functions'),
-    ]);
-    const adminUpdateProductFn = httpsCallable<unknown, { product: Jersey }>(
-      functions,
-      'adminUpdateProduct',
-    );
-    const res = await adminUpdateProductFn({ id, ...(input as Record<string, unknown>) });
-    return { product: res.data.product };
-  } catch (err: unknown) {
-    throw new ApiError((err as Error).message || 'Erro ao atualizar produto.');
+  const res = await fetch(`/api/products/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify(input),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(data.error || 'Erro ao atualizar produto.', res.status);
   }
+  return data;
 };
 
 export const deleteProduct = async (id: string): Promise<void> => {
-  try {
-    const [{ functions }, { httpsCallable }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/functions'),
-    ]);
-    const adminDeleteProductFn = httpsCallable<{ id: string }, { ok: boolean }>(
-      functions,
-      'adminDeleteProduct',
-    );
-    await adminDeleteProductFn({ id });
-  } catch (err: unknown) {
-    throw new ApiError((err as Error).message || 'Erro ao excluir produto.');
+  const res = await fetch(`/api/products/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    credentials: 'same-origin',
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ error: 'Erro ao excluir produto.' }));
+    throw new ApiError(data.error || 'Erro ao excluir produto.', res.status);
   }
 };
 
 export async function uploadImage(file: File): Promise<string> {
-  const [{ storage }, { ref, uploadBytes, getDownloadURL }] = await Promise.all([
-    import('./firebase'),
-    import('firebase/storage'),
-  ]);
+  const formData = new FormData();
+  formData.append('file', file);
 
-  const ext = file.name.split('.').pop() || 'webp';
-  const cleanName = file.name.replace(/[^a-zA-Z0-9_-]/g, '_');
-  const storagePath = `products/${Date.now()}_${cleanName}.${ext}`;
-  const fileRef = ref(storage, storagePath);
+  const res = await fetch('/api/admin/upload', {
+    method: 'POST',
+    credentials: 'same-origin',
+    body: formData,
+  });
 
-  await uploadBytes(fileRef, file, { contentType: file.type });
-  return await getDownloadURL(fileRef);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(data.error || 'Erro ao fazer upload da imagem.', res.status);
+  }
+  return data.url;
 }
 
 // --------------------------------------------------------------- Instagram ---
@@ -179,71 +126,39 @@ export interface InstagramPost {
   alt: string;
 }
 
-export const fetchInstagramPosts = async (_signal?: AbortSignal): Promise<InstagramPost[]> => {
-  if (
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ) {
-    return [
-      {
-        id: 'post-1',
-        href: 'https://instagram.com/soccerpika',
-        src: '/instagram/post-1.png',
-        alt: 'Mantos pesados que acabaram de chegar no acervo!',
-      },
-      {
-        id: 'post-2',
-        href: 'https://instagram.com/soccerpika',
-        src: '/instagram/post-2.png',
-        alt: 'Detalhes que contam a história das grandes finais.',
-      },
-      {
-        id: 'post-3',
-        href: 'https://instagram.com/soccerpika',
-        src: '/instagram/post-3.png',
-        alt: 'Autenticidade conferida peça por peça.',
-      },
-    ];
+export const fetchInstagramPosts = async (signal?: AbortSignal): Promise<InstagramPost[]> => {
+  try {
+    const res = await fetch('/api/instagram', { signal });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data.posts) && data.posts.length > 0) {
+        return data.posts;
+      }
+    }
+  } catch {
+    // fallback
   }
 
-  try {
-    const [{ functions }, { httpsCallable }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/functions'),
-    ]);
-    const getInstagramFeedFn = httpsCallable<
-      void,
-      { posts: Array<{ id: string; permalink: string; media_url?: string; caption?: string }> }
-    >(functions, 'getInstagramFeed');
-    const res = await getInstagramFeedFn();
-    return res.data.posts.map((p) => ({
-      id: p.id,
-      href: p.permalink,
-      src: p.media_url || '/instagram/post-1.png',
-      alt: p.caption || 'Soccer Pika no Instagram',
-    }));
-  } catch {
-    return [
-      {
-        id: 'post-1',
-        href: 'https://instagram.com/soccerpika',
-        src: '/instagram/post-1.png',
-        alt: 'Mantos pesados que acabaram de chegar no acervo!',
-      },
-      {
-        id: 'post-2',
-        href: 'https://instagram.com/soccerpika',
-        src: '/instagram/post-2.png',
-        alt: 'Detalhes que contam a história das grandes finais.',
-      },
-      {
-        id: 'post-3',
-        href: 'https://instagram.com/soccerpika',
-        src: '/instagram/post-3.png',
-        alt: 'Autenticidade conferida peça por peça.',
-      },
-    ];
-  }
+  return [
+    {
+      id: 'post-1',
+      href: 'https://instagram.com/soccerpika',
+      src: '/instagram/post-1.png',
+      alt: 'Mantos pesados que acabaram de chegar no acervo!',
+    },
+    {
+      id: 'post-2',
+      href: 'https://instagram.com/soccerpika',
+      src: '/instagram/post-2.png',
+      alt: 'Detalhes que contam a história das grandes finais.',
+    },
+    {
+      id: 'post-3',
+      href: 'https://instagram.com/soccerpika',
+      src: '/instagram/post-3.png',
+      alt: 'Autenticidade conferida peça por peça.',
+    },
+  ];
 };
 
 // ------------------------------------------------------------------- conta ---
@@ -268,90 +183,45 @@ export interface Order {
 }
 
 export const fetchOrders = async (): Promise<Order[]> => {
-  const { auth, db } = await import('./firebase');
-  const user = auth.currentUser;
-  if (!user) return [];
-
   try {
-    const { collection, query, where, orderBy, limit, getDocs } = await import(
-      'firebase/firestore'
-    );
-    const ordersRef = collection(db, 'orders');
-    const q = query(
-      ordersRef,
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc'),
-      limit(50),
-    );
-    const snapshot = await getDocs(q);
-
-    return snapshot.docs.map((docSnap) => {
-      const data = docSnap.data();
-      return {
-        id: docSnap.id,
-        email: data.customer?.email || user.email || '',
-        total: (data.totalInCents ?? 0) / 100,
-        status: data.status || 'pending_payment',
-        paymentMethod: data.payment?.method || null,
-        trackingCode: data.trackingCode || null,
-        createdAt: data.createdAt,
-        items: (data.items || []).map(
-          (i: {
-            productName: string;
-            size: string;
-            quantity: number;
-            priceInCents: number;
-            image: string;
-          }) => ({
-            name: i.productName,
-            size: i.size,
-            quantity: i.quantity,
-            unitPrice: (i.priceInCents ?? 0) / 100,
-            image: i.image || null,
-          }),
-        ),
-      };
-    });
+    const res = await fetch('/api/account/orders', { credentials: 'same-origin' });
+    if (res.ok) {
+      const data = await res.json();
+      return data.orders || [];
+    }
   } catch {
-    return [];
+    // fallback
   }
+  return [];
 };
 
 export const fetchWishlist = async (): Promise<Jersey[]> => {
-  const { auth, db } = await import('./firebase');
-  const user = auth.currentUser;
-  if (!user) return [];
-
   try {
-    const { collection, getDocs } = await import('firebase/firestore');
-    const wishlistSnap = await getDocs(collection(db, 'users', user.uid, 'wishlist'));
-    const productIds = wishlistSnap.docs.map((d) => d.id);
-    if (productIds.length === 0) return [];
-
-    const allProducts = await fetchProducts();
-    return allProducts.filter((p) => productIds.includes(p.id));
+    const res = await fetch('/api/account/wishlist', { credentials: 'same-origin' });
+    if (res.ok) {
+      const data = await res.json();
+      return data.wishlist || [];
+    }
   } catch {
-    return [];
+    // fallback
   }
+  return [];
 };
 
 export const addToWishlist = async (productId: string): Promise<void> => {
-  const { auth, db } = await import('./firebase');
-  const user = auth.currentUser;
-  if (!user) return;
-  const { doc, setDoc } = await import('firebase/firestore');
-  await setDoc(doc(db, 'users', user.uid, 'wishlist', productId), {
-    productId,
-    addedAt: new Date().toISOString(),
+  await fetch('/api/account/wishlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ productId }),
   });
 };
 
 export const removeFromWishlist = async (productId: string): Promise<void> => {
-  const { auth, db } = await import('./firebase');
-  const user = auth.currentUser;
-  if (!user) return;
-  const { doc, deleteDoc } = await import('firebase/firestore');
-  await deleteDoc(doc(db, 'users', user.uid, 'wishlist', productId));
+  await fetch(`/api/account/wishlist?productId=${encodeURIComponent(productId)}`, {
+    method: 'DELETE',
+    credentials: 'same-origin',
+  });
 };
 
 export interface Profile {
@@ -372,23 +242,12 @@ export interface Address {
 }
 
 export const fetchProfile = async (): Promise<{ profile: Profile; address: Address | null }> => {
-  const { auth, db } = await import('./firebase');
-  const user = auth.currentUser;
-  if (!user) throw new ApiError('Não autenticado', 401);
-
-  const { doc, getDoc } = await import('firebase/firestore');
-  const snap = await getDoc(doc(db, 'users', user.uid));
-  const data = snap.data() || {};
-
-  return {
-    profile: {
-      name: (data.name as string) || user.displayName || '',
-      email: user.email || '',
-      cpf: (data.cpf as string) || null,
-      phone: (data.phone as string) || null,
-    },
-    address: (data.address as Address) || null,
-  };
+  const res = await fetch('/api/account/profile', { credentials: 'same-origin' });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(data.error || 'Não autenticado', res.status);
+  }
+  return data;
 };
 
 export const saveProfile = async (input: {
@@ -397,17 +256,14 @@ export const saveProfile = async (input: {
   phone?: string;
   address?: Partial<Address>;
 }): Promise<void> => {
-  const { auth, db } = await import('./firebase');
-  const user = auth.currentUser;
-  if (!user) throw new ApiError('Não autenticado', 401);
-
-  const { doc, setDoc } = await import('firebase/firestore');
-  await setDoc(
-    doc(db, 'users', user.uid),
-    {
-      ...input,
-      updatedAt: new Date().toISOString(),
-    },
-    { merge: true },
-  );
+  const res = await fetch('/api/account/profile', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify(input),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ error: 'Erro ao salvar perfil.' }));
+    throw new ApiError(data.error || 'Erro ao salvar perfil.', res.status);
+  }
 };

@@ -69,11 +69,11 @@ export async function createPayment(input: CreatePaymentInput): Promise<PaymentR
       phone: input.payer.phone || '11999999999',
     },
     address: {
-      cep: input.payer.address?.zipCode || input.shippingCep || '',
+      zipCode: input.payer.address?.zipCode || input.shippingCep || '',
       street: input.payer.address?.street || 'Rua Principal',
       number: input.payer.address?.number || '100',
       complement: input.payer.address?.complement || '',
-      district: input.payer.address?.neighborhood || 'Centro',
+      neighborhood: input.payer.address?.neighborhood || 'Centro',
       city: input.payer.address?.city || 'Porto Alegre',
       state: input.payer.address?.state || 'RS',
     },
@@ -86,54 +86,28 @@ export async function createPayment(input: CreatePaymentInput): Promise<PaymentR
   };
 
   try {
-    const [{ functions }, { httpsCallable }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/functions'),
-    ]);
+    const res = await fetch('/api/payments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload),
+    });
 
-    const placeOrderFn = httpsCallable<
-      typeof payload,
-      {
-        orderId: string;
-        status: string;
-        totalInCents: number;
-        payment: {
-          method: string;
-          status: string;
-          pixQrCode?: string;
-          pixQrCodeBase64?: string;
-          pixCopyPaste?: string;
-          ticketUrl?: string;
-        };
-      }
-    >(functions, 'placeOrder');
-
-    const response = await placeOrderFn(payload);
-    const data = response.data;
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Não foi possível processar o pagamento.');
+    }
 
     return {
-      id: data.orderId,
-      orderId: data.orderId,
+      id: data.id || data.orderId,
+      orderId: data.orderId || String(data.id),
       status: data.status,
-      statusDetail: data.payment.status,
+      statusDetail: data.statusDetail || data.status,
       method: input.method,
-      amount: data.totalInCents / 100,
-      expiresAt: null,
-      pix:
-        input.method === 'pix'
-          ? {
-              qrCode: data.payment.pixCopyPaste || data.payment.pixQrCode || '',
-              qrCodeBase64: data.payment.pixQrCodeBase64 || null,
-              copyPaste: data.payment.pixCopyPaste || data.payment.pixQrCode || '',
-            }
-          : null,
-      boleto:
-        input.method === 'boleto'
-          ? {
-              url: data.payment.ticketUrl || null,
-              barcode: null,
-            }
-          : null,
+      amount: data.amount,
+      expiresAt: data.expiresAt || null,
+      pix: data.pix || null,
+      boleto: data.boleto || null,
     };
   } catch (err: unknown) {
     const errorMsg =
@@ -150,60 +124,49 @@ export interface ShippingOption {
 }
 
 export async function fetchShipping(cep: string, items: CartItem[]): Promise<ShippingOption[]> {
-  try {
-    const subtotalInCents = items.reduce(
-      (sum, i) => sum + Math.round(i.jersey.price * 100) * i.quantity,
-      0,
-    );
-
-    const [{ functions }, { httpsCallable }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/functions'),
-    ]);
-
-    const calculateShippingFn = httpsCallable<
-      { cep: string; subtotalInCents: number },
-      { options: Array<{ id: string; name: string; priceInCents: number; deliveryDays: number }> }
-    >(functions, 'calculateShipping');
-
-    const res = await calculateShippingFn({ cep, subtotalInCents });
-    return res.data.options.map((opt) => ({
-      method: opt.id,
-      priceCents: opt.priceInCents,
-      deliveryDays: opt.deliveryDays,
-    }));
-  } catch {
-    // Fallback gracioso para cálculo local se a função estiver em cold start
-    const cleanCep = cep.replace(/\D/g, '');
-    const isLocalRS = cleanCep.startsWith('9');
-    return [
-      { method: 'pac', priceCents: isLocalRS ? 1890 : 2890, deliveryDays: isLocalRS ? 3 : 7 },
-      { method: 'sedex', priceCents: isLocalRS ? 2990 : 4990, deliveryDays: isLocalRS ? 1 : 3 },
-    ];
+  const cleanCep = cep.replace(/\D/g, '');
+  if (cleanCep.length !== 8) {
+    return [];
   }
+
+  const itemsParam = items.map((i) => `${i.jersey.id}:${i.quantity}`).join(',');
+
+  try {
+    const res = await fetch(`/api/shipping?cep=${encodeURIComponent(cleanCep)}&items=${encodeURIComponent(itemsParam)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
+      }
+    }
+  } catch {
+    // fallback gracioso
+  }
+
+  const isLocalRS = cleanCep.startsWith('9');
+  return [
+    { method: 'pac', priceCents: isLocalRS ? 1890 : 2890, deliveryDays: isLocalRS ? 3 : 7 },
+    { method: 'sedex', priceCents: isLocalRS ? 2990 : 4990, deliveryDays: isLocalRS ? 1 : 3 },
+  ];
 }
 
 export async function fetchPaymentStatus(id: string | number) {
   try {
-    const [{ functions }, { httpsCallable }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/functions'),
-    ]);
-
-    const getOrderStatusFn = httpsCallable<
-      { orderId: string },
-      { id: string; status: string; paymentStatus?: string }
-    >(functions, 'getOrderStatus');
-
-    const res = await getOrderStatusFn({ orderId: String(id) });
-    return {
-      id: res.data.id,
-      status: res.data.status,
-      statusDetail: res.data.paymentStatus || res.data.status,
-    };
+    const res = await fetch(`/api/payment-status?id=${encodeURIComponent(String(id))}`, {
+      credentials: 'same-origin',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        id: data.id,
+        status: data.status,
+        statusDetail: data.statusDetail || data.status,
+      };
+    }
   } catch {
-    return { id, status: 'pending', statusDetail: 'pending' };
+    // fallback
   }
+  return { id, status: 'pending', statusDetail: 'pending' };
 }
 
 export const isApproved = (status: string) => status === 'approved' || status === 'paid';

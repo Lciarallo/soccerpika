@@ -4,68 +4,27 @@ import { SessionContext, type SessionValue } from './session-context';
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
     let isMounted = true;
-
-    Promise.all([
-      import('../lib/firebase'),
-      import('firebase/auth'),
-      import('firebase/firestore'),
-    ]).then(([{ auth, db }, { onAuthStateChanged }, { doc, getDoc }]) => {
-      if (!isMounted) return;
-      unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
-        if (!fbUser) {
-          if (isMounted) setUser(null);
-          return;
+    fetch('/api/auth/session', { credentials: 'same-origin' })
+      .then((res) => (res.ok ? res.json() : { user: null }))
+      .then((data) => {
+        if (isMounted) {
+          setUser(data.user || null);
+          setLoading(false);
         }
-
-        try {
-          const tokenResult = await fbUser.getIdTokenResult();
-          const isAdmin = tokenResult.claims.admin === true;
-
-          let userDocData: Record<string, unknown> = {};
-          try {
-            const userSnap = await getDoc(doc(db, 'users', fbUser.uid));
-            if (userSnap.exists()) {
-              userDocData = userSnap.data();
-            }
-          } catch {
-            // fallback
-          }
-
-          if (isMounted) {
-            setUser({
-              id: fbUser.uid,
-              email: fbUser.email || '',
-              name:
-                fbUser.displayName ||
-                (userDocData.name as string) ||
-                fbUser.email?.split('@')[0] ||
-                'Cliente',
-              role: isAdmin || userDocData.role === 'admin' ? 'admin' : 'user',
-              cpf: (userDocData.cpf as string) || null,
-              phone: (userDocData.phone as string) || null,
-            });
-          }
-        } catch {
-          if (isMounted) {
-            setUser({
-              id: fbUser.uid,
-              email: fbUser.email || '',
-              name: fbUser.displayName || 'Cliente',
-              role: 'user',
-            });
-          }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
         }
       });
-    });
 
     return () => {
       isMounted = false;
-      if (unsubscribe) unsubscribe();
     };
   }, []);
 
@@ -75,61 +34,33 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       loading,
       isAdmin: user?.role === 'admin',
       login: async (email, password) => {
-        const [{ auth }, { signInWithEmailAndPassword }] = await Promise.all([
-          import('../lib/firebase'),
-          import('firebase/auth'),
-        ]);
-        const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
-        const tokenResult = await cred.user.getIdTokenResult(true);
-        const isAdmin = tokenResult.claims.admin === true;
-
-        setUser({
-          id: cred.user.uid,
-          email: cred.user.email || '',
-          name: cred.user.displayName || 'Cliente',
-          role: isAdmin ? 'admin' : 'user',
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ email: email.trim(), password }),
         });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Não foi possível entrar. Verifique seu e-mail e senha.');
+        }
+        setUser(data.user);
       },
       register: async (name, email, password) => {
-        const [{ auth, db }, { createUserWithEmailAndPassword, updateProfile }, { doc, setDoc }] =
-          await Promise.all([
-            import('../lib/firebase'),
-            import('firebase/auth'),
-            import('firebase/firestore'),
-          ]);
-
-        const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        await updateProfile(cred.user, { displayName: name.trim() });
-
-        try {
-          await setDoc(
-            doc(db, 'users', cred.user.uid),
-            {
-              id: cred.user.uid,
-              name: name.trim(),
-              email: email.trim().toLowerCase(),
-              role: 'user',
-              createdAt: new Date().toISOString(),
-            },
-            { merge: true },
-          );
-        } catch {
-          // fallback
-        }
-
-        setUser({
-          id: cred.user.uid,
-          email: cred.user.email || '',
-          name: name.trim(),
-          role: 'user',
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ name: name.trim(), email: email.trim(), password }),
         });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Não foi possível cadastrar.');
+        }
+        setUser(data.user);
       },
       logout: async () => {
-        const [{ auth }, { signOut }] = await Promise.all([
-          import('../lib/firebase'),
-          import('firebase/auth'),
-        ]);
-        await signOut(auth);
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
         setUser(null);
       },
     }),
