@@ -1,5 +1,18 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-paper: #ffffff;
+  --color-ink: #000000;
+  --color-surface: #f7f7f7;
+  --color-muted: #737373;
+  --color-line: #e5e5e5;
+  --color-brand: #d90429;
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+  --font-display: 'Nunito', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
 @font-face {
   font-family: 'Nunito';
   font-style: normal;
@@ -41,4 +54,66 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* Modais, Componentes e Classes Utilitárias */
+.bg-paper { background-color: #ffffff; }
+.bg-ink { background-color: #000000; }
+.bg-surface { background-color: #f7f7f7; }
+.text-ink { color: #000000; }
+.text-paper { color: #ffffff; }
+.text-muted { color: #737373; }
+.text-brand { color: #d90429; }
+.text-danger { color: #dc2626; }
+.text-success { color: #16a34a; }
+.border-line { border-color: #e5e5e5; }
+.border-ink { border-color: #000000; }
+.font-display { font-family: 'Nunito', system-ui, sans-serif; }
+.font-900 { font-weight: 900; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0;
+}
+
+.btn-primary {
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #222222;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-dark {
+  background-color: #16a34a;
+  color: #ffffff;
+  border: 1px solid #16a34a;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.btn-outline:hover {
+  background-color: #f5f5f5;
+}
+
+.link-underline {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

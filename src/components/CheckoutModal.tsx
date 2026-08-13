@@ -258,13 +258,13 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/60 p-0 sm:items-center sm:p-6"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-0 sm:items-center sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label="Pagamento"
       onClick={(e) => e.target === e.currentTarget && close()}
     >
-      <div ref={modalRef} className="relative w-full max-w-2xl bg-paper">
+      <div ref={modalRef} className="relative w-full max-w-2xl bg-white shadow-2xl">
         <button
           type="button"
           onClick={close}

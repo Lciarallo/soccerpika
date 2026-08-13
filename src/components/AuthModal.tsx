@@ -91,13 +91,13 @@ export function AuthModal({ open, initialMode = 'login', onClose }: AuthModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/60 p-0 sm:items-center sm:p-6"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-0 sm:items-center sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={mode === 'login' ? 'Entrar' : 'Criar conta'}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div ref={modalRef} className="relative w-full max-w-md bg-paper p-6 sm:p-10">
+      <div ref={modalRef} className="relative w-full max-w-md bg-white shadow-2xl p-6 sm:p-10">
         <button
           type="button"
           onClick={onClose}
