@@ -10,18 +10,33 @@ import {
   fetchInstagramPosts,
   instagramConfigFromEnv,
   InstagramConfigError,
-  InstagramUpstreamError,
 } from './_lib/instagram.js';
+
+const FALLBACK_POSTS = [
+  {
+    id: 'post-1',
+    href: 'https://instagram.com/soccerpika',
+    src: '/instagram/post-1.png',
+    alt: 'Mantos pesados que acabaram de chegar no acervo!',
+  },
+  {
+    id: 'post-2',
+    href: 'https://instagram.com/soccerpika',
+    src: '/instagram/post-2.png',
+    alt: 'Detalhes que contam a história das grandes finais.',
+  },
+  {
+    id: 'post-3',
+    href: 'https://instagram.com/soccerpika',
+    src: '/instagram/post-3.png',
+    alt: 'Autenticidade conferida peça por peça.',
+  },
+];
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ error: 'Método não permitido.' });
-  }
-
-  if (Object.keys(req.query).length > 0) {
-    res.setHeader('Cache-Control', 'private, no-store');
-    return res.status(400).json({ error: 'Parâmetros não são aceitos nesta rota.' });
   }
 
   try {
@@ -32,25 +47,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     );
     return res.status(200).json({ posts });
   } catch (error) {
-    res.setHeader('Cache-Control', 'private, no-store');
-
     if (error instanceof InstagramConfigError) {
-      console.error('instagram-feed: configuração ausente ou inválida');
-      return res.status(503).json({
-        error: 'Feed do Instagram temporariamente indisponível.',
-        posts: [],
-      });
+      // Retorna fallback gracioso quando a chave da Meta não está configurada
+      return res.status(200).json({ posts: FALLBACK_POSTS });
     }
 
-    if (error instanceof InstagramUpstreamError) {
-      console.error(`instagram-feed: Meta respondeu ${error.status}`);
-    } else {
-      console.error('instagram-feed: falha ao consultar a Meta');
-    }
-
-    return res.status(502).json({
-      error: 'Feed do Instagram temporariamente indisponível.',
-      posts: [],
+    return res.status(200).json({
+      posts: FALLBACK_POSTS,
     });
   }
 }
