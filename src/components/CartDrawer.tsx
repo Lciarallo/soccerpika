@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Minus, Plus, X } from 'lucide-react';
 import type { CartItem } from '../types/jersey';
-import { formatPrice, installment } from '../lib/format';
+import { formatPrice } from '../lib/format';
 
 interface CartDrawerProps {
   open: boolean;
@@ -69,7 +69,6 @@ export function CartDrawer({
   if (!open) return null;
 
   const total = items.reduce((sum, i) => sum + i.jersey.price * i.quantity, 0);
-  const parcela = installment(total);
 
   return (
     <div
@@ -156,9 +155,6 @@ export function CartDrawer({
                 <span>Total</span>
                 <strong>{formatPrice(total)}</strong>
               </div>
-              <p className="store-cart-installments">
-                ou {parcela.times}x de {parcela.value} sem juros
-              </p>
 
               <button
                 type="button"
@@ -168,7 +164,7 @@ export function CartDrawer({
                 Finalizar compra
               </button>
               <p className="store-cart-methods">
-                Pix, cartão em até 12x ou boleto.
+                Pagamento via Pix, com aprovação imediata.
               </p>
             </footer>
           </>

@@ -93,32 +93,34 @@ Tokens de longa duração valem 60 dias e devem ser renovados antes de expirar.
 
 ## Pagamento
 
-Checkout com **Mercado Pago**, cobrindo Pix, cartão (até 12x) e boleto.
+Checkout só por **Pix via InfinitePay** — 0% de taxa para MEI (contra 0,99%
+do Mercado Pago, que este projeto usava antes). O checkout é hospedado: o
+cliente é redirecionado para o domínio da InfinitePay para pagar, e volta
+para `/pagamento/retorno`.
 
-| Rota                        | O que faz                                                     |
-| --------------------------- | ------------------------------------------------------------- |
-| `POST /api/payments`        | cria a cobrança nos três métodos                                |
-| `GET /api/payment-status`   | consulta o estado (a tela do Pix consulta até aprovar)          |
-| `POST /api/webhooks/mercadopago` | recebe as notificações do gateway                          |
+| Rota                          | O que faz                                                        |
+| ------------------------------ | ----------------------------------------------------------------- |
+| `POST /api/payments`           | cria o pedido e o link de cobrança Pix                            |
+| `GET /api/payment-status`      | consulta o estado no nosso banco (a tela consulta até aprovar)    |
+| `POST /api/payment-sync`       | confirma na hora, a partir do retorno do cliente                  |
+| `POST /api/webhooks/infinitepay` | recebe as notificações do gateway                               |
 
 Três decisões que sustentam o fluxo:
 
 - **O preço é do servidor.** O navegador manda só `{id, size, quantity}`;
   `api/_lib/order.ts` recalcula o total pelo catálogo, confere estoque e
   tamanho. `npm test` cobre isso, incluindo a tentativa de forjar o preço.
-- **Dado de cartão não passa por nós.** Os campos ficam em iframes do Mercado
-  Pago (Secure Fields); o navegador troca por um token de uso único e o
-  servidor cobra com o token.
-- **Webhook não é fonte de verdade.** A notificação traz só o id; o status é
-  sempre relido da API, então um POST forjado não marca pedido como pago.
-  Com `MP_WEBHOOK_SECRET` configurado, a assinatura `x-signature` é conferida
-  antes disso.
+- **Webhook não é fonte de verdade.** A notificação da InfinitePay traz só
+  coordenadas (`order_nsu`, `transaction_nsu`, `slug`); o pagamento é sempre
+  reconferido em `POST /payment_check` antes de marcar o pedido como pago —
+  um POST forjado não confirma nada sozinho.
+- **Duas vias convergem no mesmo lugar.** Webhook (assíncrono) e retorno do
+  cliente (`/api/payment-sync`, mais rápido) chamam a mesma
+  `markOrderPaid`, que baixa estoque numa transação e é idempotente — a
+  segunda confirmação de um pedido já pago não faz nada.
 
-Variáveis em `.env.example`. `MP_ACCESS_TOKEN` é secreto e nunca leva o prefixo
-`VITE_` — só `VITE_MP_PUBLIC_KEY` chega ao navegador.
-
-O `notification_url` é montado a partir do host do deploy, então o webhook só
-funciona depois de publicado (em local, use um túnel).
+Variável em `.env.example`: `INFINITEPAY_HANDLE` é a InfiniteTag da conta, só
+no servidor.
 
 ## Deploy
 
@@ -137,17 +139,16 @@ DATABASE_URL="$(grep -oP '(?<=^DATABASE_URL=").*(?=")' .env.production)" \
   npm run db:migrate
 DATABASE_URL="..." ADMIN_EMAIL=voce@exemplo.com ADMIN_PASSWORD='…' npm run db:seed
 
-# 3. Credenciais do Mercado Pago (do painel de desenvolvedor da sua conta)
-vercel env add MP_ACCESS_TOKEN production
-vercel env add VITE_MP_PUBLIC_KEY production
-vercel env add MP_WEBHOOK_SECRET production   # opcional, mas recomendado
+# 3. InfiniteTag da conta InfinitePay (painel da sua conta MEI)
+vercel env add INFINITEPAY_HANDLE production
 
 # 4. Publicar
 vercel deploy --prod
 ```
 
-Depois do deploy, aponte o webhook do Mercado Pago para
-`https://<seu-domínio>/api/webhooks/mercadopago`.
+Depois do deploy, cadastre o webhook da InfinitePay apontando para
+`https://<seu-domínio>/api/webhooks/infinitepay` (a URL também é enviada
+automaticamente a cada cobrança, via `webhook_url`).
 
 Sem `DATABASE_URL` o site sobe, mas o catálogo responde erro — ele vem todo do
 banco.
@@ -158,8 +159,13 @@ Duas telas além da loja, ambas atrás de sessão:
 
 - `/conta` — pedidos com status de pagamento, dados salvos para checkout
   rápido e lista de desejos.
-- `/admin` — painel do administrador: cadastra, edita, publica/oculta e
-  remove produtos, com upload de fotos.
+- `/admin` — painel do administrador, com cinco abas: **Painel** (faturamento,
+  ticket médio, peças vendidas, gráfico diário e ranking, tudo calculado no
+  banco em `_lib/adminStats.ts`), **Pedidos** (esteira de status e código de
+  rastreio), **Estoque** (ajuste rápido por peça), **Catálogo** (cadastra,
+  edita, publica/oculta e remove produtos, com upload de fotos) e **Usuários**
+  (promove/rebaixa entre `user` e `admin` — a loja sempre recusa ficar sem
+  nenhum admin).
 
 O primeiro admin sai do `db:seed`. Contas criadas pelo site são sempre
 `user` — o papel nunca vem do cliente; para promover alguém, rode
@@ -180,12 +186,15 @@ Como a autenticação é feita:
 
 ```
 api/
-  _lib/           db, auth, produtos, pedidos, validação, Mercado Pago
+  _lib/           db, auth, produtos, pedidos, usuários, validação,
+                  InfinitePay, agregações do painel (adminStats)
   auth/           register, login, session
   account/        orders, wishlist, profile
+  admin/          upload de fotos, dashboard, pedidos/[id], usuários/[id]
+                  (tudo atrás de requireAdmin)
   products.ts     lista e cria           products/[id].ts  detalhe, edita, remove
-  admin/upload.ts foto -> Vercel Blob
-  payments.ts     cria a cobrança        payment-status.ts  consulta
+  payments.ts     cria o pedido e o Pix  payment-status.ts  consulta
+  payment-sync.ts confirma no retorno do cliente
   webhooks/       notificações do gateway
 db/
   schema.sql      tabelas (idempotente)
@@ -194,8 +203,10 @@ src/
   components/     Header, Hero, FeaturedCarousel, Catalog, JerseyCard,
                   ProductModal, CartDrawer, CheckoutModal, AuthModal,
                   AuthenticityChecker, InstagramSection, SellJerseyForm, Footer
-  pages/          AccountPage, AdminDashboard
-  hooks/          sessão, rota e Secure Fields do cartão
+  components/admin/ Dashboard, OrdersAdmin, StockAdmin, ProductsAdmin,
+                  UsersAdmin, charts (SVG puro)
+  pages/          AccountPage, AdminDashboard, PaymentReturnPage
+  hooks/          sessão e rota
   lib/            api (chamadas), checkout, format (BRL)
   data/           jerseys.ts (semente gerada)
   types/          modelo de domínio

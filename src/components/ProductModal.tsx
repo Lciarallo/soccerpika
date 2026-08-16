@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, ExternalLink, Heart, X } from 'lucide-react';
 import type { Jersey } from '../types/jersey';
-import { formatPrice, installment } from '../lib/format';
+import { formatPrice } from '../lib/format';
 
 interface ProductModalProps {
   jersey: Jersey | null;
@@ -75,8 +75,6 @@ export function ProductModal({
 
   if (!jersey) return null;
 
-  const parcela = installment(jersey.price);
-
   const add = () => {
     onAddToCart(jersey, size);
     setAdded(true);
@@ -143,9 +141,7 @@ export function ProductModal({
             </h2>
 
             <p className="mt-5 font-display text-3xl font-900">{formatPrice(jersey.price)}</p>
-            <p className="mt-1 text-sm text-muted">
-              em até {parcela.times}x de {parcela.value} sem juros
-            </p>
+            <p className="mt-1 text-sm text-muted">à vista no Pix</p>
 
             {jersey.description && (
               <p className="mt-5 text-sm leading-relaxed">{jersey.description}</p>

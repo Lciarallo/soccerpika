@@ -1,61 +1,31 @@
 import type { CartItem } from '../types/jersey';
 
-export type PaymentMethod = 'pix' | 'boleto' | 'card';
-
 export interface PayerInput {
   firstName: string;
   lastName: string;
   email: string;
-  cpf: string;
   phone?: string;
-  address?: {
-    zipCode: string;
-    street: string;
-    number: string;
-    complement?: string;
-    neighborhood: string;
-    city: string;
-    state: string;
-  };
 }
 
 export interface PaymentResult {
-  id: string | number;
   orderId: string;
   status: string;
-  statusDetail?: string;
-  method: PaymentMethod;
   amount: number;
   expiresAt: string | null;
-  pix: {
-    qrCode: string;
-    qrCodeBase64: string | null;
-    copyPaste?: string;
-  } | null;
-  boleto: { url: string | null; barcode: string | null } | null;
+  checkoutUrl: string;
 }
 
 export class CheckoutError extends Error {}
 
 export interface CreatePaymentInput {
-  method: PaymentMethod;
   items: CartItem[];
   payer: PayerInput;
-  token?: string;
-  installments?: number;
-  paymentMethodId?: string;
-  issuerId?: string;
   shippingMethod?: string;
   shippingCep?: string;
 }
 
+/** Cria o pedido e devolve o link de pagamento Pix hospedado na InfinitePay. */
 export async function createPayment(input: CreatePaymentInput): Promise<PaymentResult> {
-  const methodMap: Record<PaymentMethod, 'pix' | 'credit_card' | 'boleto'> = {
-    pix: 'pix',
-    card: 'credit_card',
-    boleto: 'boleto',
-  };
-
   const payload = {
     items: input.items.map((i) => ({
       productId: i.jersey.id,
@@ -65,24 +35,10 @@ export async function createPayment(input: CreatePaymentInput): Promise<PaymentR
     customer: {
       name: `${input.payer.firstName} ${input.payer.lastName}`.trim(),
       email: input.payer.email,
-      cpf: input.payer.cpf,
-      phone: input.payer.phone || '11999999999',
-    },
-    address: {
-      zipCode: input.payer.address?.zipCode || input.shippingCep || '',
-      street: input.payer.address?.street || 'Rua Principal',
-      number: input.payer.address?.number || '100',
-      complement: input.payer.address?.complement || '',
-      neighborhood: input.payer.address?.neighborhood || 'Centro',
-      city: input.payer.address?.city || 'Porto Alegre',
-      state: input.payer.address?.state || 'RS',
+      phone: input.payer.phone || undefined,
     },
     shippingMethod: input.shippingMethod === 'sedex' ? 'sedex' : 'pac',
-    paymentMethod: methodMap[input.method] || 'pix',
-    cardToken: input.token,
-    installments: input.installments || 1,
-    paymentMethodId: input.paymentMethodId,
-    issuerId: input.issuerId,
+    shippingCep: input.shippingCep,
   };
 
   try {
@@ -95,21 +51,18 @@ export async function createPayment(input: CreatePaymentInput): Promise<PaymentR
 
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.error || 'Não foi possível processar o pagamento.');
+      throw new Error(data.error || 'Não foi possível gerar a cobrança Pix.');
     }
 
     return {
-      id: data.id || data.orderId,
-      orderId: data.orderId || String(data.id),
+      orderId: data.orderId,
       status: data.status,
-      statusDetail: data.statusDetail || data.status,
-      method: input.method,
       amount: data.amount,
-      expiresAt: data.expiresAt || null,
-      pix: data.pix || null,
-      boleto: data.boleto || null,
+      expiresAt: data.expiresAt ?? null,
+      checkoutUrl: data.checkoutUrl,
     };
   } catch (err: unknown) {
+    if (err instanceof CheckoutError) throw err;
     const errorMsg =
       (err as { message?: string })?.message ||
       'Não foi possível processar o pedido. Tente novamente.';
@@ -150,33 +103,56 @@ export async function fetchShipping(cep: string, items: CartItem[]): Promise<Shi
   ];
 }
 
-export async function fetchPaymentStatus(id: string | number) {
+export interface OrderStatus {
+  id: string;
+  status: string;
+  statusDetail?: string;
+}
+
+export async function fetchPaymentStatus(orderId: string): Promise<OrderStatus> {
   try {
-    const res = await fetch(`/api/payment-status?id=${encodeURIComponent(String(id))}`, {
+    const res = await fetch(`/api/payment-status?id=${encodeURIComponent(orderId)}`, {
       credentials: 'same-origin',
     });
     if (res.ok) {
       const data = await res.json();
-      return {
-        id: data.id,
-        status: data.status,
-        statusDetail: data.statusDetail || data.status,
-      };
+      return { id: data.id, status: data.status, statusDetail: data.statusDetail || data.status };
     }
   } catch {
     // fallback
   }
-  return { id, status: 'pending', statusDetail: 'pending' };
+  return { id: orderId, status: 'pending', statusDetail: 'pending' };
 }
 
-export const isApproved = (status: string) => status === 'approved' || status === 'paid';
+/** Confirma na hora, a partir do retorno do cliente na InfinitePay. */
+export async function syncPayment(
+  orderId: string,
+  coords?: { transactionNsu?: string; slug?: string; orderNsu?: string },
+): Promise<OrderStatus & { paid: boolean }> {
+  try {
+    const res = await fetch('/api/payment-sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ orderId, ...coords }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return { id: orderId, status: data.status, paid: Boolean(data.paid) };
+    }
+  } catch {
+    // fallback
+  }
+  return { id: orderId, status: 'pending', paid: false };
+}
+
+export const isApproved = (status: string) => status === 'paid';
 
 export const STATUS_LABEL: Record<string, string> = {
-  approved: 'Pagamento aprovado',
-  paid: 'Pagamento aprovado',
   pending: 'Aguardando pagamento',
-  pending_payment: 'Aguardando pagamento',
-  in_process: 'Pagamento em análise',
-  rejected: 'Pagamento recusado',
-  cancelled: 'Pagamento cancelado',
+  paid: 'Pagamento aprovado',
+  shipped: 'Enviado',
+  delivered: 'Entregue',
+  cancelled: 'Cancelado',
+  oversold: 'Em conferência',
 };

@@ -15,10 +15,10 @@ const TABS: { id: Tab; label: string; icon: typeof Package }[] = [
 ];
 
 const STATUS: Record<string, string> = {
-  approved: 'Pago',
   pending: 'Aguardando pagamento',
-  in_process: 'Em análise',
-  rejected: 'Recusado',
+  paid: 'Pago',
+  shipped: 'Enviado',
+  delivered: 'Entregue',
   cancelled: 'Cancelado',
   oversold: 'Em conferência',
 };

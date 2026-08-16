@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { Check, Copy, ExternalLink, Loader2, X } from 'lucide-react';
+import { Check, Copy, ExternalLink, Loader2, ShieldCheck, X, Zap } from 'lucide-react';
 import type { CartItem } from '../types/jersey';
 import {
   CheckoutError,
@@ -8,11 +8,9 @@ import {
   isApproved,
   STATUS_LABEL,
   fetchShipping,
-  type PaymentMethod,
   type PaymentResult,
   type ShippingOption,
 } from '../lib/checkout';
-import { useMercadoPago } from '../hooks/useMercadoPago';
 import { formatPrice } from '../lib/format';
 
 interface CheckoutModalProps {
@@ -22,21 +20,13 @@ interface CheckoutModalProps {
   onPaid: () => void;
 }
 
-const METHODS: { id: PaymentMethod; label: string; hint: string }[] = [
-  { id: 'pix', label: 'Pix', hint: 'Aprovação na hora' },
-  { id: 'card', label: 'Cartão', hint: 'Até 12x sem juros' },
-  { id: 'boleto', label: 'Boleto', hint: 'Compensa em 1–3 dias úteis' },
-];
-
 export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalProps) {
-  const [method, setMethod] = useState<PaymentMethod>('pix');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<PaymentResult | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [installments, setInstallments] = useState(1);
-  
+
   // Shipping states
   const [shippingCep, setShippingCep] = useState('');
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[] | null>(null);
@@ -56,13 +46,11 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
 
   const shippingCost = useMemo(() => {
     if (!selectedShippingMethod || !shippingOptions) return 0;
-    const opt = shippingOptions.find(o => o.method === selectedShippingMethod);
+    const opt = shippingOptions.find((o) => o.method === selectedShippingMethod);
     return opt ? opt.priceCents / 100 : 0;
   }, [selectedShippingMethod, shippingOptions]);
 
   const total = itemsTotal + shippingCost;
-
-  const mp = useMercadoPago({ enabled: open && method === 'card' && !result, amount: total });
 
   const reset = () => {
     setResult(null);
@@ -119,15 +107,14 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
     };
   }, [open]);
 
-  // Pix e boleto são assíncronos: consulta o estado até aprovar.
+  // O Pix é assíncrono: consulta o estado do pedido até aprovar.
   useEffect(() => {
     if (!result || isApproved(result.status)) return;
-    if (result.method === 'card') return;
 
     let stop = false;
     const tick = async () => {
       try {
-        const next = await fetchPaymentStatus(result.id);
+        const next = await fetchPaymentStatus(result.orderId);
         if (stop) return;
         setStatus(next.status);
         if (isApproved(next.status)) {
@@ -149,7 +136,7 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
 
   // Calcula frete quando o CEP tiver 8 dígitos
   useEffect(() => {
-    const cepDigits = shippingCep.replace(/\\D/g, '');
+    const cepDigits = shippingCep.replace(/\D/g, '');
     if (cepDigits.length !== 8) {
       setShippingOptions(null);
       setSelectedShippingMethod(null);
@@ -167,7 +154,7 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
         if (options.length > 0) {
           setSelectedShippingMethod(options[0].method);
         }
-      } catch (e) {
+      } catch {
         if (!active) return;
         setShippingError('Erro ao calcular o frete.');
         setShippingOptions(null);
@@ -175,8 +162,7 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
         if (active) setLoadingShipping(false);
       }
     };
-    
-    // Pequeno debounce
+
     const timeout = setTimeout(loadShipping, 500);
     return () => {
       active = false;
@@ -196,45 +182,19 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
       firstName: String(form.get('firstName') ?? ''),
       lastName: String(form.get('lastName') ?? ''),
       email: String(form.get('email') ?? ''),
-      cpf: String(form.get('cpf') ?? ''),
-      ...(method === 'boleto'
-        ? {
-            address: {
-              zipCode: String(form.get('zipCode') ?? ''),
-              street: String(form.get('street') ?? ''),
-              number: String(form.get('number') ?? ''),
-              neighborhood: String(form.get('neighborhood') ?? ''),
-              city: String(form.get('city') ?? ''),
-              state: String(form.get('state') ?? ''),
-            },
-          }
-        : {}),
+      phone: String(form.get('phone') ?? ''),
     };
 
     try {
-      let token: string | undefined;
-      if (method === 'card') {
-        token = await mp.createCardToken(
-          `${payer.firstName} ${payer.lastName}`.trim(),
-          payer.cpf,
-        );
-      }
-
       const payment = await createPayment({
-        method,
         items,
         payer,
-        token,
-        installments: method === 'card' ? installments : undefined,
-        paymentMethodId: mp.paymentMethodId ?? undefined,
-        issuerId: mp.issuerId ?? undefined,
         shippingMethod: selectedShippingMethod ?? undefined,
-        shippingCep: shippingCep.replace(/\\D/g, '') || undefined,
+        shippingCep: shippingCep.replace(/\D/g, '') || undefined,
       });
 
       setResult(payment);
       setStatus(payment.status);
-      if (isApproved(payment.status)) onPaid();
     } catch (e) {
       setError(
         e instanceof CheckoutError || e instanceof Error
@@ -246,9 +206,9 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
     }
   };
 
-  const copyPix = async () => {
-    if (!result?.pix) return;
-    await navigator.clipboard.writeText(result.pix.qrCode);
+  const copyLink = async () => {
+    if (!result?.checkoutUrl) return;
+    await navigator.clipboard.writeText(result.checkoutUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -300,104 +260,77 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
                     Concluir
                   </button>
                 </div>
-              ) : result.pix ? (
-                <div className="text-center">
-                  {result.pix.qrCodeBase64 && (
-                    <img
-                      src={`data:image/png;base64,${result.pix.qrCodeBase64}`}
-                      alt="QR code do Pix"
-                      className="mx-auto h-56 w-56"
-                    />
-                  )}
-                  <p className="mt-4 text-sm text-muted">
-                    Escaneie o QR code no app do banco, ou copie o código abaixo.
-                  </p>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex flex-col items-center gap-4 border border-line bg-surface p-6 sm:flex-row sm:items-start">
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center border border-line bg-white text-brand">
+                      <Zap className="h-9 w-9 animate-pulse" />
+                    </div>
 
-                  <div className="mt-4 flex items-center gap-2 bg-surface p-3">
-                    <code className="min-w-0 flex-1 truncate text-left text-xs">
-                      {result.pix.qrCode}
-                    </code>
+                    <div className="flex-1 space-y-3 text-center sm:text-left">
+                      <div>
+                        <p className="text-[0.65rem] font-bold tracking-widest text-brand uppercase">
+                          Pague com Pix via InfinitePay
+                        </p>
+                        <p className="mt-1 font-display text-2xl font-900 tabular-nums">
+                          {formatPrice(result.amount)}
+                        </p>
+                      </div>
+
+                      <ol className="space-y-1 text-xs text-muted">
+                        <li>1. Clique no botão para abrir o pagamento seguro da InfinitePay</li>
+                        <li>2. Escaneie o QR Code do Pix ou use o Copia e Cola no app do banco</li>
+                        <li>3. A confirmação é automática — esta tela atualiza sozinha</li>
+                      </ol>
+
+                      <div className="pt-2">
+                        <a
+                          href={result.checkoutUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-primary inline-flex items-center gap-2 px-5 py-3 text-xs uppercase tracking-wide"
+                        >
+                          <span>Pagar com Pix na InfinitePay</span>
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 border-t border-line pt-2 text-[0.65rem] text-muted">
+                        <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-success" />
+                        <span>Pagamento seguro intermediado pela InfinitePay.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      readOnly
+                      value={result.checkoutUrl}
+                      onFocus={(event) => event.target.select()}
+                      className="flex-1 border-b border-ink bg-transparent py-2.5 font-mono text-[0.65rem]"
+                      aria-label="Link de pagamento InfinitePay"
+                    />
                     <button
                       type="button"
-                      onClick={copyPix}
-                      className="btn btn-dark shrink-0 px-3 py-2 text-xs uppercase"
+                      onClick={copyLink}
+                      className="btn btn-outline shrink-0 px-3 text-xs uppercase"
                     >
                       {copied ? <Check size={14} /> : <Copy size={14} />}
                       {copied ? 'Copiado' : 'Copiar'}
                     </button>
                   </div>
 
-                  <p className="mt-5 flex items-center justify-center gap-2 text-sm text-muted">
+                  <p className="flex items-center justify-center gap-2 text-sm text-muted">
                     <Loader2 size={15} className="animate-spin" />
                     {STATUS_LABEL[currentStatus] ?? 'Aguardando pagamento'}…
                   </p>
-                </div>
-              ) : result.boleto ? (
-                <div className="text-center">
-                  <p className="text-sm">
-                    Boleto gerado. Ele compensa em até 3 dias úteis.
-                  </p>
-                  {result.boleto.barcode && (
-                    <code className="mt-4 block bg-surface p-3 text-xs break-all">
-                      {result.boleto.barcode}
-                    </code>
-                  )}
-                  {result.boleto.url && (
-                    <a
-                      href={result.boleto.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-primary mt-5 w-full py-4 text-sm tracking-wide uppercase"
-                    >
-                      Abrir boleto <ExternalLink size={15} />
-                    </a>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center">
-                  <p className="font-display text-lg font-800 uppercase">
-                    {STATUS_LABEL[currentStatus] ?? 'Pagamento em análise'}
-                  </p>
-                  <p className="mt-2 text-sm text-muted">{result.statusDetail}</p>
-                  <button
-                    type="button"
-                    onClick={reset}
-                    className="btn btn-outline mt-6 w-full py-3.5 text-sm tracking-wide uppercase"
-                  >
-                    Tentar outro método
-                  </button>
                 </div>
               )}
             </div>
           ) : (
             /* ---------- formulário ---------- */
             <form onSubmit={submit} className="mt-6">
-              <div className="grid grid-cols-3 gap-2">
-                {METHODS.map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => setMethod(m.id)}
-                    aria-pressed={method === m.id}
-                    className={`border px-2 py-3 text-center transition-colors ${
-                      method === m.id
-                        ? 'border-ink bg-ink text-paper'
-                        : 'border-line hover:border-ink'
-                    }`}
-                  >
-                    <span className="block text-sm font-bold uppercase">{m.label}</span>
-                    <span
-                      className={`mt-0.5 block text-[10px] ${
-                        method === m.id ? 'text-paper/70' : 'text-muted'
-                      }`}
-                    >
-                      {m.hint}
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <Field name="firstName" label="Nome" required autoComplete="given-name" />
                 <Field name="lastName" label="Sobrenome" required autoComplete="family-name" />
                 <Field
@@ -409,18 +342,18 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
                   className="sm:col-span-2"
                 />
                 <Field
-                  name="cpf"
-                  label="CPF"
-                  required
-                  inputMode="numeric"
-                  placeholder="000.000.000-00"
+                  name="phone"
+                  label="Celular"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="(00) 00000-0000"
                 />
               </div>
 
               {/* Seção de Frete (Obrigatório) */}
               <div className="mt-6 border-t border-line pt-6">
                 <h3 className="text-xs font-bold uppercase tracking-widest mb-3">Entrega</h3>
-                
+
                 <div className="grid gap-5 sm:grid-cols-6">
                   <div className="sm:col-span-2">
                     <label htmlFor="shippingCep" className="text-xs tracking-widest text-muted uppercase">
@@ -438,16 +371,6 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
                       className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm placeholder:text-muted"
                     />
                   </div>
-                  {/* Se método não for boleto, a gente ainda precisa coletar endereço de entrega. Para simplificar, num e-commerce real coletaríamos todo o endereço aqui. Por hora, coletamos Rua, Nº etc se tiver CEP. */}
-                  {shippingCep.replace(/\\D/g, '').length === 8 && (
-                    <>
-                      <Field name="street" label="Rua" required className="sm:col-span-3" />
-                      <Field name="number" label="Nº" required className="sm:col-span-1" />
-                      <Field name="neighborhood" label="Bairro" required className="sm:col-span-2" />
-                      <Field name="city" label="Cidade" required className="sm:col-span-3" />
-                      <Field name="state" label="UF" required maxLength={2} className="sm:col-span-1" />
-                    </>
-                  )}
                 </div>
 
                 {loadingShipping && (
@@ -457,10 +380,10 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
                   </p>
                 )}
                 {shippingError && <p className="mt-3 text-xs text-danger">{shippingError}</p>}
-                
+
                 {shippingOptions && shippingOptions.length > 0 && (
                   <div className="mt-4 grid gap-2">
-                    {shippingOptions.map(opt => {
+                    {shippingOptions.map((opt) => {
                       const isFree = opt.priceCents === 0;
                       return (
                         <button
@@ -487,73 +410,20 @@ export function CheckoutModal({ open, items, onClose, onPaid }: CheckoutModalPro
                 )}
               </div>
 
-              {method === 'card' && (
-                <div className="mt-6">
-                  {mp.error ? (
-                    <p className="bg-surface p-3 text-sm text-danger">{mp.error}</p>
-                  ) : (
-                    <>
-                      <div className="grid gap-5 sm:grid-cols-2">
-                        <SecureField id="mp-card-number" label="Número do cartão" className="sm:col-span-2" />
-                        <SecureField id="mp-card-expiry" label="Validade" />
-                        <SecureField id="mp-card-cvv" label="CVV" />
-                      </div>
-
-                      <label className="mt-5 block">
-                        <span className="text-xs tracking-widest text-muted uppercase">
-                          Parcelas
-                        </span>
-                        <select
-                          value={installments}
-                          onChange={(e) => setInstallments(Number(e.target.value))}
-                          className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm"
-                        >
-                          {mp.installmentOptions.length > 0 ? (
-                            mp.installmentOptions.map((p) => (
-                              <option key={p.installments} value={p.installments}>
-                                {p.recommended_message}
-                              </option>
-                            ))
-                          ) : (
-                            <option value={1}>1x de {formatPrice(total)}</option>
-                          )}
-                        </select>
-                      </label>
-
-                      {!mp.ready && (
-                        <p className="mt-3 flex items-center gap-2 text-xs text-muted">
-                          <Loader2 size={13} className="animate-spin" />
-                          Carregando campos seguros do Mercado Pago…
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
-
-              {method === 'boleto' && (
-                <div className="mt-6 border-t border-line pt-6">
-                  <p className="text-xs tracking-widest text-muted uppercase">Informações do Boleto</p>
-                  <p className="text-[11px] text-muted mt-1">
-                    Os dados de endereço acima já serão utilizados para a emissão do boleto.
-                  </p>
-                </div>
-              )}
-
               {error && <p className="mt-5 bg-surface p-3 text-sm text-danger">{error}</p>}
 
               <button
                 type="submit"
-                disabled={submitting || (method === 'card' && !mp.ready) || !selectedShippingMethod}
+                disabled={submitting || !selectedShippingMethod}
                 className="btn btn-primary mt-7 w-full py-4 text-sm tracking-wide uppercase disabled:opacity-50"
               >
                 {submitting && <Loader2 size={16} className="animate-spin" />}
-                {submitting ? 'Processando…' : `Pagar ${formatPrice(total)}`}
+                {submitting ? 'Gerando cobrança…' : `Pagar ${formatPrice(total)} com Pix`}
               </button>
 
               <p className="mt-3 text-center text-[11px] text-muted">
-                Pagamento processado pelo Mercado Pago. Não guardamos dados do
-                seu cartão.
+                Pagamento processado pela InfinitePay. Não guardamos dados do
+                seu Pix.
               </p>
             </form>
           )}
@@ -570,7 +440,7 @@ interface FieldProps {
   required?: boolean;
   placeholder?: string;
   autoComplete?: string;
-  inputMode?: 'text' | 'numeric';
+  inputMode?: 'text' | 'numeric' | 'tel';
   maxLength?: number;
   className?: string;
 }
@@ -588,24 +458,6 @@ function Field({ name, label, className = '', ...rest }: FieldProps) {
         className="mt-1.5 w-full border-b border-ink bg-transparent py-2.5 text-sm
                    placeholder:text-muted"
       />
-    </div>
-  );
-}
-
-/** Contêiner do iframe do Mercado Pago — o SDK monta o campo aqui dentro. */
-function SecureField({
-  id,
-  label,
-  className = '',
-}: {
-  id: string;
-  label: string;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <span className="text-xs tracking-widest text-muted uppercase">{label}</span>
-      <div id={id} className="mt-1.5 h-10 border-b border-ink" />
     </div>
   );
 }

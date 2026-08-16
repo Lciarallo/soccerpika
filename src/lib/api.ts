@@ -267,3 +267,105 @@ export const saveProfile = async (input: {
     throw new ApiError(data.error || 'Erro ao salvar perfil.', res.status);
   }
 };
+
+// -------------------------------------------------------------- painel admin ---
+
+export interface PeriodStats {
+  revenue: number;
+  orderCount: number;
+  averageTicket: number;
+  unitsSold: number;
+}
+
+export interface RankedDatum {
+  label: string;
+  value: number;
+}
+
+export interface DashboardData {
+  days: number;
+  current: PeriodStats;
+  previous: PeriodStats;
+  daily: { label: string; value: number }[];
+  topProducts: RankedDatum[];
+  statusCounts: Record<string, number>;
+  lowStock: { id: string; name: string; stockQty: number }[];
+  recentOrders: {
+    id: string;
+    customerName: string | null;
+    email: string;
+    itemCount: number;
+    total: number;
+    status: string;
+    createdAt: string;
+  }[];
+}
+
+export const fetchAdminDashboard = async (days: 7 | 30 | 90): Promise<DashboardData> => {
+  const res = await fetch(`/api/admin/dashboard?days=${days}`, { credentials: 'same-origin' });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(data.error || 'Erro ao carregar o painel.', res.status);
+  }
+  return data;
+};
+
+export interface AdminOrder extends Order {
+  customerName: string | null;
+}
+
+export const fetchAdminOrders = async (): Promise<AdminOrder[]> => {
+  const res = await fetch('/api/admin/orders', { credentials: 'same-origin' });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(data.error || 'Erro ao carregar os pedidos.', res.status);
+  }
+  return data.orders || [];
+};
+
+export const updateAdminOrder = async (
+  id: string,
+  input: { status?: string; trackingCode?: string },
+): Promise<void> => {
+  const res = await fetch(`/api/admin/orders/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify(input),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ error: 'Erro ao atualizar o pedido.' }));
+    throw new ApiError(data.error || 'Erro ao atualizar o pedido.', res.status);
+  }
+};
+
+export interface AdminUserRow {
+  id: string;
+  name: string;
+  email: string;
+  role: 'user' | 'admin';
+  createdAt: string;
+  orderCount: number;
+}
+
+export const fetchAdminUsers = async (): Promise<AdminUserRow[]> => {
+  const res = await fetch('/api/admin/users', { credentials: 'same-origin' });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new ApiError(data.error || 'Erro ao carregar os usuários.', res.status);
+  }
+  return data.users || [];
+};
+
+export const updateAdminUserRole = async (id: string, role: 'user' | 'admin'): Promise<void> => {
+  const res = await fetch(`/api/admin/users/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ role }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ error: 'Erro ao atualizar o usuário.' }));
+    throw new ApiError(data.error || 'Erro ao atualizar o usuário.', res.status);
+  }
+};

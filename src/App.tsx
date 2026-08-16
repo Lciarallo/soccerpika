@@ -42,6 +42,9 @@ const AccountPage = lazy(() =>
 const AdminDashboard = lazy(() =>
   import('./pages/AdminDashboard').then((m) => ({ default: m.AdminDashboard })),
 );
+const PaymentReturnPage = lazy(() =>
+  import('./pages/PaymentReturnPage').then((m) => ({ default: m.PaymentReturnPage })),
+);
 
 const INITIAL_FILTERS: FilterState = {
   query: '',
@@ -259,6 +262,13 @@ function Routes() {
     return (
       <Suspense fallback={<LoadingStorefront />}>
         <AccountPage onExit={() => navigate('/')} />
+      </Suspense>
+    );
+  }
+  if (path === '/pagamento/retorno') {
+    return (
+      <Suspense fallback={<LoadingStorefront />}>
+        <PaymentReturnPage onExit={() => navigate('/')} />
       </Suspense>
     );
   }
